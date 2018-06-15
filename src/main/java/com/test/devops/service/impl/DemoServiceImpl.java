@@ -19,4 +19,9 @@ public class DemoServiceImpl implements DemoService {
     public List<Demo> queryAll() {
         return mapper.selectAll();
     }
+
+    @Override
+    public void add(Demo demo) {
+        mapper.insert(demo);
+    }
 }

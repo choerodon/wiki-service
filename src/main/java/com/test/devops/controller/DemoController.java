@@ -3,7 +3,9 @@ package com.test.devops.controller;
 import com.test.devops.entity.Demo;
 import com.test.devops.service.DemoService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +27,15 @@ public class DemoController {
     @RequestMapping(value = "/demos", method = RequestMethod.GET)
     public List<Demo> getVersion() {
         return demoService.queryAll();
+    }
+
+    @Permission(permissionPublic = true,level = ResourceLevel.USER)
+    @ApiOperation(value = "运行的Demo")
+    @RequestMapping(value = "/demos", method = RequestMethod.POST)
+    public void insertVersion(
+            @ApiParam("demo")
+            @RequestBody Demo demo
+    ) {
+        demoService.add(demo);
     }
 }
