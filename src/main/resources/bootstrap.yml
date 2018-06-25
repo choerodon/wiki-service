@@ -1,21 +1,21 @@
 server:
-  port: 8090
+  port: 9990
 spring:
   application:
     name: wiki-service
-  cloud:
-    config:
-      failFast: true
-      retry:
-        maxAttempts: 6
-        multiplier: 1.5
-        maxInterval: 2000
-      uri: localhost:8010
-      enabled: false
-management:
-  port: 8091
-  security:
-    enabled: false
+#  cloud:
+#    config:
+#      failFast: true
+#      retry:
+#        maxAttempts: 6
+#        multiplier: 1.5
+#        maxInterval: 2000
+#      uri: localhost:8010
+#      enabled: false
+#management:
+#  port: 8091
+#  security:
+#    enabled: false
 
 
 

@@ -16,32 +16,32 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>io.choerodon</groupId>
-            <artifactId>choerodon-starter-swagger</artifactId>
-            <version>0.5.0.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>io.choerodon</groupId>
-            <artifactId>choerodon-starter-core</artifactId>
-            <version>0.5.0.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>io.choerodon</groupId>
-            <artifactId>choerodon-starter-oauth-resource</artifactId>
-            <version>0.5.0.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>io.choerodon</groupId>
-            <artifactId>choerodon-starter-feign-replay</artifactId>
-            <version>0.5.0.RELEASE</version>
-        </dependency>
-        <dependency>
+        <!--<dependency>-->
+            <!--<groupId>io.choerodon</groupId>-->
+            <!--<artifactId>choerodon-starter-swagger</artifactId>-->
+            <!--<version>0.5.0.RELEASE</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>io.choerodon</groupId>-->
+            <!--<artifactId>choerodon-starter-core</artifactId>-->
+            <!--<version>0.5.0.RELEASE</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>io.choerodon</groupId>-->
+            <!--<artifactId>choerodon-starter-oauth-resource</artifactId>-->
+            <!--<version>0.5.0.RELEASE</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>io.choerodon</groupId>-->
+            <!--<artifactId>choerodon-starter-feign-replay</artifactId>-->
+            <!--<version>0.5.0.RELEASE</version>-->
+        <!--</dependency>-->
+<!--        <dependency>
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-mybatis-mapper</artifactId>
             <version>0.5.0.RELEASE</version>
-        </dependency>
-        <dependency>
+        </dependency>-->
+<!--        <dependency>
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-hitoa</artifactId>
             <version>0.5.0.RELEASE</version>
@@ -49,11 +49,11 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+        </dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter-actuator</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -68,12 +68,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
-        <dependency>
+       <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
         <!-- config server -->
-        <dependency>
+<!--        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-client</artifactId>
         </dependency>
@@ -84,8 +84,8 @@
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
-        </dependency>
-        <dependency>
+        </dependency>-->
+<!--        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-kafka</artifactId>
             <exclusions>
@@ -99,27 +99,27 @@
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-bus</artifactId>
             <version>0.5.0.RELEASE</version>
-        </dependency>
+        </dependency>-->
         <!-- test -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>junit</groupId>-->
+            <!--<artifactId>junit</artifactId>-->
+            <!--<version>4.12</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
         <!--监控相关依赖 -->
-        <dependency><!-- 如果服务需要监控功能则需要此依赖 -->
+<!--        <dependency>&lt;!&ndash; 如果服务需要监控功能则需要此依赖 &ndash;&gt;
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-stream-binder-kafka</artifactId>
         </dependency>
-        <dependency><!-- 如果服务需要hystrix监控功能则需要此依赖 -->
+        <dependency>&lt;!&ndash; 如果服务需要hystrix监控功能则需要此依赖 &ndash;&gt;
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-netflix-hystrix-stream</artifactId>
         </dependency>
-        <dependency><!-- 如果服务需要zipkin监控功能则需要此依赖 -->
+        <dependency>&lt;!&ndash; 如果服务需要zipkin监控功能则需要此依赖 &ndash;&gt;
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-sleuth-stream</artifactId>
-        </dependency>
+        </dependency>-->
 
     </dependencies>
 
