@@ -2,7 +2,7 @@ server:
   port: 8090
 spring:
   application:
-    name: {{service.code}}
+    name: wiki-service
   cloud:
     config:
       failFast: true
@@ -16,5 +16,6 @@ management:
   port: 8091
   security:
     enabled: false
+
 
 

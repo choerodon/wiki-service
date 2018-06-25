@@ -8,3 +8,4 @@ import io.choerodon.mybatis.common.BaseMapper;
  */
 public interface DemoMapper extends  BaseMapper<Demo> {
 }
+

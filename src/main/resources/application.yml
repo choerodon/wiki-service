@@ -41,3 +41,4 @@ eureka:
     serviceUrl:
       defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8000/eureka/}
     registryFetchIntervalSeconds: 10
+

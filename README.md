@@ -57,7 +57,7 @@ public class CustomExtraDataManager implements ExtraDataManager {
         ChoerodonRouteData choerodonRouteData = new ChoerodonRouteData();
         choerodonRouteData.setName("demo");
         choerodonRouteData.setPath("/demo/**");
-        choerodonRouteData.setServiceId("{{service.code}}");
+        choerodonRouteData.setServiceId("wiki-service");
         extraData.put(ExtraData.ZUUL_ROUTE_DATA, choerodonRouteData);
         return extraData;
     }

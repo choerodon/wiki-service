@@ -30,3 +30,4 @@ public class Demo extends AuditDomain {
         this.name = name;
     }
 }
+
