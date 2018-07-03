@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: registry.cn-hangzhou.aliyuncs.com/choerodon-devops/devops-service
+  repository: registry.cn-hangzhou.aliyuncs.com/choerodon-wiki/wiki-service
   pullPolicy: Always
 
 preJob:

@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page xmlns="http://www.xwiki.org">
+    <title>{{ SPACE_TITLE }}</title>
+    <content>{{velocity}}&#13;
+        {{html}}&#13;
+        #set($objects = $doc.getObjects("AppWithinMinutes.LiveTableClass"))&#13;
+        &lt;div id="home-page-welcome"&gt;&#13;
+        &lt;div style="margin-top: 10px;margin-left: 31px;"&gt;&#13;
+        &lt;span class="material-icons" style="color:#14892C;width:20px;height:20px"&gt;check_circle&lt;/span&gt;&#13;
+        &lt;span class="home-page-font"&gt;欢迎来到您的新空间！&lt;/span&gt;&#13;
+        &lt;/div&gt;&#13;
+        &lt;div class="home-page-left"&gt;&#13;
+        &lt;span style="font-size: 13px;color: #000;"&gt;&#13;
+        #foreach ($object in $objects)&#13;
+        $escapetool.xml($object.getProperty("description").value)&#13;
+        #end&#13;
+        &lt;/span&gt;&#13;
+        &lt;/div&gt;&#13;
+        &lt;div style="margin-bottom: 12px;"&gt;&#13;
+        &lt;div class="home-page-left"&gt;&#13;
+        &lt;span class="home-page-font"&gt;编辑这个主页&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击屏幕右上方的编辑来自定义您
+        的空间主页。&lt;/span&gt;&#13;
+        &lt;/div&gt;&#13;
+        &lt;div class="home-page-left"&gt;&#13;
+        &lt;span class="home-page-font"&gt;创建您的首个页面&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击页头上的创建按钮开始。
+        &lt;/span&gt;&#13;
+        &lt;/div&gt;&#13;
+        &lt;div class="home-page-left"&gt;&#13;
+        &lt;span class="home-page-font"&gt;给您的空间打上印记&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击左侧面板上的配置侧栏来更新空间细节和标识。&lt;/span&gt;&#13;
+        &lt;/div&gt;&#13;
+        &lt;div class="home-page-left"&gt;&#13;
+        &lt;span class="home-page-font"&gt;设置权限&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击左边侧栏上的空间工具来更新权限
+        允许其他人访问。&lt;/span&gt;&#13;
+        &lt;/div&gt;&#13;
+        &lt;/div&gt;&#13;
+        &lt;/div&gt;&#13;
+        &lt;div id="home-page-space"&gt;&#13;
+        &lt;div id = "home-page-recent-space"&gt;&#13;
+        &lt;div id="home-page-recent-font"&gt;&#13;
+        最近的空间活动&#13;
+        &lt;/div&gt;&#13;
+        &lt;/div&gt;&#13;
+        &lt;div&gt;&#13;
+        {{/html}}&#13;
+        &#13;
+        #set ($space = $doc.getSpace())&#13;
+        #set ($spaces = $space.split('\.'))&#13;
+        #set($application = $spaces.get(0))&#13;
+        &#13;
+        {{activity subentries="3" entries="2" spaces=$application/}}&#13;
+        {{/velocity}}&#13;
+    </content>
+    <objects>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>AppWithinMinutes.LiveTableClass</className>
+            <number>0</number>
+            <property name="class" type="String">
+                <attribute name="name" value="class"/>
+                <attribute name="prettyName" value="Class"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="1"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+            </property>
+            <property name="columns" type="String">
+                <attribute name="name" value="columns"/>
+                <attribute name="prettyName" value="Live Table Columns"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="3"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value></value>
+            </property>
+            <property name="dataSpace" type="String">
+                <attribute name="name" value="dataSpace"/>
+                <attribute name="prettyName" value="Data Location"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="4"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value></value>
+            </property>
+            <property name="description" type="TextArea">
+                <attribute name="name" value="description"/>
+                <attribute name="prettyName" value="Description"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="40"/>
+                <attribute name="rows" value="5"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="editor" value="---"/>
+                <attribute name="number" value="2"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value>{{ DESCRIPTION }}</value>
+            </property>
+        </objectSummary>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.JavaScriptExtension</className>
+            <number>0</number>
+            <headline>long</headline>
+            <property name="cache" type="StaticList">
+                <attribute name="name" value="cache"/>
+                <attribute name="prettyName" value="Caching policy"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="5"/>
+                <attribute name="values" value="long|short|default|forbid"/>
+                <attribute name="allowedValues" value="long,short,default,forbid"/>
+                <value>long</value>
+            </property>
+            <property name="code" type="TextArea">
+                <attribute name="name" value="code"/>
+                <attribute name="prettyName" value="Code"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="50"/>
+                <attribute name="rows" value="20"/>
+                <attribute name="contenttype" value="PureText"/>
+                <attribute name="editor" value="PureText"/>
+                <attribute name="number" value="2"/>
+                <value>var activityAction = document.getElementsByClassName("activityAction");&#13;
+                    for (var i = 0; i &lt; activityAction.length; i++) {&#13;
+                    if (activityAction[i].getElementsByTagName("a").length != 0) {&#13;
+                    activityAction[i].getElementsByTagName("a")[0].innerHTML = '(查看更新)';&#13;
+                    }&#13;
+                    }&#13;
+                    &#13;
+                    &#13;
+                    //增加元素&#13;
+                    var strTitle = `&#13;
+                    &lt;span style="font-size: 18px;&#13;
+                    color: #000;&#13;
+                    line-height: 59px;&#13;
+                    margin-bottom: 0;&#13;
+                    padding-left: 14px;&#13;
+                    cursor: pointer;"&gt;主页&lt;/span&gt;&#13;
+                    `;&#13;
+                    &#13;
+                    if(document.getElementsByClassName("xwiki-main-refesh")[0] != null){&#13;
+                    document.getElementsByClassName("xwiki-main-refesh")[0].insertAdjacentHTML('beforeBegin', strTitle);&#13;
+                    }&#13;
+                </value>
+            </property>
+            <property name="name" type="String">
+                <attribute name="name" value="name"/>
+                <attribute name="prettyName" value="Name"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="number" value="1"/>
+                <value>appPageJs</value>
+            </property>
+            <property name="parse" type="Boolean">
+                <attribute name="name" value="parse"/>
+                <attribute name="prettyName" value="Parse content"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="displayFormType" value="select"/>
+                <attribute name="displayType" value="yesno"/>
+                <attribute name="number" value="4"/>
+                <value></value>
+            </property>
+            <property name="use" type="StaticList">
+                <attribute name="name" value="use"/>
+                <attribute name="prettyName" value="Use this extension"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="3"/>
+                <attribute name="values" value="currentPage|onDemand|always"/>
+                <attribute name="allowedValues" value="currentPage,onDemand,always"/>
+                <value>currentPage</value>
+            </property>
+        </objectSummary>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.StyleSheetExtension</className>
+            <number>0</number>
+            <headline>default</headline>
+            <property name="cache" type="StaticList">
+                <attribute name="name" value="cache"/>
+                <attribute name="prettyName" value="Caching policy"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="5"/>
+                <attribute name="values" value="long|short|default|forbid"/>
+                <attribute name="allowedValues" value="long,short,default,forbid"/>
+                <value>default</value>
+            </property>
+            <property name="code" type="TextArea">
+                <attribute name="name" value="code"/>
+                <attribute name="prettyName" value="Code"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="50"/>
+                <attribute name="rows" value="20"/>
+                <attribute name="contenttype" value="PureText"/>
+                <attribute name="editor" value="PureText"/>
+                <attribute name="number" value="2"/>
+                <value>.breadcrumb-expandable{&#13;
+                    display: none;&#13;
+                    }&#13;
+                    &#13;
+                    .xcontent&gt;hr{&#13;
+                    display: none;&#13;
+                    }&#13;
+                    &#13;
+                    #body.hideright.panel-left-width-Medium .main {&#13;
+                    padding-left: 250px !important;&#13;
+                    left: 0 !important;&#13;
+                    width: 100% !important;&#13;
+                    padding-right:0px !important;&#13;
+                    }&#13;
+                    &#13;
+                    .xcontent{&#13;
+                    margin-top:0px !important;&#13;
+                    }&#13;
+                    &#13;
+                    .document-header{&#13;
+                    margin-bottom:0px !important;&#13;
+                    margin-right:0px !important;&#13;
+                    height: 59px;&#13;
+                    line-height: 59px;&#13;
+                    border-bottom: 1px solid #D3D3D3;&#13;
+                    }&#13;
+                    &#13;
+                    .document-header .document-menu, .document-header .document-info {&#13;
+                    margin-top: 0px;&#13;
+                    }&#13;
+                    &#13;
+                    .row {&#13;
+                    margin-left: 0px !important; &#13;
+                    margin-right: 0px !important; &#13;
+                    }&#13;
+                    &#13;
+                    #contentcolumn .main {&#13;
+                    margin-left: 0px;&#13;
+                    }&#13;
+                    &#13;
+                    .document-header #document-title h1 {&#13;
+                    font-size: 18px;&#13;
+                    color: #000000;&#13;
+                    line-height: 59px;&#13;
+                    padding-left: 0px;&#13;
+                    }&#13;
+                    &#13;
+                    .xwiki-main-refesh:hover{&#13;
+                    background-color: #DDDDDD;&#13;
+                    border-radius: 3px;&#13;
+                    }&#13;
+                    &#13;
+                    .xdocLastModification{&#13;
+                    line-height: 0px;&#13;
+                    padding-top: 12px;&#13;
+                    }&#13;
+                    &#13;
+                    #actionBox,#xwikicontent&gt;p,#HEntries{&#13;
+                    display:none;&#13;
+                    }
+                </value>
+            </property>
+            <property name="contentType" type="StaticList">
+                <attribute name="name" value="contentType"/>
+                <attribute name="prettyName" value="Content Type"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="6"/>
+                <attribute name="values" value="CSS|LESS"/>
+                <attribute name="allowedValues" value="CSS,LESS"/>
+                <value>CSS</value>
+            </property>
+            <property name="name" type="String">
+                <attribute name="name" value="name"/>
+                <attribute name="prettyName" value="Name"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="number" value="1"/>
+                <value>appPageStyle</value>
+            </property>
+            <property name="parse" type="Boolean">
+                <attribute name="name" value="parse"/>
+                <attribute name="prettyName" value="Parse content"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="displayFormType" value="select"/>
+                <attribute name="displayType" value="yesno"/>
+                <attribute name="number" value="4"/>
+                <value>0</value>
+            </property>
+            <property name="use" type="StaticList">
+                <attribute name="name" value="use"/>
+                <attribute name="prettyName" value="Use this extension"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="3"/>
+                <attribute name="values" value="currentPage|onDemand|always"/>
+                <attribute name="allowedValues" value="currentPage,onDemand,always"/>
+                <value>currentPage</value>
+            </property>
+        </objectSummary>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.StyleSheetExtension</className>
+            <number>1</number>
+            <headline>long</headline>
+            <property name="cache" type="StaticList">
+                <attribute name="name" value="cache"/>
+                <attribute name="prettyName" value="Caching policy"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="5"/>
+                <attribute name="values" value="long|short|default|forbid"/>
+                <attribute name="allowedValues" value="long,short,default,forbid"/>
+                <value>long</value>
+            </property>
+            <property name="code" type="TextArea">
+                <attribute name="name" value="code"/>
+                <attribute name="prettyName" value="Code"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="50"/>
+                <attribute name="rows" value="20"/>
+                <attribute name="contenttype" value="PureText"/>
+                <attribute name="editor" value="PureText"/>
+                <attribute name="number" value="2"/>
+                <value>#home-page-welcome{&#13;
+                    background: #F3F9F4;&#13;
+                    border: 1px solid #91C89C;&#13;
+                    border-radius: 2px;&#13;
+                    margin-top: 14px;&#13;
+                    }&#13;
+                    &#13;
+                    .home-page-left{&#13;
+                    margin-left:54px;&#13;
+                    }&#13;
+                    &#13;
+                    .home-page-font{&#13;
+                    font-size: 14px;&#13;
+                    color: #000000;&#13;
+                    line-height: 20px;&#13;
+                    }&#13;
+                    &#13;
+                    .home-page-font1{&#13;
+                    font-size: 13px;&#13;
+                    color: rgba(0,0,0,0.65);&#13;
+                    line-height: 20px;&#13;
+                    }&#13;
+                    &#13;
+                    #home-page-space{&#13;
+                    margin-top: 20px;&#13;
+                    width: 98%;&#13;
+                    }&#13;
+                    &#13;
+                    #home-page-recent-space{&#13;
+                    width: 80%;&#13;
+                    height:354px;&#13;
+                    background: #FAFAFA;&#13;
+                    float: left;&#13;
+                    }&#13;
+                    &#13;
+                    #home-page-space-contributor{&#13;
+                    width: 38%;&#13;
+                    height:298px;&#13;
+                    background: #FAFAFA;&#13;
+                    float: left;&#13;
+                    margin-left:20px;&#13;
+                    }&#13;
+                    &#13;
+                    #home-page-recent-font{&#13;
+                    font-size: 16px;&#13;
+                    color: #000000;&#13;
+                    line-height: 24px;&#13;
+                    margin-left:18px;&#13;
+                    margin-top:20px;&#13;
+                    }&#13;
+                    &#13;
+                    #xdocAuthors{&#13;
+                    display:none;&#13;
+                    }&#13;
+                    &#13;
+                    .doc-tags {&#13;
+                    clear: both;&#13;
+                    }&#13;
+                    &#13;
+                    #xwikidatacontents{&#13;
+                    margin-left: 20px;&#13;
+                    width: 92%;&#13;
+                    }&#13;
+                    &#13;
+                    #xwikidata{&#13;
+                    background-color: white;&#13;
+                    margin-top: -18px;&#13;
+                    }&#13;
+                    &#13;
+                    #docExtraTabs{&#13;
+                    margin-left: -16px;&#13;
+                    }&#13;
+                    &#13;
+                    #docExtrasTabsUl&gt;li&gt;a{&#13;
+                    background-color: white;&#13;
+                    }&#13;
+                    &#13;
+                    #docextrapanes {&#13;
+                    box-shadow: none;&#13;
+                    }&#13;
+                    &#13;
+                    .activity{&#13;
+                    clear: both;&#13;
+                    width: 72%;&#13;
+                    margin-top: 54px;&#13;
+                    position: absolute;&#13;
+                    margin-left: 38px;&#13;
+                    }&#13;
+                    &#13;
+                    .activity&gt;h2{&#13;
+                    display: none;&#13;
+                    }&#13;
+                    &#13;
+                    &#13;
+                    .activityAuthor a{&#13;
+                    font-size: 16px;&#13;
+                    color: #000000;&#13;
+                    line-height: 24px;&#13;
+                    text-decoration: none;&#13;
+                    }&#13;
+                    &#13;
+                    .activityTime{&#13;
+                    font-size: 13px;&#13;
+                    color: #5E6C84 !important;&#13;
+                    line-height: 20px;&#13;
+                    }&#13;
+                    &#13;
+                    .activityAction{&#13;
+                    font-size: 12px;&#13;
+                    color: rgba(0,0,0,0.65);&#13;
+                    text-align: left;&#13;
+                    }&#13;
+                    &#13;
+                    .activitySnapshot img {&#13;
+                    border-radius: 12px;&#13;
+                    height: 24px;&#13;
+                    width: 24px;&#13;
+                    }&#13;
+                    &#13;
+                    .activitySnapshot .activityActionAvatar {&#13;
+                    bottom: 6px;&#13;
+                    height: 10px;&#13;
+                    right: -12px;&#13;
+                    width: 10px;&#13;
+                    border-width:0;&#13;
+                    }&#13;
+                    &#13;
+                    .activityAction a {&#13;
+                    text-decoration: none;&#13;
+                    }
+                </value>
+            </property>
+            <property name="contentType" type="StaticList">
+                <attribute name="name" value="contentType"/>
+                <attribute name="prettyName" value="Content Type"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="6"/>
+                <attribute name="values" value="CSS|LESS"/>
+                <attribute name="allowedValues" value="CSS,LESS"/>
+                <value>CSS</value>
+            </property>
+            <property name="name" type="String">
+                <attribute name="name" value="name"/>
+                <attribute name="prettyName" value="Name"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="number" value="1"/>
+                <value>homePageStyle</value>
+            </property>
+            <property name="parse" type="Boolean">
+                <attribute name="name" value="parse"/>
+                <attribute name="prettyName" value="Parse content"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="displayFormType" value="select"/>
+                <attribute name="displayType" value="yesno"/>
+                <attribute name="number" value="4"/>
+                <value></value>
+            </property>
+            <property name="use" type="StaticList">
+                <attribute name="name" value="use"/>
+                <attribute name="prettyName" value="Use this extension"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="3"/>
+                <attribute name="values" value="currentPage|onDemand|always"/>
+                <attribute name="allowedValues" value="currentPage,onDemand,always"/>
+                <value>currentPage</value>
+            </property>
+        </objectSummary>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.UIExtensionClass</className>
+            <number>0</number>
+            <headline></headline>
+            <property name="content" type="TextArea">
+                <attribute name="name" value="content"/>
+                <attribute name="prettyName" value="Extension Content"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="40"/>
+                <attribute name="rows" value="10"/>
+                <attribute name="editor" value="Text"/>
+                <attribute name="number" value="3"/>
+                <value></value>
+            </property>
+            <property name="extensionPointId" type="String">
+                <attribute name="name" value="extensionPointId"/>
+                <attribute name="prettyName" value="Extension Point ID"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="number" value="1"/>
+                <value>org.xwiki.platform.panels.Applications</value>
+            </property>
+            <property name="name" type="String">
+                <attribute name="name" value="name"/>
+                <attribute name="prettyName" value="Extension ID"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="number" value="2"/>
+                <value>platform.panels.ConfluenceTestApplication</value>
+            </property>
+            <property name="parameters" type="TextArea">
+                <attribute name="name" value="parameters"/>
+                <attribute name="prettyName" value="Extension Parameters"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="40"/>
+                <attribute name="rows" value="10"/>
+                <attribute name="contenttype" value="PureText"/>
+                <attribute name="editor" value="PureText"/>
+                <attribute name="number" value="4"/>
+                <value>label={{ SPACE_LABEL }}&#13;
+                    target={{ SPACE_TARGET }}.WebHome&#13;
+                    icon=icon:{{ SPACE_ICON }}
+                </value>
+            </property>
+            <property name="scope" type="StaticList">
+                <attribute name="name" value="scope"/>
+                <attribute name="prettyName" value="Extension Scope"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="5"/>
+                <attribute name="values" value="wiki=Current Wiki|user=Current User|global=Global"/>
+                <attribute name="allowedValues" value="wiki,user,global"/>
+                <value>wiki</value>
+            </property>
+        </objectSummary>
+    </objects>
+</page>

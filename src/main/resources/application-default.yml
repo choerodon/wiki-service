@@ -1,3 +1,18 @@
-security:
-  basic:
-    enabled: false
+spring:
+  cloud:
+    bus:
+      enabled: false
+  sleuth:
+    stream:
+      enabled: false
+hystrix:
+  stream:
+    queue:
+      enabled: false
+#security:
+#  basic:
+#    enabled: false
+#  ignored: "/oauth/token"
+logging:
+  level:
+    io.choerodon.wiki: DEBUG
