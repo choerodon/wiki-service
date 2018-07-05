@@ -32,10 +32,11 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
     }
 
     @Override
-    public void insert(WikiSpaceE wikiSpaceE) {
+    public WikiSpaceE insert(WikiSpaceE wikiSpaceE) {
         WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
-        if (wikiSpaceMapper.insert(ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class)) != 1) {
+        if (wikiSpaceMapper.insert(wikiSpaceDO) != 1) {
             throw new CommonException("error.space.insert");
         }
+        return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
     }
 }

@@ -48,8 +48,7 @@
         #set($application = $spaces.get(0))&#13;
         &#13;
         {{activity subentries="3" entries="2" spaces=$application/}}&#13;
-        {{/velocity}}&#13;
-    </content>
+        {{/velocity}}&#13;</content>
     <objects>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>AppWithinMinutes.LiveTableClass</className>
@@ -105,7 +104,7 @@
                 <attribute name="picker" value="0"/>
                 <attribute name="validationMessage" value=""/>
                 <attribute name="validationRegExp" value=""/>
-                <value>{{ DESCRIPTION }}</value>
+                <value></value>
             </property>
         </objectSummary>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

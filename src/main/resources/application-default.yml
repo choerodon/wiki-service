@@ -13,6 +13,6 @@ hystrix:
 #  basic:
 #    enabled: false
 #  ignored: "/oauth/token"
-logging:
-  level:
-    io.choerodon.wiki: DEBUG
+#logging:
+#  level:
+#    io.choerodon.wiki: DEBUG

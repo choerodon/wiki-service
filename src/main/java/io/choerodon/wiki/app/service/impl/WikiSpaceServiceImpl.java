@@ -51,7 +51,6 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         }
 
         WikiSpaceE wikiSpaceE = new WikiSpaceE();
-        wikiSpaceE.setName(wikiSpaceDTO.getName());
         wikiSpaceE.setIcon(wikiSpaceDTO.getIcon());
         wikiSpaceE.setDescription(wikiSpaceDTO.getDescribe());
         wikiSpaceE.setResourceId(organizationId);
@@ -62,14 +61,19 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             case ORGANIZATION:
                 String param1 = "0-" + wikiSpaceDTO.getName();
                 wikiSpaceE.setPath(param1);
-                wikiSpaceRepository.insert(wikiSpaceE);
-                iWikiSpaceService.createSpace1(wikiSpaceE,param1, getXml(wikiSpaceE));
+                wikiSpaceE.setName(param1);
+                WikiSpaceE orgSpace = wikiSpaceRepository.insert(wikiSpaceE);
+                iWikiSpaceService.createSpace1(orgSpace.getId(),param1, getXmlStr(wikiSpaceE));
                 break;
             case PROJECT:
                 wikiSpaceE.setPath("O-组织" + "/" + "P-" + wikiSpaceDTO.getName());
                 break;
             case ORGANIZATION_S:
-                wikiSpaceE.setPath(path + "/" + wikiSpaceDTO.getName());
+                String param2 = wikiSpaceDTO.getName();
+                wikiSpaceE.setPath(path + "/" + param2);
+                wikiSpaceE.setName(param2);
+                WikiSpaceE orgUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
+                iWikiSpaceService.createSpace2(orgUnderSpace.getId(),path,param2, getXmlStr(wikiSpaceE));
                 break;
             case PROJECT_S:
                 wikiSpaceE.setPath(path + "/" + wikiSpaceDTO.getName());
@@ -77,7 +81,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         }
     }
 
-    private String getXml(WikiSpaceE wikiSpaceE){
+    private String getXmlStr(WikiSpaceE wikiSpaceE){
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome.xml");
         Map<String, String> params = new HashMap<>();
         params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());

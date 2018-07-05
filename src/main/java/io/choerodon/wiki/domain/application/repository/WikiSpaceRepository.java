@@ -11,5 +11,5 @@ public interface WikiSpaceRepository {
 
     List<WikiSpaceE> getWikiSpaceList(Long resourceId,String resourceType);
 
-    void insert(WikiSpaceE wikiSpaceE);
+    WikiSpaceE insert(WikiSpaceE wikiSpaceE);
 }

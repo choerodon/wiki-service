@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
+import retrofit2.converter.wire.WireConverterFactory;
 
 import io.choerodon.wiki.infra.feign.WikiClient;
 
@@ -42,6 +43,7 @@ public class RetrofitConfig {
                 .client(okHttpClient)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
+                .addConverterFactory(WireConverterFactory.create())
                 .build();
 
         return retrofit.create(WikiClient.class);

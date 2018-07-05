@@ -43,7 +43,7 @@ public class WikiOrganizationSpaceController {
             @ApiParam(value = "空间信息", required = true)
             @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
 
-        wikiSpaceService.create(wikiSpaceDTO, organizationId, WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        wikiSpaceService.create(wikiSpaceDTO, organizationId, WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
