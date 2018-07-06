@@ -39,7 +39,7 @@ public class WikiUserController {
      * @return responseEntity
      */
     @Permission(level = ResourceLevel.ORGANIZATION)
-    @ApiOperation(value = "组织下创建wiki空间")
+    @ApiOperation(value = "创建wiki用户")
     @PostMapping
     public ResponseEntity<Boolean> create(
             @ApiParam(value = "用户信息", required = true)
@@ -47,7 +47,7 @@ public class WikiUserController {
 
         return Optional.ofNullable(wikiUserService.create(wikiUserDTO))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.application.query"));
+                .orElseThrow(() -> new CommonException("error.user.create"));
     }
 
     /**
@@ -65,6 +65,6 @@ public class WikiUserController {
 
         return Optional.ofNullable(wikiUserService.checkUserExsist(userName))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.application.query"));
+                .orElseThrow(() -> new CommonException("error.user.query"));
     }
 }

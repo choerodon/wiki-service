@@ -238,4 +238,11 @@ public interface WikiClient {
     Call<ResponseBody> checkUserExsist(
             @Path("client") String client,
             @Path("param1") String param1);
+
+    @Headers({"Content-Type:application/xml;charset=UTF-8"})
+    @PUT("/rest/wikis/{client}/spaces/XWiki/pages/{groupName}?objects=true")
+    Call<ResponseBody> createGroup(
+            @Path("client") String client,
+            @Path("groupName") String groupName,
+            @Body RequestBody xmlParam);
 }
