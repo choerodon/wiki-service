@@ -245,4 +245,5 @@ public interface WikiClient {
             @Path("client") String client,
             @Path("groupName") String groupName,
             @Body RequestBody xmlParam);
+
 }
