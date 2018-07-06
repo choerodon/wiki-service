@@ -37,8 +37,8 @@ public class WikiProjectSpaceController {
     /**
      * 项目下创建wiki空间
      *
-     * @param projectId 组织id
-     * @param wikiSpaceDTO   空间信息
+     * @param projectId    组织id
+     * @param wikiSpaceDTO 空间信息
      * @return responseEntity
      */
     @Permission(level = ResourceLevel.PROJECT)
@@ -49,7 +49,6 @@ public class WikiProjectSpaceController {
             @PathVariable(value = "project_id") Long projectId,
             @ApiParam(value = "空间信息", required = true)
             @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-
         wikiSpaceService.create(wikiSpaceDTO, projectId, WikiSpaceResourceType.PROJECT_S.getResourceType());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

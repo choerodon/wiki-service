@@ -39,6 +39,9 @@ env:
     SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES: zookeeper-0.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-1.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-2.zookeeper-headless.zookeeper.svc.cluster.local:2181
     SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.apache.kafka.common.serialization.ByteArraySerializer
     SPRING_CLOUD_CONFIG_URI: http://config-server.framework:8010/
+    WIKI_CLIENT: xwiki
+    WIKI_URL: http://xwiki-alpha.saas.hand-china.com
+    SECURITY_BASIC_ENABLE: false
 
 metrics:
   path: /prometheus
@@ -56,9 +59,10 @@ persistence:
   # subPath:
 
 service:
-  enabled: false
+  name: wiki-service
+  enable: false
   type: ClusterIP
-  port: 8090
+  port: 9990
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -67,7 +71,7 @@ resources:
   # lines,adjust them as necessary,and remove the curly braces after 'resources:'.
   limits:
     # cpu: 100m
-    memory: 2Gi
+    memory: 4Gi
   requests:
     # cpu: 100m
-    memory: 1.5Gi
+    memory: 2Gi

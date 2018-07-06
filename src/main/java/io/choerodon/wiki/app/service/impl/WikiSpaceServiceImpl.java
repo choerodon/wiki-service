@@ -3,6 +3,7 @@ package io.choerodon.wiki.app.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.choerodon.core.convertor.ConvertPageHelper;
@@ -23,8 +24,13 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 @Service
 public class WikiSpaceServiceImpl implements WikiSpaceService {
 
+    private static final String LOCATION = "bin/view/";
+
     private WikiSpaceRepository wikiSpaceRepository;
     private WikiSpaceAsynService wikiSpaceAsynService;
+
+    @Value("${wiki.url}")
+    private String wikiUrl;
 
     public WikiSpaceServiceImpl(WikiSpaceRepository wikiSpaceRepository,
                                 WikiSpaceAsynService wikiSpaceAsynService) {
@@ -67,6 +73,10 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                                                           PageRequest pageRequest, String searchParam) {
         Page<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.listWikiSpaceByPage(resourceId, type,
                 pageRequest, searchParam);
+        String urlSlash = wikiUrl.endsWith("/") ? "" : "/";
+        for (WikiSpaceE ws:wikiSpaceES) {
+            ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
+        }
         return ConvertPageHelper.convertPage(wikiSpaceES, WikiSpaceResponseDTO.class);
     }
 
@@ -91,7 +101,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     private void createOrgSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO) {
-        String orgName = "0-" + wikiSpaceDTO.getName();
+        String orgName = "O-" + wikiSpaceDTO.getName();
         wikiSpaceE.setPath(orgName);
         wikiSpaceE.setName(orgName);
         WikiSpaceE orgSpace = wikiSpaceRepository.insert(wikiSpaceE);

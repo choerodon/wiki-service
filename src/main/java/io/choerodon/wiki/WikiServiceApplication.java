@@ -8,8 +8,8 @@ import io.choerodon.resource.annoation.EnableChoerodonResourceServer;
 
 
 @SpringBootApplication
-//@EnableEurekaClient
-//@EnableChoerodonResourceServer
+@EnableEurekaClient
+@EnableChoerodonResourceServer
 public class WikiServiceApplication {
 
     public static void main(String[] args){
