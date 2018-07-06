@@ -10,4 +10,6 @@ public interface WikiUserService {
     Boolean create(WikiUserDTO wikiSpaceDTO);
 
     Boolean checkUserExsist(String userName);
+
+    Boolean deletePage(String pageName);
 }

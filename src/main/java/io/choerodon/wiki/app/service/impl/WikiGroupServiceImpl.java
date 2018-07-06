@@ -25,13 +25,20 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     private IWikiGroupService iWikiGroupService;
 
-    public WikiGroupServiceImpl(IWikiGroupService iWikiGroupService) {
+    private IWikiUserService iWikiUserService;
+
+    public WikiGroupServiceImpl(IWikiGroupService iWikiGroupService,IWikiUserService iWikiUserService) {
         this.iWikiGroupService = iWikiGroupService;
+        this.iWikiUserService = iWikiUserService;
     }
 
     @Override
     public Boolean create(WikiGroupDTO wikiGroupDTO) {
-        return iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(),getXml());
+        Boolean flag = iWikiUserService.checkUserExsist(wikiGroupDTO.getGroupName());
+        if(!flag){
+            return iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(),getXml());
+        }
+        return false;
     }
 
     private String getXml() {

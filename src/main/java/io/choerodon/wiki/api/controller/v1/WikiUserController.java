@@ -67,4 +67,21 @@ public class WikiUserController {
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.user.query"));
     }
+
+    /**
+     * 删除wiki底下的文档
+     *
+     * @param pageName   用户名
+     * @return responseEntity
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation(value = "删除wiki底下的文档")
+    @GetMapping("/delete/{pageName}")
+    public ResponseEntity<Boolean> delete(
+            @ApiParam(value = "page名称", required = true)
+            @PathVariable String pageName) {
+        return Optional.ofNullable(wikiUserService.deletePage(pageName))
+                .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.page.delete"));
+    }
 }

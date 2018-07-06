@@ -246,4 +246,8 @@ public interface WikiClient {
             @Path("groupName") String groupName,
             @Body RequestBody xmlParam);
 
+    @DELETE("/rest/wikis/{client}/spaces/XWiki/pages/{param1}?objects=true")
+    Call<ResponseBody> deletePage(
+            @Path("client") String client,
+            @Path("param1") String param1);
 }

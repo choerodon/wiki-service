@@ -65,11 +65,30 @@ public class IWikiUserServiceImpl implements IWikiUserService {
             }else if(response.code()==404){
                 return false;
             }else {
-                throw new CommonException("获取用户失败");
+                throw new CommonException("error.get.user");
             }
         }catch (IOException e){
             logger.error(e.getMessage());
-            throw new CommonException("获取用户失败");
+            throw new CommonException("error.get.user");
+        }
+    }
+
+    @Override
+    public Boolean deletePage(String pageName) {
+        Call<ResponseBody> call = wikiClient.deletePage(
+                client, pageName);
+        try {
+            Response response = call.execute();
+            if(response.code()==204){
+                return true;
+            }else if(response.code()==404){
+                throw new CommonException("error.get.page");
+            }else {
+                throw new CommonException("error.delete.page");
+            }
+        }catch (IOException e){
+            logger.error(e.getMessage());
+            throw new CommonException("error.delete.page");
         }
     }
 

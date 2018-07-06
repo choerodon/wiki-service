@@ -42,6 +42,11 @@ public class WikiUserServiceImpl implements WikiUserService {
         return iWikiUserService.checkUserExsist(userName);
     }
 
+    @Override
+    public Boolean deletePage(String pageName) {
+        return iWikiUserService.deletePage(pageName);
+    }
+
     private String getXml(WikiUserE wikiUserE) {
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/user.xml");
         Map<String, String> params = new HashMap<>();

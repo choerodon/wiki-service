@@ -41,7 +41,7 @@ public class WikiGroupController {
     @ApiOperation(value = "创建wiki组")
     @PostMapping
     public ResponseEntity<Boolean> create(
-            @ApiParam(value = "组织信息", required = true)
+            @ApiParam(value = "组信息", required = true)
             @RequestBody @Valid WikiGroupDTO wikiGroupDTO) {
 
         return Optional.ofNullable(wikiGroupService.create(wikiGroupDTO))
