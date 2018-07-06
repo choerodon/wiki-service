@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page xmlns="http://www.xwiki.org">
+    <name>WebPreferences</name>
+    <title>Preferences</title>
+    <parent>xwiki:{{ SPACE_NAME }}.WebHome</parent>
+    <parentId>xwiki:{{ SPACE_NAME }}.WebHome</parentId>
+    <version>1.1</version>
+    <majorVersion>1</majorVersion>
+    <minorVersion>1</minorVersion>
+    <hidden>true</hidden>
+    <comment>Grant space administration rights.</comment>
+    <content></content>
+    <objects>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <pageVersion>1.1</pageVersion>
+            <pageName>WebPreferences</pageName>
+            <className>XWiki.XWikiGlobalRights</className>
+            <number>0</number>
+            <headline>1</headline>
+            <property name="allow" type="Boolean">
+                <attribute name="name" value="allow"/>
+                <attribute name="prettyName" value="Allow/Deny"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="displayFormType" value="select"/>
+                <attribute name="defaultValue" value="1"/>
+                <attribute name="displayType" value="allow"/>
+                <attribute name="number" value="4"/>
+                <value>1</value>
+            </property>
+            <property name="groups" type="Groups">
+                <attribute name="name" value="groups"/>
+                <attribute name="prettyName" value="Groups"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="input"/>
+                <attribute name="multiSelect" value="1"/>
+                <attribute name="size" value="5"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="picker" value="1"/>
+                <attribute name="number" value="1"/>
+                <attribute name="allowedValues" value="XWiki.XWikiAllGroup,XWiki.XWikiAdminGroup"/>
+                <value></value>
+            </property>
+            <property name="levels" type="Levels">
+                <attribute name="name" value="levels"/>
+                <attribute name="prettyName" value="Levels"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="1"/>
+                <attribute name="size" value="3"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="number" value="2"/>
+                <attribute name="allowedValues" value="login,view,edit,delete,creator,register,comment,script,admin,createwiki,programming"/>
+                <value>admin</value>
+            </property>
+            <property name="users" type="Users">
+                <attribute name="name" value="users"/>
+                <attribute name="prettyName" value="Users"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="input"/>
+                <attribute name="multiSelect" value="1"/>
+                <attribute name="size" value="5"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="picker" value="1"/>
+                <attribute name="number" value="3"/>
+                <attribute name="allowedValues" value="XWiki.ernst,XWiki.15616,XWiki.ceshi111,XWiki.wuguokai,XWiki.admin,XWiki.ceshi,XWiki.heiheihei"/>
+                <value>xwiki:XWiki.admin</value>
+            </property>
+        </objectSummary>
+    </objects>
+</page>

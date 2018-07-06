@@ -605,9 +605,7 @@
                 <attribute name="contenttype" value="PureText"/>
                 <attribute name="editor" value="PureText"/>
                 <attribute name="number" value="4"/>
-                <value>label={{ SPACE_LABEL }}&#13;
-                    target={{ SPACE_TARGET }}.WebHome&#13;
-                    icon=icon:{{ SPACE_ICON }}
+                <value>label={{ SPACE_LABEL }}&#13;target={{ SPACE_TARGET }}.WebHome&#13;icon=icon:{{ SPACE_ICON }}
                 </value>
             </property>
             <property name="scope" type="StaticList">

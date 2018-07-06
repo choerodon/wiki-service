@@ -1,19 +1,20 @@
 package io.choerodon.wiki.app.service.impl;
 
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
+import io.choerodon.core.convertor.ConvertPageHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
+import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
+import io.choerodon.wiki.app.service.WikiSpaceAsynService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
-import io.choerodon.wiki.domain.service.IWikiSpaceService;
-import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
@@ -23,72 +24,110 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 public class WikiSpaceServiceImpl implements WikiSpaceService {
 
     private WikiSpaceRepository wikiSpaceRepository;
-    private IWikiSpaceService iWikiSpaceService;
+    private WikiSpaceAsynService wikiSpaceAsynService;
 
     public WikiSpaceServiceImpl(WikiSpaceRepository wikiSpaceRepository,
-                                IWikiSpaceService iWikiSpaceService) {
+                                WikiSpaceAsynService wikiSpaceAsynService) {
         this.wikiSpaceRepository = wikiSpaceRepository;
-        this.iWikiSpaceService = iWikiSpaceService;
+        this.wikiSpaceAsynService = wikiSpaceAsynService;
     }
 
     @Override
-    public void create(WikiSpaceDTO wikiSpaceDTO, Long organizationId, String type) {
-        String path = "";
-        if (WikiSpaceResourceType.ORGANIZATION_S.getResourceType().equals(type)) {
-            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
-                    organizationId, WikiSpaceResourceType.ORGANIZATION.getResourceType());
-            if (wikiSpaceEList == null || wikiSpaceEList.isEmpty() || !wikiSpaceEList.get(0).getSynchro()) {
-                throw new CommonException("error.organization.synchronized");
-            }
-            path = wikiSpaceEList.get(0).getPath();
-        } else if (WikiSpaceResourceType.PROJECT_S.getResourceType().equals(type)) {
-            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
-                    organizationId, WikiSpaceResourceType.PROJECT.getResourceType());
-            if (wikiSpaceEList == null || wikiSpaceEList.isEmpty() || !wikiSpaceEList.get(0).getSynchro()) {
-                throw new CommonException("error.organization.synchronized");
-            }
-            path = wikiSpaceEList.get(0).getPath();
-        }
+    public void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String type) {
+        String path = getPath(resourceId, type);
 
         WikiSpaceE wikiSpaceE = new WikiSpaceE();
         wikiSpaceE.setIcon(wikiSpaceDTO.getIcon());
         wikiSpaceE.setDescription(wikiSpaceDTO.getDescribe());
-        wikiSpaceE.setResourceId(organizationId);
+        wikiSpaceE.setResourceId(resourceId);
         wikiSpaceE.setResourceType(type);
         wikiSpaceE.setSynchro(false);
+
         WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(type);
         switch (wikiSpaceResourceType) {
             case ORGANIZATION:
-                String param1 = "0-" + wikiSpaceDTO.getName();
-                wikiSpaceE.setPath(param1);
-                wikiSpaceE.setName(param1);
-                WikiSpaceE orgSpace = wikiSpaceRepository.insert(wikiSpaceE);
-                iWikiSpaceService.createSpace1(orgSpace.getId(),param1, getXmlStr(wikiSpaceE));
+                createOrgSpace(wikiSpaceE, wikiSpaceDTO);
                 break;
             case PROJECT:
-                wikiSpaceE.setPath("O-组织" + "/" + "P-" + wikiSpaceDTO.getName());
+                createProjectSpace(wikiSpaceE, wikiSpaceDTO);
                 break;
             case ORGANIZATION_S:
-                String param2 = wikiSpaceDTO.getName();
-                wikiSpaceE.setPath(path + "/" + param2);
-                wikiSpaceE.setName(param2);
-                WikiSpaceE orgUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
-                iWikiSpaceService.createSpace2(orgUnderSpace.getId(),path,param2, getXmlStr(wikiSpaceE));
+                createOrgUnderSpace(wikiSpaceE, wikiSpaceDTO, path);
                 break;
             case PROJECT_S:
-                wikiSpaceE.setPath(path + "/" + wikiSpaceDTO.getName());
+                createProjectUnderSpace(wikiSpaceE, wikiSpaceDTO, path);
+                break;
+            default:
                 break;
         }
     }
 
-    private String getXmlStr(WikiSpaceE wikiSpaceE){
-        InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome.xml");
-        Map<String, String> params = new HashMap<>();
-        params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
-        params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
-        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
-        params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
-        params.put("{{ DESCRIPTION }}", wikiSpaceE.getDescription());
-        return  FileUtil.replaceReturnString(inputStream,params);
+    @Override
+    public Page<WikiSpaceResponseDTO> listWikiSpaceByPage(Long resourceId, String type,
+                                                          PageRequest pageRequest, String searchParam) {
+        Page<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.listWikiSpaceByPage(resourceId, type,
+                pageRequest, searchParam);
+        return ConvertPageHelper.convertPage(wikiSpaceES, WikiSpaceResponseDTO.class);
+    }
+
+    private String getPath(Long resourceId, String type) {
+        if (WikiSpaceResourceType.ORGANIZATION_S.getResourceType().equals(type)) {
+            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
+                    resourceId, WikiSpaceResourceType.ORGANIZATION.getResourceType());
+            if (wikiSpaceEList == null || wikiSpaceEList.isEmpty() || !wikiSpaceEList.get(0).getSynchro()) {
+                throw new CommonException("error.organization.synchronized");
+            }
+            return wikiSpaceEList.get(0).getPath();
+        } else if (WikiSpaceResourceType.PROJECT_S.getResourceType().equals(type)) {
+            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
+                    resourceId, WikiSpaceResourceType.PROJECT.getResourceType());
+            if (wikiSpaceEList == null || wikiSpaceEList.isEmpty() || !wikiSpaceEList.get(0).getSynchro()) {
+                throw new CommonException("error.organization.synchronized");
+            }
+            return wikiSpaceEList.get(0).getPath();
+        }
+
+        return "";
+    }
+
+    private void createOrgSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO) {
+        String orgName = "0-" + wikiSpaceDTO.getName();
+        wikiSpaceE.setPath(orgName);
+        wikiSpaceE.setName(orgName);
+        WikiSpaceE orgSpace = wikiSpaceRepository.insert(wikiSpaceE);
+        wikiSpaceAsynService.createOrgSpace(orgName, orgSpace);
+    }
+
+    private void createProjectSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO) {
+        String[] names = wikiSpaceDTO.getName().split("/");
+        String param1 = "O-" + names[0];
+        String param2 = "P-" + names[1];
+        wikiSpaceE.setPath(param1 + "/" + param2);
+        wikiSpaceE.setName(param2);
+        WikiSpaceE projectSpace = wikiSpaceRepository.insert(wikiSpaceE);
+        wikiSpaceAsynService.createOrgUnderSpace(param1, param2, projectSpace);
+    }
+
+    private void createOrgUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path) {
+        if (StringUtils.isEmpty(path)) {
+            throw new CommonException("error.param.empty");
+        }
+        String orgUnderName = wikiSpaceDTO.getName();
+        wikiSpaceE.setPath(path + "/" + orgUnderName);
+        wikiSpaceE.setName(orgUnderName);
+        WikiSpaceE orgUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
+        wikiSpaceAsynService.createOrgUnderSpace(path, orgUnderName, orgUnderSpace);
+    }
+
+    private void createProjectUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path) {
+        if (StringUtils.isEmpty(path)) {
+            throw new CommonException("error.param.empty");
+        }
+        String[] param = path.split("/");
+        String projectUnderName = wikiSpaceDTO.getName();
+        wikiSpaceE.setPath(path + "/" + projectUnderName);
+        wikiSpaceE.setName(projectUnderName);
+        WikiSpaceE projectUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
+        wikiSpaceAsynService.createProjectUnderSpace(param[0], param[1], projectUnderName, projectUnderSpace);
     }
 }

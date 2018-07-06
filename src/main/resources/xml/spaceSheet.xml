@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page xmlns="http://www.xwiki.org">
+    <version>1.1</version>
+    <translations/>
+    <syntax>xwiki/2.1</syntax>
+    <language></language>
+    <majorVersion>1</majorVersion>
+    <minorVersion>1</minorVersion>
+    <hidden>true</hidden>
+    <comment>Update class sheet</comment>
+    <content>{{velocity}}
+{{html wiki="true"}}
+#set ($discard = $doc.use('wwwe.Code.wwweClass'))
+(% class="xform" %)
+(((
+  ; &lt;label#if ($xcontext.action == 'edit') for="wwwe.Code.wwweClass_0_longText1"#end&gt;$escapetool.xml($doc.displayPrettyName('longText1', false, false))&lt;/label&gt;
+  : $doc.display('longText1')
+)))
+{{/html}}
+{{/velocity}}</content>
+    <objects/>
+</page>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page xmlns="http://www.xwiki.org">
+    <translations/>
+    <syntax>xwiki/2.1</syntax>
+    <language></language>
+    <majorVersion>2</majorVersion>
+    <minorVersion>1</minorVersion>
+    <hidden>true</hidden>
+    <comment>Update translations</comment>
+    <content># Class fields
+wwwe.Code.wwweClass_longText1=Long Text
+
+# Live table generic keys
+wwwe.livetable.doc.title=Page Title
+wwwe.livetable.doc.name=Page Name
+wwwe.livetable.doc.space=Space
+wwwe.livetable.doc.fullname=Page full name
+wwwe.livetable.doc.location=Location
+wwwe.livetable.doc.author=Last Author
+wwwe.livetable.doc.creator=Creator
+wwwe.livetable.doc.date=Date
+wwwe.livetable.doc.creationDate=Creation Date
+wwwe.livetable._avatar=Avatar
+wwwe.livetable._images=Images
+wwwe.livetable._attachments=Attachments
+wwwe.livetable._actions=Actions
+wwwe.livetable._actions.edit=Edit
+wwwe.livetable._actions.delete=Delete
+wwwe.livetable.emptyvalue=-
+
+# Live table specific keys
+wwwe.livetable.longText1=Long Text
+
+# Other keys
+wwwe.entry.name=wwwe
+
+# Deprecated keys
+wwwe.dataSpace.title=Data
+</content>
+    <objects>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.TranslationDocumentClass</className>
+            <number>0</number>
+            <headline>WIKI</headline>
+            <property name="scope" type="StaticList">
+                <attribute name="name" value="scope"/>
+                <attribute name="prettyName" value="Scope"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value="|, "/>
+                <attribute name="number" value="1"/>
+                <attribute name="values" value="GLOBAL|WIKI|USER|ON_DEMAND"/>
+                <attribute name="allowedValues" value="GLOBAL,WIKI,USER,ON_DEMAND"/>
+                <value>WIKI</value>
+            </property>
+        </objectSummary>
+    </objects>
+</page>

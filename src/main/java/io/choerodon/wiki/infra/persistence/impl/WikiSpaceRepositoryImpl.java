@@ -1,13 +1,25 @@
 package io.choerodon.wiki.infra.persistence.impl;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.convertor.ConvertPageHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
+import io.choerodon.wiki.infra.common.TypeUtil;
 import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
 import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
 
@@ -16,6 +28,9 @@ import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
  */
 @Service
 public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger logger = LoggerFactory.getLogger(WikiSpaceRepositoryImpl.class);
 
     private WikiSpaceMapper wikiSpaceMapper;
 
@@ -38,5 +53,32 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
             throw new CommonException("error.space.insert");
         }
         return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
+    }
+
+    @Override
+    public Page<WikiSpaceE> listWikiSpaceByPage(Long resourceId, String type,
+                                                          PageRequest pageRequest, String searchParam) {
+        Page<WikiSpaceDO> wikiSpaceDOPage = null;
+        try {
+            if (!StringUtils.isEmpty(searchParam)) {
+                Map<String, Object> searchParamMap = objectMapper.readValue(searchParam, Map.class);
+                wikiSpaceDOPage = PageHelper.doPageAndSort(
+                        pageRequest, () -> wikiSpaceMapper.listWikiSpaceByPage(
+                                resourceId,
+                                type,
+                                TypeUtil.cast(searchParamMap.get(TypeUtil.SEARCH_PARAM)),
+                                TypeUtil.cast(searchParamMap.get(TypeUtil.PARAM))));
+            } else {
+                wikiSpaceDOPage = PageHelper.doPageAndSort(
+                        pageRequest, () -> wikiSpaceMapper.listWikiSpaceByPage(resourceId,
+                                type,
+                                null, 
+                                null));
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+        return ConvertPageHelper.convertPage(wikiSpaceDOPage, WikiSpaceE.class);
     }
 }
