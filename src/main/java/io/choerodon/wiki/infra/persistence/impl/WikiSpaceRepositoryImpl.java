@@ -1,7 +1,6 @@
 package io.choerodon.wiki.infra.persistence.impl;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +56,7 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
 
     @Override
     public Page<WikiSpaceE> listWikiSpaceByPage(Long resourceId, String type,
-                                                          PageRequest pageRequest, String searchParam) {
+                                                PageRequest pageRequest, String searchParam) {
         Page<WikiSpaceDO> wikiSpaceDOPage = null;
         try {
             if (!StringUtils.isEmpty(searchParam)) {
@@ -72,7 +71,7 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
                 wikiSpaceDOPage = PageHelper.doPageAndSort(
                         pageRequest, () -> wikiSpaceMapper.listWikiSpaceByPage(resourceId,
                                 type,
-                                null, 
+                                null,
                                 null));
             }
         } catch (IOException e) {
@@ -80,5 +79,10 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
         }
 
         return ConvertPageHelper.convertPage(wikiSpaceDOPage, WikiSpaceE.class);
+    }
+
+    @Override
+    public WikiSpaceE selectById(Long id) {
+        return ConvertHelper.convert(wikiSpaceMapper.selectByPrimaryKey(id), WikiSpaceE.class);
     }
 }

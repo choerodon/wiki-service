@@ -1,11 +1,15 @@
 package io.choerodon.wiki.app.service.impl;
 
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
@@ -16,6 +20,8 @@ import io.choerodon.wiki.app.service.WikiSpaceAsynService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
+import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
+import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
@@ -28,14 +34,17 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
 
     private WikiSpaceRepository wikiSpaceRepository;
     private WikiSpaceAsynService wikiSpaceAsynService;
+    private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
 
     @Value("${wiki.url}")
     private String wikiUrl;
 
     public WikiSpaceServiceImpl(WikiSpaceRepository wikiSpaceRepository,
-                                WikiSpaceAsynService wikiSpaceAsynService) {
+                                WikiSpaceAsynService wikiSpaceAsynService,
+                                IWikiSpaceWebHomeService iWikiSpaceWebHomeService) {
         this.wikiSpaceRepository = wikiSpaceRepository;
         this.wikiSpaceAsynService = wikiSpaceAsynService;
+        this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
     }
 
     @Override
@@ -44,7 +53,9 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
 
         WikiSpaceE wikiSpaceE = new WikiSpaceE();
         wikiSpaceE.setIcon(wikiSpaceDTO.getIcon());
-        wikiSpaceE.setDescription(wikiSpaceDTO.getDescribe());
+        if (wikiSpaceDTO.getDescription() != null) {
+            wikiSpaceE.setDescription(wikiSpaceDTO.getDescription());
+        }
         wikiSpaceE.setResourceId(resourceId);
         wikiSpaceE.setResourceType(type);
         wikiSpaceE.setSynchro(false);
@@ -74,10 +85,48 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         Page<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.listWikiSpaceByPage(resourceId, type,
                 pageRequest, searchParam);
         String urlSlash = wikiUrl.endsWith("/") ? "" : "/";
-        for (WikiSpaceE ws:wikiSpaceES) {
+        for (WikiSpaceE ws : wikiSpaceES) {
             ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
         }
         return ConvertPageHelper.convertPage(wikiSpaceES, WikiSpaceResponseDTO.class);
+    }
+
+    @Override
+    public WikiSpaceResponseDTO query(Long id) {
+        return ConvertHelper.convert(wikiSpaceRepository.selectById(id), WikiSpaceResponseDTO.class);
+    }
+
+    @Override
+    public void update(Long id, WikiSpaceDTO wikiSpaceDTO, String type) {
+        WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
+        if (wikiSpaceE != null && wikiSpaceE.getSynchro()) {
+            Map<String, String> params = new HashMap<>();
+            if (!wikiSpaceE.getIcon().equals(wikiSpaceDTO.getIcon())) {
+                params.put("{{ SPACE_ICON }}", wikiSpaceE.getName());
+            }
+            if (wikiSpaceDTO.getDescription() != null &&
+                    wikiSpaceE.getDescription().equals(wikiSpaceDTO.getDescription())) {
+                params.put("{{ DESCRIPTION }}", wikiSpaceE.getDescription());
+            }
+            if (!params.isEmpty()) {
+                params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
+                params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
+                params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
+                String[] path = wikiSpaceE.getPath().split("/");
+                if (type.equals(WikiSpaceResourceType.ORGANIZATION_S.getResourceType())) {
+                    InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+                    String xmlParam = FileUtil.replaceReturnString(inputStream, params);
+                    params.put("{{ SPACE_PARENT }}", path[0]);
+                    iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam);
+                } else if (type.equals(WikiSpaceResourceType.PROJECT_S.getResourceType())) {
+                    InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome2.xml");
+                    String xmlParam = FileUtil.replaceReturnString(inputStream, params);
+                    params.put("{{ SPACE_ROOT }}", path[0]);
+                    params.put("{{ SPACE_PARENT }}", path[1]);
+                    iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xmlParam);
+                }
+            }
+        }
     }
 
     private String getPath(Long resourceId, String type) {
@@ -92,7 +141,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
                     resourceId, WikiSpaceResourceType.PROJECT.getResourceType());
             if (wikiSpaceEList == null || wikiSpaceEList.isEmpty() || !wikiSpaceEList.get(0).getSynchro()) {
-                throw new CommonException("error.organization.synchronized");
+                throw new CommonException("error.project.synchronized");
             }
             return wikiSpaceEList.get(0).getPath();
         }

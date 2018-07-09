@@ -4,7 +4,6 @@ import java.util.List;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
 
 /**
@@ -12,10 +11,12 @@ import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
  */
 public interface WikiSpaceRepository {
 
-    List<WikiSpaceE> getWikiSpaceList(Long resourceId,String resourceType);
+    List<WikiSpaceE> getWikiSpaceList(Long resourceId, String resourceType);
 
     WikiSpaceE insert(WikiSpaceE wikiSpaceE);
 
     Page<WikiSpaceE> listWikiSpaceByPage(Long resourceId, String type,
-                                                   PageRequest pageRequest, String searchParam);
+                                         PageRequest pageRequest, String searchParam);
+
+    WikiSpaceE selectById(Long id);
 }

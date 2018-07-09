@@ -77,4 +77,45 @@ public class WikiProjectSpaceController {
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.query"));
     }
+
+    /**
+     * 查询项目下单个wiki空间
+     *
+     * @param projectId 组织id
+     * @param id        空间id
+     * @return DevopsServiceDTO
+     */
+    @Permission(level = ResourceLevel.PROJECT)
+    @ApiOperation(value = "查询项目下单个wiki空间")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<WikiSpaceResponseDTO> query(
+            @ApiParam(value = "项目ID", required = true)
+            @PathVariable(value = "project_id") Long projectId,
+            @ApiParam(value = "空间ID", required = true)
+            @PathVariable Long id) {
+        return Optional.ofNullable(wikiSpaceService.query(id))
+                .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.wiki.space.query"));
+    }
+
+    /**
+     * 更新项目下单个空间
+     *
+     * @param projectId    项目id
+     * @param id           空间id
+     * @param wikiSpaceDTO 空间信息
+     * @return Boolean
+     */
+    @Permission(level = ResourceLevel.PROJECT)
+    @ApiOperation(value = " 更新项目下单个空间")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity update(@ApiParam(value = "组织ID", required = true)
+                                 @PathVariable(value = "project_id") Long projectId,
+                                 @ApiParam(value = "空间ID", required = true)
+                                 @PathVariable Long id,
+                                 @ApiParam(value = "空间信息", required = true)
+                                 @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
+        wikiSpaceService.update(id, wikiSpaceDTO, WikiSpaceResourceType.PROJECT_S.getResourceType());
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 }

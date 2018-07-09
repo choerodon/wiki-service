@@ -49,7 +49,6 @@ public class WikiOrganizationSpaceController {
             @PathVariable(value = "organization_id") Long organizationId,
             @ApiParam(value = "空间信息", required = true)
             @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-
         wikiSpaceService.create(wikiSpaceDTO, organizationId, WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -77,5 +76,46 @@ public class WikiOrganizationSpaceController {
                 WikiSpaceResourceType.ORGANIZATION_S.getResourceType(), pageRequest, searchParam))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.query"));
+    }
+
+    /**
+     * 查询组织下单个wiki空间
+     *
+     * @param organizationId 组织id
+     * @param id             空间id
+     * @return DevopsServiceDTO
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation(value = "查询组织下单个wiki空间")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<WikiSpaceResponseDTO> query(
+            @ApiParam(value = "组织ID", required = true)
+            @PathVariable(value = "organization_id") Long organizationId,
+            @ApiParam(value = "空间ID", required = true)
+            @PathVariable Long id) {
+        return Optional.ofNullable(wikiSpaceService.query(id))
+                .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.wiki.space.query"));
+    }
+
+    /**
+     * 更新组织下单个空间
+     *
+     * @param organizationId 组织id
+     * @param id             空间id
+     * @param wikiSpaceDTO   空间信息
+     * @return Boolean
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation(value = "更新组织下单个空间")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity update(@ApiParam(value = "组织ID", required = true)
+                                 @PathVariable(value = "organization_id") Long organizationId,
+                                 @ApiParam(value = "空间ID", required = true)
+                                 @PathVariable Long id,
+                                 @ApiParam(value = "空间信息", required = true)
+                                 @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
+        wikiSpaceService.update(id, wikiSpaceDTO,WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

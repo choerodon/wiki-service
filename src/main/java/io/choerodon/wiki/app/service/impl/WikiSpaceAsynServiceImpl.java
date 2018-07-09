@@ -54,7 +54,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
 
     @Override
     public void createOrgSpace(String orgName, WikiSpaceE wikiSpaceE) {
-        int webHomeCode = iWikiSpaceWebHomeService.createSpace1WebHome(orgName, getWebHomeXmlStr(wikiSpaceE));
+        int webHomeCode = iWikiSpaceWebHomeService.createSpace1WebHome(orgName, getWebHome1XmlStr(wikiSpaceE));
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace1WebPreferences(orgName, getWebPreferencesXmlStr(wikiSpaceE));
         int pageHomeCode = iWikiSpaceCodeWebHomeService.createSpace1CodeWebHome(orgName, getCodeWebHomeXmlStr());
         int classCode = iWikiSpaceCodeClassService.createSpace1CodeClass(orgName, getClassXmlStr());
@@ -67,7 +67,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
 
     @Override
     public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE) {
-        int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHomeXmlStr(wikiSpaceE));
+        int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE));
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE));
         int pageHomeCode = iWikiSpaceCodeWebHomeService.createSpace2CodeWebHome(param1, param2, getCodeWebHomeXmlStr());
         int classCode = iWikiSpaceCodeClassService.createSpace2CodeClass(param1, param2, getClassXmlStr());
@@ -80,7 +80,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
 
     @Override
     public void createProjectUnderSpace(String param1, String param2, String projectUnderName, WikiSpaceE wikiSpaceE) {
-        int webHomeCode = iWikiSpaceWebHomeService.createSpace3WebHome(param1, param2, projectUnderName, getWebHomeXmlStr(wikiSpaceE));
+        int webHomeCode = iWikiSpaceWebHomeService.createSpace3WebHome(param1, param2, projectUnderName, getWebHome3XmlStr(param1, param2, wikiSpaceE));
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace3WebPreferences(param1, param2, projectUnderName, getWebPreferencesXmlStr(wikiSpaceE));
         int pageHomeCode = iWikiSpaceCodeWebHomeService.createSpace3CodeWebHome(param1, param2, projectUnderName, getCodeWebHomeXmlStr());
         int classCode = iWikiSpaceCodeClassService.createSpace3CodeClass(param1, param2, projectUnderName, getClassXmlStr());
@@ -107,11 +107,36 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         }
     }
 
-    private String getWebHomeXmlStr(WikiSpaceE wikiSpaceE) {
+    private String getWebHome1XmlStr(WikiSpaceE wikiSpaceE) {
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome.xml");
         Map<String, String> params = new HashMap<>();
         params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
         params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
+        params.put("{{ DESCRIPTION }}", wikiSpaceE.getDescription());
+        return FileUtil.replaceReturnString(inputStream, params);
+    }
+
+    private String getWebHome2XmlStr(String parent, WikiSpaceE wikiSpaceE) {
+        InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+        Map<String, String> params = new HashMap<>();
+        params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_PARENT }}", parent);
+        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
+        params.put("{{ DESCRIPTION }}", wikiSpaceE.getDescription());
+        return FileUtil.replaceReturnString(inputStream, params);
+    }
+
+    private String getWebHome3XmlStr(String root, String parent, WikiSpaceE wikiSpaceE) {
+        InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome2.xml");
+        Map<String, String> params = new HashMap<>();
+        params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_ROOT }}", root);
+        params.put("{{ SPACE_PARENT }}", parent);
         params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
         params.put("{{ DESCRIPTION }}", wikiSpaceE.getDescription());

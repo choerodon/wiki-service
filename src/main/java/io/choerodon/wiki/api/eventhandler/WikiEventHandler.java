@@ -44,7 +44,6 @@ public class WikiEventHandler {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationEventPayload.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
-        wikiSpaceDTO.setDescribe(organizationEventPayload.getName());
         wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(),
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
     }
@@ -59,7 +58,6 @@ public class WikiEventHandler {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
         wikiSpaceDTO.setIcon(PROJECT_ICON);
-        wikiSpaceDTO.setDescribe(projectEvent.getProjectName());
         wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(),
                 WikiSpaceResourceType.PROJECT.getResourceType());
     }
