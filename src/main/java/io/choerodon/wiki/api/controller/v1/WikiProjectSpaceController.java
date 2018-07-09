@@ -35,6 +35,26 @@ public class WikiProjectSpaceController {
     }
 
     /**
+     * 检查项目下空间名唯一性
+     *
+     * @param projectId 项目ID
+     * @param name      空间名
+     * @return
+     */
+    @Permission(level = ResourceLevel.PROJECT)
+    @ApiOperation(value = "检查项目下空间名唯一性")
+    @GetMapping(value = "/check")
+    public ResponseEntity<Boolean> checkName(
+            @ApiParam(value = "项目ID", required = true)
+            @PathVariable(value = "project_id") Long projectId,
+            @ApiParam(value = "空间名", required = true)
+            @RequestParam String name) {
+        return Optional.ofNullable(wikiSpaceService.checkName(projectId, name,WikiSpaceResourceType.PROJECT_S.getResourceType()))
+                .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.space.name.check"));
+    }
+
+    /**
      * 项目下创建wiki空间
      *
      * @param projectId    组织id

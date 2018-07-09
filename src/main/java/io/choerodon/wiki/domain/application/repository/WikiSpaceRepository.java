@@ -19,4 +19,6 @@ public interface WikiSpaceRepository {
                                          PageRequest pageRequest, String searchParam);
 
     WikiSpaceE selectById(Long id);
+
+    Boolean checkName(Long projectId, String name,String type);
 }

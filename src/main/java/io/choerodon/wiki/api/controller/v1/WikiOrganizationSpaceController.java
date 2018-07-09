@@ -35,6 +35,26 @@ public class WikiOrganizationSpaceController {
     }
 
     /**
+     * 检查组织下空间名唯一性
+     *
+     * @param organizationId 组织ID
+     * @param name      空间名
+     * @return
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ApiOperation(value = "检查组织下空间名唯一性")
+    @GetMapping(value = "/check")
+    public ResponseEntity<Boolean> checkName(
+            @ApiParam(value = "组织ID", required = true)
+            @PathVariable(value = "organization_id") Long organizationId,
+            @ApiParam(value = "空间名", required = true)
+            @RequestParam String name) {
+        return Optional.ofNullable(wikiSpaceService.checkName(organizationId, name,WikiSpaceResourceType.ORGANIZATION_S.getResourceType()))
+                .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.space.name.check"));
+    }
+
+    /**
      * 组织下创建wiki空间
      *
      * @param organizationId 组织id

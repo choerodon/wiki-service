@@ -48,7 +48,13 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
+    public Boolean checkName(Long projectId, String name,String type) {
+        return wikiSpaceRepository.checkName(projectId,name,type);
+    }
+
+    @Override
     public void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String type) {
+        checkName(resourceId,wikiSpaceDTO.getName(),type);
         String path = getPath(resourceId, type);
 
         WikiSpaceE wikiSpaceE = new WikiSpaceE();

@@ -85,4 +85,17 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
     public WikiSpaceE selectById(Long id) {
         return ConvertHelper.convert(wikiSpaceMapper.selectByPrimaryKey(id), WikiSpaceE.class);
     }
+
+    @Override
+    public Boolean checkName(Long projectId, String name, String type) {
+        WikiSpaceDO wikiSpaceDO = new WikiSpaceDO();
+        wikiSpaceDO.setResourceId(projectId);
+        wikiSpaceDO.setResourceType(type);
+        wikiSpaceDO.setName(name);
+        int selectCount = wikiSpaceMapper.selectCount(wikiSpaceDO);
+        if (selectCount > 0) {
+            throw new CommonException("error.space.name.check");
+        }
+        return true;
+    }
 }
