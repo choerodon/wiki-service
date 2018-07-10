@@ -10,6 +10,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 @Configuration
@@ -28,7 +30,7 @@ public class RetrofitConfig {
         OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
         okHttpClientBuilder.interceptors().add((Interceptor.Chain chain) -> {
             Request original = chain.request();
-
+//            CustomUserDetails customUserDetails = DetailsHelper.getUserDetails();
             Request.Builder requestBuilder = original.newBuilder()
                     .header("Authorization", "Basic YWRtaW46aGFuZGhhbmQ=");
 
