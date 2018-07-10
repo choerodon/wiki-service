@@ -8,8 +8,6 @@ import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -20,7 +18,7 @@ import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
- * Created by Zenger on 2018/7/3.
+ * Created by Ernst on 2018/7/5.
  */
 @Service
 public class IWikiUserServiceImpl implements IWikiUserService {
@@ -55,7 +53,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     }
 
     @Override
-    public Boolean checkUserExsist(String userName) {
+    public Boolean checkDocExsist(String userName) {
         Call<ResponseBody> call = wikiClient.checkUserExsist(
                 client, userName);
         try {

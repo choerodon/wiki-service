@@ -39,7 +39,7 @@ public class WikiUserServiceImpl implements WikiUserService {
 
     @Override
     public Boolean checkUserExsist(String userName) {
-        return iWikiUserService.checkUserExsist(userName);
+        return iWikiUserService.checkDocExsist(userName);
     }
 
     @Override
@@ -52,7 +52,6 @@ public class WikiUserServiceImpl implements WikiUserService {
         Map<String, String> params = new HashMap<>();
         params.put("{{ FIRST_NAME }}", wikiUserE.getFirstName());
         params.put("{{ LAST_NAME }}", wikiUserE.getLastName());
-        params.put("{{ PASSWORD }}", wikiUserE.getPassword());
         params.put("{{ USER_EMAIL }}", wikiUserE.getEmail());
         return FileUtil.replaceReturnString(inputStream, params);
     }

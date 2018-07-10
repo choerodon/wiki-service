@@ -1,5 +1,6 @@
 package io.choerodon.wiki.infra.feign;
 
+import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -250,4 +251,10 @@ public interface WikiClient {
     Call<ResponseBody> deletePage(
             @Path("client") String client,
             @Path("param1") String param1);
+
+    @POST("/rest/wikis/{client}/spaces/XWiki/pages/{param1}/objects")
+    Call<ResponseBody> createGroupUsers(
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Body FormBody body);
 }

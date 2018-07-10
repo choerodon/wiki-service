@@ -2,6 +2,7 @@ package io.choerodon.wiki.domain.service.impl;
 
 import java.io.IOException;
 
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -44,6 +45,22 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             } else {
                 return false;
             }
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean createGroupUsers(String groupName, String userName) {
+        try{
+            FormBody body = new FormBody.Builder().add("className","XWiki.XWikiGroups").add("property#member","XWiki."+userName).build();
+            Call<ResponseBody> call = wikiClient.createGroupUsers(client,groupName,body);
+            Response response = call.execute();
+            if(response.code() == 201){
+                return true;
+            }
+            return false;
         } catch (IOException e) {
             logger.error(e.getMessage());
             return false;

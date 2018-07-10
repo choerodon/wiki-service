@@ -22,7 +22,7 @@ import io.choerodon.wiki.app.service.WikiGroupService;
  * Created by Ernst on 2018/7/6.
  */
 @RestController
-@RequestMapping(value = "/v1/groups")
+@RequestMapping(value = "/v1/organizations/{organization_id}/groups")
 public class WikiGroupController {
 
     private WikiGroupService wikiGroupService;

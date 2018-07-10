@@ -13,15 +13,6 @@
                 <attribute name="number" value="3"/>
                 <value>{{ USER_EMAIL }}</value>
             </property>
-            <property name="first_name" type="String">
-                <attribute name="name" value="first_name"/>
-                <attribute name="prettyName" value="First Name"/>
-                <attribute name="unmodifiable" value="0"/>
-                <attribute name="disabled" value="0"/>
-                <attribute name="size" value="30"/>
-                <attribute name="number" value="1"/>
-                <value>{{ FIRST_NAME }}</value>
-            </property>
             <property name="last_name" type="String">
                 <attribute name="name" value="last_name"/>
                 <attribute name="prettyName" value="Last Name"/>
@@ -30,15 +21,6 @@
                 <attribute name="size" value="30"/>
                 <attribute name="number" value="2"/>
                 <value>{{ LAST_NAME }}</value>
-            </property>
-            <property name="password" type="Password">
-                <attribute name="name" value="password"/>
-                <attribute name="prettyName" value="Password"/>
-                <attribute name="unmodifiable" value="0"/>
-                <attribute name="disabled" value="0"/>
-                <attribute name="size" value="10"/>
-                <attribute name="number" value="4"/>
-                <value>{{ PASSWORD }}</value>
             </property>
         </objectSummary>
     </objects>

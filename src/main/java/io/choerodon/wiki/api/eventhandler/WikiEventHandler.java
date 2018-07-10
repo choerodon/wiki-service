@@ -1,12 +1,18 @@
 package io.choerodon.wiki.api.eventhandler;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.core.event.EventPayload;
 import io.choerodon.event.consumer.annotation.EventListener;
+import io.choerodon.wiki.api.dto.GitlabGroupMemberDTO;
+import io.choerodon.wiki.api.dto.GitlabUserDTO;
+import io.choerodon.wiki.api.dto.WikiGroupDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
+import io.choerodon.wiki.app.service.WikiGroupService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
 import io.choerodon.wiki.domain.application.event.ProjectEvent;
@@ -26,8 +32,11 @@ public class WikiEventHandler {
 
     private WikiSpaceService wikiSpaceService;
 
-    public WikiEventHandler(WikiSpaceService wikiSpaceService) {
+    WikiGroupService wikiGroupService;
+
+    public WikiEventHandler(WikiSpaceService wikiSpaceService, WikiGroupService wikiGroupService) {
         this.wikiSpaceService = wikiSpaceService;
+        this.wikiGroupService = wikiGroupService;
     }
 
     private void loggerInfo(Object o) {
@@ -46,6 +55,15 @@ public class WikiEventHandler {
         wikiSpaceDTO.setIcon(ORG_ICON);
         wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(),
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
+
+        //创建组
+        WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
+        String adminGroupName = "O-"+organizationEventPayload.getCode()+"AdminGroup";
+        String userGroupName = "O-"+organizationEventPayload.getCode()+"UserGroup";
+        wikiGroupDTO.setGroupName(adminGroupName);
+        wikiGroupService.create(wikiGroupDTO);
+        wikiGroupDTO.setGroupName(userGroupName);
+        wikiGroupService.create(wikiGroupDTO);
     }
 
     /**
@@ -60,5 +78,34 @@ public class WikiEventHandler {
         wikiSpaceDTO.setIcon(PROJECT_ICON);
         wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(),
                 WikiSpaceResourceType.PROJECT.getResourceType());
+        //创建组
+        WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
+        String adminGroupName = "P-"+projectEvent.getProjectCode()+"AdminGroup";
+        String userGroupName = "P-"+projectEvent.getProjectCode()+"UserGroup";
+        wikiGroupDTO.setGroupName(adminGroupName);
+        wikiGroupService.create(wikiGroupDTO);
+        wikiGroupDTO.setGroupName(userGroupName);
+        wikiGroupService.create(wikiGroupDTO);
+    }
+
+
+    /**
+     * 角色同步事件
+     */
+    @EventListener(topic = IAM_SERVICE, businessType = "updateMemberRole")
+    public void handleGitlabGroupMemberEvent(EventPayload<List<GitlabGroupMemberDTO>> payload) {
+        List<GitlabGroupMemberDTO> gitlabGroupMemberDTOList = payload.getData();
+        loggerInfo(gitlabGroupMemberDTOList);
+
+        wikiGroupService.createWikiGroupUsers(gitlabGroupMemberDTOList);
+    }
+
+    /**
+     * 用户创建事件
+     */
+    @EventListener(topic = IAM_SERVICE, businessType = "createUser")
+    public void handleCreateUserEvent(EventPayload<GitlabUserDTO> payload) {
+        GitlabUserDTO gitlabUserDTO = payload.getData();
+        wikiGroupService.createWikiUserToGroup(gitlabUserDTO);
     }
 }

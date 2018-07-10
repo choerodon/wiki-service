@@ -1,7 +1,6 @@
 package io.choerodon.wiki.api.controller.v1;
 
 import javax.validation.Valid;
-
 import java.util.Optional;
 
 import io.swagger.annotations.ApiOperation;
@@ -13,17 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
-import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiUserDTO;
-import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.app.service.WikiUserService;
-import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
  * Created by Ernst on 2018/7/4.
  */
 @RestController
-@RequestMapping(value = "/v1/users")
+@RequestMapping(value = "/v1/organizations/{organization_id}/users")
 public class WikiUserController {
 
     private WikiUserService wikiUserService;
@@ -58,7 +54,7 @@ public class WikiUserController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "wiki用户是否存在")
-    @GetMapping("/{userName}")
+    @GetMapping("/{user_name}")
     public ResponseEntity<Boolean> checkUser(
             @ApiParam(value = "用户名", required = true)
             @PathVariable String userName) {
@@ -76,7 +72,7 @@ public class WikiUserController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "删除wiki底下的文档")
-    @GetMapping("/delete/{pageName}")
+    @GetMapping("/delete/{page_name}")
     public ResponseEntity<Boolean> delete(
             @ApiParam(value = "page名称", required = true)
             @PathVariable String pageName) {
