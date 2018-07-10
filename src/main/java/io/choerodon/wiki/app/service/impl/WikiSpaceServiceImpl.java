@@ -103,7 +103,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public void update(Long id, WikiSpaceDTO wikiSpaceDTO, String type) {
+    public WikiSpaceResponseDTO update(Long id, WikiSpaceDTO wikiSpaceDTO, String type) {
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
         if (wikiSpaceE != null && wikiSpaceE.getSynchro()) {
             Map<String, String> params = new HashMap<>();
@@ -133,9 +133,11 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                     String xmlParam = FileUtil.replaceReturnString(inputStream, params);
                     iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xmlParam);
                 }
-                wikiSpaceRepository.update(wikiSpaceE);
+                return ConvertHelper.convert(wikiSpaceRepository.update(wikiSpaceE),WikiSpaceResponseDTO.class);
             }
         }
+
+        return ConvertHelper.convert(wikiSpaceE,WikiSpaceResponseDTO.class);
     }
 
     private String getPath(Long resourceId, String type) {

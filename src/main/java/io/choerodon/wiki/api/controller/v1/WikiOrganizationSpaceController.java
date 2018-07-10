@@ -38,7 +38,7 @@ public class WikiOrganizationSpaceController {
      * 检查组织下空间名唯一性
      *
      * @param organizationId 组织ID
-     * @param name      空间名
+     * @param name           空间名
      * @return
      */
     @Permission(level = ResourceLevel.ORGANIZATION)
@@ -49,7 +49,7 @@ public class WikiOrganizationSpaceController {
             @PathVariable(value = "organization_id") Long organizationId,
             @ApiParam(value = "空间名", required = true)
             @RequestParam String name) {
-        return Optional.ofNullable(wikiSpaceService.checkName(organizationId, name,WikiSpaceResourceType.ORGANIZATION_S.getResourceType()))
+        return Optional.ofNullable(wikiSpaceService.checkName(organizationId, name, WikiSpaceResourceType.ORGANIZATION_S.getResourceType()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.space.name.check"));
     }
@@ -129,13 +129,15 @@ public class WikiOrganizationSpaceController {
     @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "更新组织下单个空间")
     @PutMapping(value = "/{id}")
-    public ResponseEntity update(@ApiParam(value = "组织ID", required = true)
-                                 @PathVariable(value = "organization_id") Long organizationId,
-                                 @ApiParam(value = "空间ID", required = true)
-                                 @PathVariable Long id,
-                                 @ApiParam(value = "空间信息", required = true)
-                                 @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        wikiSpaceService.update(id, wikiSpaceDTO,WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<WikiSpaceResponseDTO> update(@ApiParam(value = "组织ID", required = true)
+                                                       @PathVariable(value = "organization_id") Long organizationId,
+                                                       @ApiParam(value = "空间ID", required = true)
+                                                       @PathVariable Long id,
+                                                       @ApiParam(value = "空间信息", required = true)
+                                                       @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
+        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO,
+                WikiSpaceResourceType.ORGANIZATION_S.getResourceType()))
+                .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.wiki.space.update"));
     }
 }

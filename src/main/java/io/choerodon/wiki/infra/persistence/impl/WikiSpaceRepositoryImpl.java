@@ -100,9 +100,11 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
     }
 
     @Override
-    public void update(WikiSpaceE wikiSpaceE) {
-        if (wikiSpaceMapper.updateByPrimaryKey(ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class)) != 1) {
-            throw new CommonException("error.space.update");
+    public WikiSpaceE update(WikiSpaceE wikiSpaceE) {
+        WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
+        if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDO) != 1) {
+            throw new CommonException("error.space.insert");
         }
+        return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
     }
 }

@@ -17,7 +17,7 @@ public interface WikiSpaceService {
 
     WikiSpaceResponseDTO query(Long id);
 
-    void update(Long id,WikiSpaceDTO wikiSpaceDTO,String type);
+    WikiSpaceResponseDTO update(Long id,WikiSpaceDTO wikiSpaceDTO,String type);
 
     Boolean checkName(Long projectId,String name,String type);
 }

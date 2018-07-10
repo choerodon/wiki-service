@@ -22,5 +22,5 @@ public interface WikiSpaceRepository {
 
     Boolean checkName(Long projectId, String name,String type);
 
-    void update(WikiSpaceE wikiSpaceE);
+    WikiSpaceE update(WikiSpaceE wikiSpaceE);
 }
