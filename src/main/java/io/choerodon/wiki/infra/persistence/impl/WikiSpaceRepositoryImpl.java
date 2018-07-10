@@ -98,4 +98,11 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
         }
         return true;
     }
+
+    @Override
+    public void update(WikiSpaceE wikiSpaceE) {
+        if (wikiSpaceMapper.updateByPrimaryKey(ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class)) != 1) {
+            throw new CommonException("error.space.update");
+        }
+    }
 }

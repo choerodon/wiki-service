@@ -48,13 +48,13 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public Boolean checkName(Long projectId, String name,String type) {
-        return wikiSpaceRepository.checkName(projectId,name,type);
+    public Boolean checkName(Long projectId, String name, String type) {
+        return wikiSpaceRepository.checkName(projectId, name, type);
     }
 
     @Override
     public void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String type) {
-        checkName(resourceId,wikiSpaceDTO.getName(),type);
+        checkName(resourceId, wikiSpaceDTO.getName(), type);
         String path = getPath(resourceId, type);
 
         WikiSpaceE wikiSpaceE = new WikiSpaceE();
@@ -108,11 +108,13 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         if (wikiSpaceE != null && wikiSpaceE.getSynchro()) {
             Map<String, String> params = new HashMap<>();
             if (!wikiSpaceE.getIcon().equals(wikiSpaceDTO.getIcon())) {
-                params.put("{{ SPACE_ICON }}", wikiSpaceE.getName());
+                params.put("{{ SPACE_ICON }}", wikiSpaceDTO.getIcon());
+                wikiSpaceE.setIcon(wikiSpaceDTO.getIcon());
             }
             if (wikiSpaceDTO.getDescription() != null &&
-                    wikiSpaceE.getDescription().equals(wikiSpaceDTO.getDescription())) {
-                params.put("{{ DESCRIPTION }}", wikiSpaceE.getDescription());
+                    !wikiSpaceE.getDescription().equals(wikiSpaceDTO.getDescription())) {
+                params.put("{{ DESCRIPTION }}", wikiSpaceDTO.getDescription());
+                wikiSpaceE.setDescription(wikiSpaceDTO.getDescription());
             }
             if (!params.isEmpty()) {
                 params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
@@ -120,17 +122,18 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                 params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
                 String[] path = wikiSpaceE.getPath().split("/");
                 if (type.equals(WikiSpaceResourceType.ORGANIZATION_S.getResourceType())) {
+                    params.put("{{ SPACE_PARENT }}", path[0]);
                     InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                     String xmlParam = FileUtil.replaceReturnString(inputStream, params);
-                    params.put("{{ SPACE_PARENT }}", path[0]);
                     iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam);
                 } else if (type.equals(WikiSpaceResourceType.PROJECT_S.getResourceType())) {
-                    InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome2.xml");
-                    String xmlParam = FileUtil.replaceReturnString(inputStream, params);
                     params.put("{{ SPACE_ROOT }}", path[0]);
                     params.put("{{ SPACE_PARENT }}", path[1]);
+                    InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome2.xml");
+                    String xmlParam = FileUtil.replaceReturnString(inputStream, params);
                     iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xmlParam);
                 }
+                wikiSpaceRepository.update(wikiSpaceE);
             }
         }
     }

@@ -104,7 +104,7 @@
                 <attribute name="picker" value="0"/>
                 <attribute name="validationMessage" value=""/>
                 <attribute name="validationRegExp" value=""/>
-                <value></value>
+                <value>{{ DESCRIPTION }}</value>
             </property>
         </objectSummary>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
