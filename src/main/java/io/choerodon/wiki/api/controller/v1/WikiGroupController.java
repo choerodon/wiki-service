@@ -17,6 +17,7 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.api.dto.WikiGroupDTO;
 import io.choerodon.wiki.app.service.WikiGroupService;
+import io.choerodon.wiki.infra.common.GetUserNameUtil;
 
 /**
  * Created by Ernst on 2018/7/6.
@@ -44,7 +45,7 @@ public class WikiGroupController {
             @ApiParam(value = "组信息", required = true)
             @RequestBody @Valid WikiGroupDTO wikiGroupDTO) {
 
-        return Optional.ofNullable(wikiGroupService.create(wikiGroupDTO))
+        return Optional.ofNullable(wikiGroupService.create(wikiGroupDTO, GetUserNameUtil.getUsername()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.group.create"));
     }
