@@ -54,7 +54,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
 
     @Override
     public Boolean checkDocExsist(String userName) {
-        Call<ResponseBody> call = wikiClient.checkUserExsist(
+        Call<ResponseBody> call = wikiClient.checkDocExsist(
                 client, userName);
         try {
             Response response = call.execute();

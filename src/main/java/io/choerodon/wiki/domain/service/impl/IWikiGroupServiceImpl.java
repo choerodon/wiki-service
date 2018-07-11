@@ -1,6 +1,9 @@
 package io.choerodon.wiki.domain.service.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -13,7 +16,9 @@ import org.springframework.stereotype.Service;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
+import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -29,14 +34,17 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
 
     private WikiClient wikiClient;
 
-    public IWikiGroupServiceImpl(WikiClient wikiClient) {
+    private IWikiUserServiceImpl iWikiUserService;
+
+    public IWikiGroupServiceImpl(WikiClient wikiClient, IWikiUserServiceImpl iWikiUserService) {
         this.wikiClient = wikiClient;
+        this.iWikiUserService = iWikiUserService;
     }
 
     @Override
-    public Boolean createGroup(String groupName, String xmlParam) {
+    public Boolean createGroup(String groupName) {
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), getGroupXml());
             Call<ResponseBody> call = wikiClient.createGroup(
                     client, groupName, requestBody);
             Response response = call.execute();
@@ -54,6 +62,12 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     @Override
     public Boolean createGroupUsers(String groupName, String userName) {
         try{
+            //如果组不存在则新建组
+            Boolean falg = iWikiUserService.checkDocExsist(groupName);
+            if(!falg){
+                this.createGroup(groupName);
+            }
+
             FormBody body = new FormBody.Builder().add("className","XWiki.XWikiGroups").add("property#member","XWiki."+userName).build();
             Call<ResponseBody> call = wikiClient.createGroupUsers(client,groupName,body);
             Response response = call.execute();
@@ -65,6 +79,60 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             logger.error(e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public Boolean disableOrgGroupView(String organizationCode, String organizationName) {
+        try{
+            String groupName = "O-"+organizationCode+"UserGroup";
+            Boolean falg = iWikiUserService.checkDocExsist(groupName);
+            if(!falg){
+                throw new CommonException("error.query.group");
+            }
+
+            FormBody body = new FormBody.Builder().add("className","XWiki.XWikiGlobalRights").add("property#allow","0")
+                    .add("property#groups","XWiki."+groupName).add("property#levels","view").build();
+
+            Call<ResponseBody> call = wikiClient.disableOrgGroupView(client,organizationName,body);
+            Response response = call.execute();
+            if(response.code() == 201){
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean disableProjectGroupView(String projectName, String projectCode, String organizationName) {
+        try{
+            String groupName = "P-"+projectCode+"UserGroup";
+            Boolean falg = iWikiUserService.checkDocExsist(groupName);
+            if(!falg){
+                throw new CommonException("error.query.group");
+            }
+
+            FormBody body = new FormBody.Builder().add("className","XWiki.XWikiGlobalRights").add("property#allow","0")
+                    .add("property#groups","XWiki."+groupName).add("property#levels","view").build();
+
+            Call<ResponseBody> call = wikiClient.disableProjectGroupView(client,organizationName,projectName,body);
+            Response response = call.execute();
+            if(response.code() == 201){
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+    }
+
+    private String getGroupXml() {
+        InputStream inputStream = this.getClass().getResourceAsStream("/xml/group.xml");
+        Map<String, String> params = new HashMap<>();
+        return FileUtil.replaceReturnString(inputStream, params);
     }
 
 }

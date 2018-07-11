@@ -5,8 +5,11 @@ package io.choerodon.wiki.domain.service;
  */
 public interface IWikiGroupService {
 
-    Boolean createGroup(String groupName, String xmlParam);
+    Boolean createGroup(String groupName);
 
     Boolean createGroupUsers(String groupName, String userName);
 
+    Boolean disableOrgGroupView(String groupName, String organizationName);
+
+    Boolean disableProjectGroupView(String projectName, String projectCode, String organizationName);
 }

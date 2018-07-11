@@ -15,5 +15,11 @@ public interface WikiGroupService {
 
     void createWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList);
 
+    void deleteWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList);
+
     void createWikiUserToGroup(GitlabUserDTO gitlabUserDTO);
+
+    void disableOrganizationGroup(Long orgId);
+
+    void disableProjectGroup(Long projectId);
 }

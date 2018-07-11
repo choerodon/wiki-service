@@ -236,7 +236,7 @@ public interface WikiClient {
             @Body RequestBody xmlParam);
 
     @GET("/rest/wikis/{client}/spaces/XWiki/pages/{param1}?objects=true")
-    Call<ResponseBody> checkUserExsist(
+    Call<ResponseBody> checkDocExsist(
             @Path("client") String client,
             @Path("param1") String param1);
 
@@ -257,4 +257,18 @@ public interface WikiClient {
             @Path("client") String client,
             @Path("param1") String param1,
             @Body FormBody body);
+
+    @POST("/rest/wikis/{client}/spaces/{organization}/pages/WebPreferences/objects")
+    Call<ResponseBody> disableOrgGroupView(
+            @Path("client") String client,
+            @Path("organization") String organization,
+            @Body FormBody body);
+
+    @POST("/rest/wikis/{client}/spaces/{organization}/spaces/{project}/pages/WebPreferences/objects")
+    Call<ResponseBody> disableProjectGroupView(
+            @Path("client") String client,
+            @Path("organization") String organization,
+            @Path("project") String project,
+            @Body FormBody body);
+
 }

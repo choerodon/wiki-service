@@ -101,6 +101,17 @@ public class WikiEventHandler {
     }
 
     /**
+     * 角色同步事件,去除角色
+     */
+    @EventListener(topic = IAM_SERVICE, businessType = "deleteMemberRole")
+    public void handledeleteMemberRoleEvent(EventPayload<List<GitlabGroupMemberDTO>> payload) {
+        List<GitlabGroupMemberDTO> gitlabGroupMemberDTOList = payload.getData();
+        loggerInfo(gitlabGroupMemberDTOList);
+        //TODO
+        wikiGroupService.deleteWikiGroupUsers(gitlabGroupMemberDTOList);
+    }
+
+    /**
      * 用户创建事件
      */
     @EventListener(topic = IAM_SERVICE, businessType = "createUser")
@@ -108,4 +119,20 @@ public class WikiEventHandler {
         GitlabUserDTO gitlabUserDTO = payload.getData();
         wikiGroupService.createWikiUserToGroup(gitlabUserDTO);
     }
+
+    /**
+     * 组织禁用事件
+     */
+/*    @EventListener(topic = IAM_SERVICE, businessType = "")
+    public void handleOrganizationDisableEvent(EventPayload payload) {
+
+    }*/
+
+    /**
+     * 项目禁用事件
+     */
+/*    @EventListener(topic = IAM_SERVICE, businessType = "")
+    public void handleProjectDisableEvent(EventPayload payload) {
+
+    }*/
 }

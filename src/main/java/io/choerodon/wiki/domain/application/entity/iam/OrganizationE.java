@@ -1,20 +1,25 @@
-package io.choerodon.wiki.domain.application.valueobject;
+package io.choerodon.wiki.domain.application.entity.iam;
 
 /**
  * Created by ernst on 2018/7/9.
  */
-public class Organization {
+public class OrganizationE {
     private Long id;
     private String name;
     private String code;
 
-    public Organization() {
+    public OrganizationE() {
     }
 
-    public Organization(Long id) {
+    public OrganizationE(Long id) {
         this.id = id;
     }
 
+    public OrganizationE(Long id, String name, String code) {
+        this.id = id;
+        this.name = name;
+        this.code = code;
+    }
 
     public Long getId() {
         return id;

@@ -8,7 +8,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
 import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
-import io.choerodon.wiki.domain.application.valueobject.Organization;
+import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO;
 import io.choerodon.wiki.infra.dataobject.iam.ProjectDO;
 import io.choerodon.wiki.infra.dataobject.iam.UserDO;
@@ -38,10 +38,10 @@ public class IamRepositoryImpl implements IamRepository {
     }
 
     @Override
-    public Organization queryOrganizationById(Long organizationId) {
+    public OrganizationE queryOrganizationById(Long organizationId) {
         ResponseEntity<OrganizationDO> organization = iamServiceClient.queryOrganizationById(organizationId);
         if (organization.getStatusCode().is2xxSuccessful()) {
-            return ConvertHelper.convert(organization.getBody(), Organization.class);
+            return ConvertHelper.convert(organization.getBody(), OrganizationE.class);
         } else {
             throw new CommonException("error.organization.get");
         }

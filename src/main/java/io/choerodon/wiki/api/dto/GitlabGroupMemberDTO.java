@@ -7,6 +7,8 @@ import java.util.List;
  */
 public class GitlabGroupMemberDTO {
 
+    private Long userId;
+
     /**
      * 被更改角色的用户的用户名
      */
@@ -28,6 +30,14 @@ public class GitlabGroupMemberDTO {
     private List<String> roleLabels;
 
     private String uuid;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public String getUsername() {
         return username;

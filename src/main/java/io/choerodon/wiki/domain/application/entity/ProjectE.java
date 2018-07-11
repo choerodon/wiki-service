@@ -3,6 +3,8 @@ package io.choerodon.wiki.domain.application.entity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
+
 /**
  * Created by Zenger on 2018/3/28.
  */
@@ -12,6 +14,8 @@ public class ProjectE {
     private Long id;
     private String name;
     private String code;
+    private OrganizationE organization;
+
 
     public ProjectE() {
     }
@@ -44,4 +48,11 @@ public class ProjectE {
         this.code = code;
     }
 
+    public OrganizationE getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(OrganizationE organization) {
+        this.organization = organization;
+    }
 }

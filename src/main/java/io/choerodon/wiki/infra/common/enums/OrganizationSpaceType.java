@@ -6,9 +6,15 @@ package io.choerodon.wiki.infra.common.enums;
 public enum OrganizationSpaceType {
 
 
-    PROJECT_OWNER("project.owner"),
+    PROJECT_WIKI_ADMIN("project.wiki.admin"),
 
-    ORGANIZATION_OWNER("organization.owner");
+    PROJECT_WIKI_USER("project.wiki.user"),
+
+    ORGANIZATION_WIKI_ADMIN("organization.wiki.admin"),
+
+    ORGANIZATION_WIKI_USER("organization.wiki.user");
+
+
 
     private String type;
 
@@ -18,10 +24,14 @@ public enum OrganizationSpaceType {
 
     public static OrganizationSpaceType forString(String value) {
         switch (value) {
-            case "project.owner":
-                return OrganizationSpaceType.PROJECT_OWNER;
-            case "organization.owner":
-                return OrganizationSpaceType.ORGANIZATION_OWNER;
+            case "project.wiki.admin":
+                return OrganizationSpaceType.PROJECT_WIKI_ADMIN;
+            case "project.wiki.user":
+                return OrganizationSpaceType.PROJECT_WIKI_USER;
+            case "organization.wiki.admin":
+                return OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN;
+            case "organization.wiki.user":
+                return OrganizationSpaceType.ORGANIZATION_WIKI_USER;
             default:
                 return null;
         }
