@@ -65,7 +65,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             //如果组不存在则新建组
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
-                this.createGroup(username, groupName);
+                this.createGroup(groupName,username);
             }
 
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + username).build();

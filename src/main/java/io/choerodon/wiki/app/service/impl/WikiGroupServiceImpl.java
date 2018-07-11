@@ -49,7 +49,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     public Boolean create(WikiGroupDTO wikiGroupDTO) {
         Boolean flag = iWikiUserService.checkDocExsist(GetUserNameUtil.getUsername(), wikiGroupDTO.getGroupName());
         if (!flag) {
-            return iWikiGroupService.createGroup(GetUserNameUtil.getUsername(), wikiGroupDTO.getGroupName());
+            return iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(),GetUserNameUtil.getUsername());
         }
         return false;
     }
