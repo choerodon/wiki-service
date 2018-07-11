@@ -41,6 +41,7 @@ env:
     SPRING_CLOUD_CONFIG_URI: http://config-server.framework:8010/
     WIKI_CLIENT: xwiki
     WIKI_URL: http://xwiki-alpha.saas.hand-china.com
+    WIKI_TOKEN: Choerodon
     SECURITY_BASIC_ENABLE: false
 
 metrics:

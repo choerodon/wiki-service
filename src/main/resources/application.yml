@@ -37,6 +37,7 @@ mybatis:
 wiki:
   client: xwiki
   url: http://xwiki-alpha.saas.hand-china.com
+  token: Choerodon
 eureka:
   instance:
     preferIpAddress: true
