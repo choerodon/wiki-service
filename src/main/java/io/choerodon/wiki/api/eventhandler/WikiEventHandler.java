@@ -54,17 +54,17 @@ public class WikiEventHandler {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationEventPayload.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(),USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
         //创建组
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
-        String adminGroupName = "O-"+organizationEventPayload.getCode()+"AdminGroup";
-        String userGroupName = "O-"+organizationEventPayload.getCode()+"UserGroup";
+        String adminGroupName = "O-" + organizationEventPayload.getCode() + "AdminGroup";
+        String userGroupName = "O-" + organizationEventPayload.getCode() + "UserGroup";
         wikiGroupDTO.setGroupName(adminGroupName);
-        wikiGroupService.create(wikiGroupDTO);
+        wikiGroupService.create(wikiGroupDTO, USERNAME);
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO);
+        wikiGroupService.create(wikiGroupDTO, USERNAME);
     }
 
     /**
@@ -77,16 +77,16 @@ public class WikiEventHandler {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
         wikiSpaceDTO.setIcon(PROJECT_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(),USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(), USERNAME,
                 WikiSpaceResourceType.PROJECT.getResourceType());
         //创建组
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
-        String adminGroupName = "P-"+projectEvent.getProjectCode()+"AdminGroup";
-        String userGroupName = "P-"+projectEvent.getProjectCode()+"UserGroup";
+        String adminGroupName = "P-" + projectEvent.getProjectCode() + "AdminGroup";
+        String userGroupName = "P-" + projectEvent.getProjectCode() + "UserGroup";
         wikiGroupDTO.setGroupName(adminGroupName);
-        wikiGroupService.create(wikiGroupDTO);
+        wikiGroupService.create(wikiGroupDTO, USERNAME);
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO);
+        wikiGroupService.create(wikiGroupDTO, USERNAME);
     }
 
 

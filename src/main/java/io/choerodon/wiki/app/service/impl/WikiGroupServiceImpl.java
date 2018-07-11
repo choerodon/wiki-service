@@ -22,7 +22,6 @@ import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.common.FileUtil;
-import io.choerodon.wiki.infra.common.GetUserNameUtil;
 import io.choerodon.wiki.infra.common.enums.OrganizationSpaceType;
 
 /**
@@ -46,10 +45,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     }
 
     @Override
-    public Boolean create(WikiGroupDTO wikiGroupDTO) {
-        Boolean flag = iWikiUserService.checkDocExsist(GetUserNameUtil.getUsername(), wikiGroupDTO.getGroupName());
+    public Boolean create(WikiGroupDTO wikiGroupDTO, String username) {
+        Boolean flag = iWikiUserService.checkDocExsist(username, wikiGroupDTO.getGroupName());
         if (!flag) {
-            return iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(),GetUserNameUtil.getUsername());
+            return iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
         }
         return false;
     }
@@ -72,7 +71,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         wikiUserE.setFirstName(user.getLoginName());
                         wikiUserE.setEmail(user.getEmail());
                         String xmlParam = getUserXml(wikiUserE);
-                        if (!iWikiUserService.checkDocExsist(user.getLoginName(),user.getLoginName())) {
+                        if (!iWikiUserService.checkDocExsist(user.getLoginName(), user.getLoginName())) {
                             iWikiUserService.createUser(wikiUserE, user.getLoginName(), xmlParam);
                         }
 
@@ -105,7 +104,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             String groupName = "O-" + orgCode + "UserGroup";
 
             //如果用户不存在则新建
-            Boolean flag = iWikiUserService.checkDocExsist(loginName,loginName);
+            Boolean flag = iWikiUserService.checkDocExsist(loginName, loginName);
             if (!flag) {
                 WikiUserE wikiUserE = new WikiUserE();
                 wikiUserE.setLastName(loginName);
