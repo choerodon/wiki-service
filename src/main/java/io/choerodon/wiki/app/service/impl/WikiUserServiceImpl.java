@@ -39,12 +39,12 @@ public class WikiUserServiceImpl implements WikiUserService {
 
     @Override
     public Boolean checkUserExsist(String userName) {
-        return iWikiUserService.checkDocExsist(userName);
+        return iWikiUserService.checkDocExsist(userName,userName);
     }
 
     @Override
-    public Boolean deletePage(String pageName) {
-        return iWikiUserService.deletePage(pageName);
+    public Boolean deletePage(String pageName, String username) {
+        return iWikiUserService.deletePage(pageName, username);
     }
 
     private String getXml(WikiUserE wikiUserE) {

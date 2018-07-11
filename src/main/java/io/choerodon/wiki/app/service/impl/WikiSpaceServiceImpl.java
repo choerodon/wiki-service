@@ -53,7 +53,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String type) {
+    public void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId,String username, String type) {
         checkName(resourceId, wikiSpaceDTO.getName(), type);
         String path = getPath(resourceId, type);
 
@@ -61,6 +61,8 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setIcon(wikiSpaceDTO.getIcon());
         if (wikiSpaceDTO.getDescription() != null) {
             wikiSpaceE.setDescription(wikiSpaceDTO.getDescription());
+        } else {
+            wikiSpaceE.setDescription("");
         }
         wikiSpaceE.setResourceId(resourceId);
         wikiSpaceE.setResourceType(type);
@@ -69,16 +71,16 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(type);
         switch (wikiSpaceResourceType) {
             case ORGANIZATION:
-                createOrgSpace(wikiSpaceE, wikiSpaceDTO);
+                createOrgSpace(wikiSpaceE, wikiSpaceDTO,username);
                 break;
             case PROJECT:
-                createProjectSpace(wikiSpaceE, wikiSpaceDTO);
+                createProjectSpace(wikiSpaceE, wikiSpaceDTO,username);
                 break;
             case ORGANIZATION_S:
-                createOrgUnderSpace(wikiSpaceE, wikiSpaceDTO, path);
+                createOrgUnderSpace(wikiSpaceE, wikiSpaceDTO, path,username);
                 break;
             case PROJECT_S:
-                createProjectUnderSpace(wikiSpaceE, wikiSpaceDTO, path);
+                createProjectUnderSpace(wikiSpaceE, wikiSpaceDTO, path,username);
                 break;
             default:
                 break;
@@ -103,7 +105,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public WikiSpaceResponseDTO update(Long id, WikiSpaceDTO wikiSpaceDTO, String type) {
+    public WikiSpaceResponseDTO update(Long id, WikiSpaceDTO wikiSpaceDTO,String username, String type) {
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
         if (wikiSpaceE != null && wikiSpaceE.getSynchro()) {
             Map<String, String> params = new HashMap<>();
@@ -125,13 +127,13 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                     params.put("{{ SPACE_PARENT }}", path[0]);
                     InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                     String xmlParam = FileUtil.replaceReturnString(inputStream, params);
-                    iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam);
+                    iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam,username);
                 } else if (type.equals(WikiSpaceResourceType.PROJECT_S.getResourceType())) {
                     params.put("{{ SPACE_ROOT }}", path[0]);
                     params.put("{{ SPACE_PARENT }}", path[1]);
                     InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome2.xml");
                     String xmlParam = FileUtil.replaceReturnString(inputStream, params);
-                    iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xmlParam);
+                    iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xmlParam,username);
                 }
                 return ConvertHelper.convert(wikiSpaceRepository.update(wikiSpaceE),WikiSpaceResponseDTO.class);
             }
@@ -160,25 +162,25 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         return "";
     }
 
-    private void createOrgSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO) {
+    private void createOrgSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO,String username) {
         String orgName = "O-" + wikiSpaceDTO.getName();
         wikiSpaceE.setPath(orgName);
         wikiSpaceE.setName(orgName);
         WikiSpaceE orgSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createOrgSpace(orgName, orgSpace);
+        wikiSpaceAsynService.createOrgSpace(orgName, orgSpace,username);
     }
 
-    private void createProjectSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO) {
+    private void createProjectSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO,String username) {
         String[] names = wikiSpaceDTO.getName().split("/");
         String param1 = "O-" + names[0];
         String param2 = "P-" + names[1];
         wikiSpaceE.setPath(param1 + "/" + param2);
         wikiSpaceE.setName(param2);
         WikiSpaceE projectSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createOrgUnderSpace(param1, param2, projectSpace);
+        wikiSpaceAsynService.createOrgUnderSpace(param1, param2, projectSpace,username);
     }
 
-    private void createOrgUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path) {
+    private void createOrgUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path,String username) {
         if (StringUtils.isEmpty(path)) {
             throw new CommonException("error.param.empty");
         }
@@ -186,10 +188,10 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setPath(path + "/" + orgUnderName);
         wikiSpaceE.setName(orgUnderName);
         WikiSpaceE orgUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createOrgUnderSpace(path, orgUnderName, orgUnderSpace);
+        wikiSpaceAsynService.createOrgUnderSpace(path, orgUnderName, orgUnderSpace,username);
     }
 
-    private void createProjectUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path) {
+    private void createProjectUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path,String username) {
         if (StringUtils.isEmpty(path)) {
             throw new CommonException("error.param.empty");
         }
@@ -198,6 +200,6 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setPath(path + "/" + projectUnderName);
         wikiSpaceE.setName(projectUnderName);
         WikiSpaceE projectUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createProjectUnderSpace(param[0], param[1], projectUnderName, projectUnderSpace);
+        wikiSpaceAsynService.createProjectUnderSpace(param[0], param[1], projectUnderName, projectUnderSpace,username);
     }
 }

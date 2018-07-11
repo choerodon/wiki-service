@@ -11,5 +11,5 @@ public interface WikiUserService {
 
     Boolean checkUserExsist(String userName);
 
-    Boolean deletePage(String pageName);
+    Boolean deletePage(String pageName, String username);
 }

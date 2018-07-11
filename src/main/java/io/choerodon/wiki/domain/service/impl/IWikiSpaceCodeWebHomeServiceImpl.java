@@ -32,11 +32,11 @@ public class IWikiSpaceCodeWebHomeServiceImpl implements IWikiSpaceCodeWebHomeSe
     }
 
     @Override
-    public int createSpace1CodeWebHome(String param1, String xmlParam) {
+    public int createSpace1CodeWebHome(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace1CodeWebHome(
+            response = wikiClient.createSpace1CodeWebHome(username,
                     client, param1, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -46,11 +46,11 @@ public class IWikiSpaceCodeWebHomeServiceImpl implements IWikiSpaceCodeWebHomeSe
     }
 
     @Override
-    public int createSpace2CodeWebHome(String param1, String param2, String xmlParam) {
+    public int createSpace2CodeWebHome(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace2CodeWebHome(
+            response = wikiClient.createSpace2CodeWebHome(username,
                     client, param1, param2, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -60,11 +60,11 @@ public class IWikiSpaceCodeWebHomeServiceImpl implements IWikiSpaceCodeWebHomeSe
     }
 
     @Override
-    public int createSpace3CodeWebHome(String param1, String param2, String param3, String xmlParam) {
+    public int createSpace3CodeWebHome(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace3CodeWebHome(
+            response = wikiClient.createSpace3CodeWebHome(username,
                     client, param1, param2, param3, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());

@@ -9,7 +9,7 @@ public interface IWikiUserService {
 
     Boolean createUser(WikiUserE wikiUserE, String param1, String xmlParam);
 
-    Boolean checkDocExsist(String userName);
+    Boolean checkDocExsist(String username,String param1);
 
-    Boolean deletePage(String pageName);
+    Boolean deletePage(String pageName, String username);
 }

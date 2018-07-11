@@ -19,7 +19,7 @@ public interface WikiGroupService {
 
     void createWikiUserToGroup(GitlabUserDTO gitlabUserDTO);
 
-    void disableOrganizationGroup(Long orgId);
+    void disableOrganizationGroup(Long orgId,String username);
 
-    void disableProjectGroup(Long projectId);
+    void disableProjectGroup(Long projectId,String username);
 }

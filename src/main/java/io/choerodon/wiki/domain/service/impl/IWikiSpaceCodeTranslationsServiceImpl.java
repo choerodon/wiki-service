@@ -32,11 +32,11 @@ public class IWikiSpaceCodeTranslationsServiceImpl implements IWikiSpaceCodeTran
     }
 
     @Override
-    public int createSpace1CodeTranslations(String param1, String xmlParam) {
+    public int createSpace1CodeTranslations(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace1Translations(
+            response = wikiClient.createSpace1Translations(username,
                     client, param1, param1, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -46,11 +46,11 @@ public class IWikiSpaceCodeTranslationsServiceImpl implements IWikiSpaceCodeTran
     }
 
     @Override
-    public int createSpace2CodeTranslations(String param1, String param2, String xmlParam) {
+    public int createSpace2CodeTranslations(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace2Translations(
+            response = wikiClient.createSpace2Translations(username,
                     client, param1, param2, param2, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -60,11 +60,11 @@ public class IWikiSpaceCodeTranslationsServiceImpl implements IWikiSpaceCodeTran
     }
 
     @Override
-    public int createSpace3CodeTranslations(String param1, String param2, String param3, String xmlParam) {
+    public int createSpace3CodeTranslations(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace3Translations(
+            response = wikiClient.createSpace3Translations(username,
                     client, param1, param2, param3, param3, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());

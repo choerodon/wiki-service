@@ -36,32 +36,34 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     }
 
     @Override
-    public void createOrgSpace(String orgName, WikiSpaceE wikiSpaceE) {
-        int webHomeCode = iWikiSpaceWebHomeService.createSpace1WebHome(orgName, getWebHome1XmlStr(wikiSpaceE));
-        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace1WebPreferences(orgName, getWebPreferencesXmlStr(wikiSpaceE));
+    public void createOrgSpace(String orgName, WikiSpaceE wikiSpaceE, String username) {
+        int webHomeCode = iWikiSpaceWebHomeService.createSpace1WebHome(orgName, getWebHome1XmlStr(wikiSpaceE), username);
+        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace1WebPreferences(orgName, getWebPreferencesXmlStr(wikiSpaceE), username);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
     @Override
-    public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE) {
-        int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE));
-        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE));
+    public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username) {
+        int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
+        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
     @Override
-    public void createProjectUnderSpace(String param1, String param2, String projectUnderName, WikiSpaceE wikiSpaceE) {
-        int webHomeCode = iWikiSpaceWebHomeService.createSpace3WebHome(param1, param2, projectUnderName, getWebHome3XmlStr(param1, param2, wikiSpaceE));
-        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace3WebPreferences(param1, param2, projectUnderName, getWebPreferencesXmlStr(wikiSpaceE));
+    public void createProjectUnderSpace(String param1, String param2, String projectUnderName, WikiSpaceE wikiSpaceE, String username) {
+        int webHomeCode = iWikiSpaceWebHomeService.createSpace3WebHome(param1, param2, projectUnderName, getWebHome3XmlStr(param1, param2, wikiSpaceE), username);
+        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace3WebPreferences(param1, param2, projectUnderName, getWebPreferencesXmlStr(wikiSpaceE), username);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
     void checkCodeSuccess(int webHomeCode, int webPreferencesCode, WikiSpaceE wikiSpaceE) {
         if ((webHomeCode == 201 || webHomeCode == 202) && (webPreferencesCode == 201 || webPreferencesCode == 202)) {
             WikiSpaceDO wikiSpaceDO = wikiSpaceMapper.selectByPrimaryKey(wikiSpaceE.getId());
-            wikiSpaceDO.setSynchro(true);
-            if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDO) != 1) {
-                throw new CommonException("error.wikispace.update");
+            if (wikiSpaceDO != null) {
+                wikiSpaceDO.setSynchro(true);
+                if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDO) != 1) {
+                    throw new CommonException("error.wikispace.update");
+                }
             }
         }
     }

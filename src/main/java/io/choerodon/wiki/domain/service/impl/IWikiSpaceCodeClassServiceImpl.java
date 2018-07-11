@@ -32,11 +32,11 @@ public class IWikiSpaceCodeClassServiceImpl implements IWikiSpaceCodeClassServic
     }
 
     @Override
-    public int createSpace1CodeClass(String param1, String xmlParam) {
+    public int createSpace1CodeClass(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace1Class(
+            response = wikiClient.createSpace1Class(username,
                     client, param1, param1, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -46,11 +46,11 @@ public class IWikiSpaceCodeClassServiceImpl implements IWikiSpaceCodeClassServic
     }
 
     @Override
-    public int createSpace2CodeClass(String param1, String param2, String xmlParam) {
+    public int createSpace2CodeClass(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace2Class(
+            response = wikiClient.createSpace2Class(username,
                     client, param1, param2, param2, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -60,11 +60,11 @@ public class IWikiSpaceCodeClassServiceImpl implements IWikiSpaceCodeClassServic
     }
 
     @Override
-    public int createSpace3CodeClass(String param1, String param2, String param3, String xmlParam) {
+    public int createSpace3CodeClass(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace3Class(
+            response = wikiClient.createSpace3Class(username,
                     client, param1, param2, param3, param3, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());

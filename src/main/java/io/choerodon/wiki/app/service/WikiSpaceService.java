@@ -10,14 +10,14 @@ import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
  */
 public interface WikiSpaceService {
 
-    void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String type);
+    void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId,String username, String type);
 
     Page<WikiSpaceResponseDTO> listWikiSpaceByPage(Long resourceId, String type,
                                                    PageRequest pageRequest, String searchParam);
 
     WikiSpaceResponseDTO query(Long id);
 
-    WikiSpaceResponseDTO update(Long id,WikiSpaceDTO wikiSpaceDTO,String type);
+    WikiSpaceResponseDTO update(Long id,WikiSpaceDTO wikiSpaceDTO,String username,String type);
 
     Boolean checkName(Long projectId,String name,String type);
 }

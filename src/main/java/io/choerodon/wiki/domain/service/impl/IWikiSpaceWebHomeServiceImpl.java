@@ -8,13 +8,11 @@ import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import retrofit2.Response;
 
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.infra.feign.WikiClient;
-import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
 
 /**
  * Created by Zenger on 2018/7/3.
@@ -34,11 +32,11 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int createSpace1WebHome(String param1, String xmlParam) {
+    public int createSpace1WebHome(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace1WebHome(
+            response = wikiClient.createSpace1WebHome(username,
                     client, param1, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -48,11 +46,11 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int createSpace2WebHome(String param1, String param2, String xmlParam) {
+    public int createSpace2WebHome(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace2WebHome(
+            response = wikiClient.createSpace2WebHome(username,
                     client, param1, param2, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -62,11 +60,11 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int createSpace3WebHome(String param1, String param2, String param3, String xmlParam) {
+    public int createSpace3WebHome(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace3WebHome(
+            response = wikiClient.createSpace3WebHome(username,
                     client, param1, param2, param3, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());

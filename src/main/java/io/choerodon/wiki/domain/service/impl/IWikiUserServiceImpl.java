@@ -38,12 +38,12 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     public Boolean createUser(WikiUserE wikiUserE, String param1, String xmlParam) {
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            Call<ResponseBody> call = wikiClient.createUser(
+            Call<ResponseBody> call = wikiClient.createUser(param1,
                     client, param1, requestBody);
             Response response = call.execute();
-            if(response.code()==201 || response.code()==202){
+            if (response.code() == 201 || response.code() == 202) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         } catch (IOException e) {
@@ -53,38 +53,38 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     }
 
     @Override
-    public Boolean checkDocExsist(String userName) {
-        Call<ResponseBody> call = wikiClient.checkDocExsist(
-                client, userName);
+    public Boolean checkDocExsist(String username, String param1) {
+        Call<ResponseBody> call = wikiClient.checkDocExsist(username,
+                client, param1);
         try {
             Response response = call.execute();
-            if(response.code()==200){
+            if (response.code() == 200) {
                 return true;
-            }else if(response.code()==404){
+            } else if (response.code() == 404) {
                 return false;
-            }else {
+            } else {
                 throw new CommonException("error.get.user");
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error(e.getMessage());
             throw new CommonException("error.get.user");
         }
     }
 
     @Override
-    public Boolean deletePage(String pageName) {
-        Call<ResponseBody> call = wikiClient.deletePage(
+    public Boolean deletePage(String pageName, String username) {
+        Call<ResponseBody> call = wikiClient.deletePage(username,
                 client, pageName);
         try {
             Response response = call.execute();
-            if(response.code()==204){
+            if (response.code() == 204) {
                 return true;
-            }else if(response.code()==404){
+            } else if (response.code() == 404) {
                 throw new CommonException("error.get.page");
-            }else {
+            } else {
                 throw new CommonException("error.delete.page");
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error(e.getMessage());
             throw new CommonException("error.delete.page");
         }

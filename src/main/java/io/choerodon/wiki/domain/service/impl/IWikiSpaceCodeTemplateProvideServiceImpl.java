@@ -32,11 +32,11 @@ public class IWikiSpaceCodeTemplateProvideServiceImpl implements IWikiSpaceCodeT
     }
 
     @Override
-    public int createSpace1CodeTemplateProvide(String param1, String xmlParam) {
+    public int createSpace1CodeTemplateProvide(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace1TemplateProvider(
+            response = wikiClient.createSpace1TemplateProvider(username,
                     client, param1, param1, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -46,11 +46,11 @@ public class IWikiSpaceCodeTemplateProvideServiceImpl implements IWikiSpaceCodeT
     }
 
     @Override
-    public int createSpace2CodeTemplateProvide(String param1, String param2, String xmlParam) {
+    public int createSpace2CodeTemplateProvide(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace2TemplateProvider(
+            response = wikiClient.createSpace2TemplateProvider(username,
                     client, param1, param2, param2, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -60,11 +60,11 @@ public class IWikiSpaceCodeTemplateProvideServiceImpl implements IWikiSpaceCodeT
     }
 
     @Override
-    public int createSpace3CodeTemplateProvide(String param1, String param2, String param3, String xmlParam) {
+    public int createSpace3CodeTemplateProvide(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace3TemplateProvider(
+            response = wikiClient.createSpace3TemplateProvider(username,
                     client, param1, param2, param3, param3, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());

@@ -28,6 +28,7 @@ public class WikiEventHandler {
     private static final String ORG_SERVICE = "organization-service";
     private static final String ORG_ICON = "chart-organisation";
     private static final String PROJECT_ICON = "branch";
+    private static final String USERNAME = "admin";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiEventHandler.class);
 
     private WikiSpaceService wikiSpaceService;
@@ -53,7 +54,7 @@ public class WikiEventHandler {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationEventPayload.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(),
+        wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(),USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
         //创建组
@@ -76,7 +77,7 @@ public class WikiEventHandler {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
         wikiSpaceDTO.setIcon(PROJECT_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(),
+        wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(),USERNAME,
                 WikiSpaceResourceType.PROJECT.getResourceType());
         //创建组
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
@@ -93,7 +94,7 @@ public class WikiEventHandler {
      * 角色同步事件
      */
     @EventListener(topic = IAM_SERVICE, businessType = "updateMemberRole")
-    public void handleGitlabGroupMemberEvent(EventPayload<List<GitlabGroupMemberDTO>> payload) {
+    public void handleCreateGroupMemberEvent(EventPayload<List<GitlabGroupMemberDTO>> payload) {
         List<GitlabGroupMemberDTO> gitlabGroupMemberDTOList = payload.getData();
         loggerInfo(gitlabGroupMemberDTOList);
 
@@ -107,7 +108,6 @@ public class WikiEventHandler {
     public void handledeleteMemberRoleEvent(EventPayload<List<GitlabGroupMemberDTO>> payload) {
         List<GitlabGroupMemberDTO> gitlabGroupMemberDTOList = payload.getData();
         loggerInfo(gitlabGroupMemberDTOList);
-        //TODO
         wikiGroupService.deleteWikiGroupUsers(gitlabGroupMemberDTOList);
     }
 

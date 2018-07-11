@@ -19,6 +19,7 @@ import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
 import io.choerodon.wiki.app.service.WikiSpaceService;
+import io.choerodon.wiki.infra.common.GetUserNameUtil;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
@@ -69,7 +70,8 @@ public class WikiOrganizationSpaceController {
             @PathVariable(value = "organization_id") Long organizationId,
             @ApiParam(value = "空间信息", required = true)
             @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        wikiSpaceService.create(wikiSpaceDTO, organizationId, WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+        wikiSpaceService.create(wikiSpaceDTO, organizationId, GetUserNameUtil.getUsername(),
+                WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -135,7 +137,7 @@ public class WikiOrganizationSpaceController {
                                                        @PathVariable Long id,
                                                        @ApiParam(value = "空间信息", required = true)
                                                        @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO,
+        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO,GetUserNameUtil.getUsername(),
                 WikiSpaceResourceType.ORGANIZATION_S.getResourceType()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.update"));

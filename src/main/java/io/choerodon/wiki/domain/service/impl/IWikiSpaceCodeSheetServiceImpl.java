@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import retrofit2.Response;
 
-import io.choerodon.wiki.domain.service.IWikiSpaceCodeClassService;
 import io.choerodon.wiki.domain.service.IWikiSpaceCodeSheetService;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
@@ -33,11 +32,11 @@ public class IWikiSpaceCodeSheetServiceImpl implements IWikiSpaceCodeSheetServic
     }
 
     @Override
-    public int createSpace1CodeSheet(String param1, String xmlParam) {
+    public int createSpace1CodeSheet(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace1Sheet(
+            response = wikiClient.createSpace1Sheet(username,
                     client, param1, param1, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -47,11 +46,11 @@ public class IWikiSpaceCodeSheetServiceImpl implements IWikiSpaceCodeSheetServic
     }
 
     @Override
-    public int createSpace2CodeSheet(String param1, String param2, String xmlParam) {
+    public int createSpace2CodeSheet(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace2Sheet(
+            response = wikiClient.createSpace2Sheet(username,
                     client, param1, param2, param2, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
@@ -61,11 +60,11 @@ public class IWikiSpaceCodeSheetServiceImpl implements IWikiSpaceCodeSheetServic
     }
 
     @Override
-    public int createSpace3CodeSheet(String param1, String param2, String param3, String xmlParam) {
+    public int createSpace3CodeSheet(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            response = wikiClient.createSpace3Sheet(
+            response = wikiClient.createSpace3Sheet(username,
                     client, param1, param2, param3, param3, requestBody).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
