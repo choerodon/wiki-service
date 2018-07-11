@@ -98,7 +98,7 @@ public class WikiEventHandler {
         List<GitlabGroupMemberDTO> gitlabGroupMemberDTOList = payload.getData();
         loggerInfo(gitlabGroupMemberDTOList);
 
-        wikiGroupService.createWikiGroupUsers(gitlabGroupMemberDTOList);
+        wikiGroupService.createWikiGroupUsers(gitlabGroupMemberDTOList, USERNAME);
     }
 
     /**
@@ -117,7 +117,7 @@ public class WikiEventHandler {
     @EventListener(topic = IAM_SERVICE, businessType = "createUser")
     public void handleCreateUserEvent(EventPayload<GitlabUserDTO> payload) {
         GitlabUserDTO gitlabUserDTO = payload.getData();
-        wikiGroupService.createWikiUserToGroup(gitlabUserDTO);
+        wikiGroupService.createWikiUserToGroup(gitlabUserDTO,USERNAME);
     }
 
     /**

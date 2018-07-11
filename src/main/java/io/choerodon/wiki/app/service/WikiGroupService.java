@@ -13,11 +13,11 @@ public interface WikiGroupService {
 
     Boolean create(WikiGroupDTO wikiGroupDTO, String username);
 
-    void createWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList);
+    void createWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList, String username);
 
     void deleteWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList);
 
-    void createWikiUserToGroup(GitlabUserDTO gitlabUserDTO);
+    void createWikiUserToGroup(GitlabUserDTO gitlabUserDTO, String username);
 
     void disableOrganizationGroup(Long orgId, String username);
 

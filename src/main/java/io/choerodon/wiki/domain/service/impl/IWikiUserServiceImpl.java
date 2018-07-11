@@ -35,10 +35,10 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     }
 
     @Override
-    public Boolean createUser(WikiUserE wikiUserE, String param1, String xmlParam) {
+    public Boolean createUser(WikiUserE wikiUserE, String param1, String xmlParam,String username) {
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
-            Call<ResponseBody> call = wikiClient.createUser(param1,
+            Call<ResponseBody> call = wikiClient.createUser(username,
                     client, param1, requestBody);
             Response response = call.execute();
             if (response.code() == 201 || response.code() == 202) {

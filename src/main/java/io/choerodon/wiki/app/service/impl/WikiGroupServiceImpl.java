@@ -54,7 +54,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     }
 
     @Override
-    public void createWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList) {
+    public void createWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList, String username) {
         gitlabGroupMemberList.stream()
                 .filter(gitlabGroupMemberDTO -> !gitlabGroupMemberDTO.getResourceType().equals(SITE))
                 .forEach(gitlabGroupMemberDTO -> {
@@ -64,18 +64,17 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                     //通过groupName给组添加成员
                     if (!StringUtils.isEmpty(groupName)) {
                         //根据用户名查询用户信息
-                        String userName = gitlabGroupMemberDTO.getUsername();
-                        UserE user = iamRepository.queryByLoginName(userName);
+                        UserE user = iamRepository.queryByLoginName(gitlabGroupMemberDTO.getUsername());
                         WikiUserE wikiUserE = new WikiUserE();
                         wikiUserE.setLastName(user.getLoginName());
                         wikiUserE.setFirstName(user.getLoginName());
                         wikiUserE.setEmail(user.getEmail());
                         String xmlParam = getUserXml(wikiUserE);
-                        if (!iWikiUserService.checkDocExsist(user.getLoginName(), user.getLoginName())) {
-                            iWikiUserService.createUser(wikiUserE, user.getLoginName(), xmlParam);
+                        if (!iWikiUserService.checkDocExsist(username, user.getLoginName())) {
+                            iWikiUserService.createUser(wikiUserE, user.getLoginName(), xmlParam, username);
                         }
 
-                        iWikiGroupService.createGroupUsers(groupName, userName);
+                        iWikiGroupService.createGroupUsers(groupName, username);
                     }
                 });
     }
@@ -94,7 +93,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     }
 
     @Override
-    public void createWikiUserToGroup(GitlabUserDTO gitlabUserDTO) {
+    public void createWikiUserToGroup(GitlabUserDTO gitlabUserDTO, String username) {
         String loginName = gitlabUserDTO.getUsername();
         UserE user = iamRepository.queryByLoginName(loginName);
         if (user != null) {
@@ -112,11 +111,11 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 wikiUserE.setEmail(gitlabUserDTO.getEmail());
 
                 String xmlParam = getUserXml(wikiUserE);
-                iWikiUserService.createUser(wikiUserE, loginName, xmlParam);
+                iWikiUserService.createUser(wikiUserE, loginName, xmlParam,username);
             }
 
             //通过groupName给组添加成员
-            iWikiGroupService.createGroupUsers(groupName, loginName);
+            iWikiGroupService.createGroupUsers(groupName, username);
         }
     }
 

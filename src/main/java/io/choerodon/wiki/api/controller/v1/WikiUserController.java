@@ -42,7 +42,7 @@ public class WikiUserController {
             @ApiParam(value = "用户信息", required = true)
             @RequestBody @Valid WikiUserDTO wikiUserDTO) {
 
-        return Optional.ofNullable(wikiUserService.create(wikiUserDTO))
+        return Optional.ofNullable(wikiUserService.create(wikiUserDTO,GetUserNameUtil.getUsername()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.user.create"));
     }

@@ -7,7 +7,7 @@ import io.choerodon.wiki.api.dto.WikiUserDTO;
  */
 public interface WikiUserService {
 
-    Boolean create(WikiUserDTO wikiSpaceDTO);
+    Boolean create(WikiUserDTO wikiSpaceDTO,String userName);
 
     Boolean checkUserExsist(String userName);
 

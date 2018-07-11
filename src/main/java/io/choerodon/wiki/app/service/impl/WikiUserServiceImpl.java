@@ -25,7 +25,7 @@ public class WikiUserServiceImpl implements WikiUserService {
     }
 
     @Override
-    public Boolean create(WikiUserDTO wikiUserDTO) {
+    public Boolean create(WikiUserDTO wikiUserDTO,String userName) {
         String path = "";
 
         WikiUserE wikiUserE = new WikiUserE();
@@ -34,7 +34,7 @@ public class WikiUserServiceImpl implements WikiUserService {
         wikiUserE.setUserName(wikiUserDTO.getUserName());
         wikiUserE.setPassword(wikiUserDTO.getPassword());
         wikiUserE.setEmail(wikiUserDTO.getEmail());
-        return iWikiUserService.createUser(wikiUserE, wikiUserDTO.getUserName(), getXml(wikiUserE));
+        return iWikiUserService.createUser(wikiUserE, wikiUserDTO.getUserName(), getXml(wikiUserE),userName);
     }
 
     @Override
