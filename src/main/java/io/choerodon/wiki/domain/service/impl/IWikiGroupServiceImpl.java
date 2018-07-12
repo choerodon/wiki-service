@@ -60,7 +60,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     }
 
     @Override
-    public Boolean createGroupUsers(String groupName, String username) {
+    public Boolean createGroupUsers(String groupName, String loginName, String username) {
         try {
             //如果组不存在则新建组
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
@@ -68,7 +68,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
                 this.createGroup(groupName,username);
             }
 
-            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + username).build();
+            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + loginName).build();
             Call<ResponseBody> call = wikiClient.createGroupUsers(username, client, groupName, body);
             Response response = call.execute();
             if (response.code() == 201) {

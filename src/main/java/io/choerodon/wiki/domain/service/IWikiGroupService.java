@@ -7,7 +7,7 @@ public interface IWikiGroupService {
 
     Boolean createGroup(String groupName,String username);
 
-    Boolean createGroupUsers(String groupName, String username);
+    Boolean createGroupUsers(String groupName, String loginName,String username);
 
     Boolean disableOrgGroupView(String groupName, String organizationName,String username);
 

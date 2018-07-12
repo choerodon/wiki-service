@@ -74,7 +74,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                             iWikiUserService.createUser(wikiUserE, user.getLoginName(), xmlParam, username);
                         }
 
-                        iWikiGroupService.createGroupUsers(groupName, username);
+                        iWikiGroupService.createGroupUsers(groupName, user.getLoginName(),username);
                     }
                 });
     }
@@ -115,7 +115,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             }
 
             //通过groupName给组添加成员
-            iWikiGroupService.createGroupUsers(groupName, username);
+            iWikiGroupService.createGroupUsers(groupName, loginName,username);
         }
     }
 
