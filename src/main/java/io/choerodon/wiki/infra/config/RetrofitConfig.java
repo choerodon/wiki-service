@@ -3,8 +3,6 @@ package io.choerodon.wiki.infra.config;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +15,6 @@ import io.choerodon.wiki.infra.feign.WikiClient;
 @Configuration
 public class RetrofitConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(RetrofitConfig.class);
-
     @Value("${wiki.url}")
     private String wikiUrl;
 
@@ -28,7 +24,7 @@ public class RetrofitConfig {
     /**
      * Retrofit 设置
      *
-     * @return Harbor 平台连接
+     * @return WikiClient 创建的接口实例
      */
     @Bean
     public WikiClient wikiClientService() {

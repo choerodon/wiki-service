@@ -9,13 +9,9 @@
         &lt;span class="material-icons" style="color:#14892C;width:20px;height:20px"&gt;check_circle&lt;/span&gt;&#13;
         &lt;span class="home-page-font"&gt;欢迎来到您的新空间！&lt;/span&gt;&#13;
         &lt;/div&gt;&#13;
-        &lt;div class="home-page-left"&gt;&#13;
-        &lt;span style="font-size: 13px;color: #000;"&gt;&#13;
-        #foreach ($object in $objects)&#13;
-        $escapetool.xml($object.getProperty("description").value)&#13;
-        #end&#13;
-        &lt;/span&gt;&#13;
-        &lt;/div&gt;&#13;
+        &lt;div class="home-page-left"&gt;
+        &lt;span class = "home-page-font1"&gt;这是您的主页。现在这里显示最近的空间活动，但是您可以用您喜欢的任何方式来自定义这个页面。&lt;/span&gt;
+        &lt;/div&gt;
         &lt;div style="margin-bottom: 12px;"&gt;&#13;
         &lt;div class="home-page-left"&gt;&#13;
         &lt;span class="home-page-font"&gt;编辑这个主页&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击屏幕右上方的编辑来自定义您
@@ -104,7 +100,7 @@
                 <attribute name="picker" value="0"/>
                 <attribute name="validationMessage" value=""/>
                 <attribute name="validationRegExp" value=""/>
-                <value>{{ DESCRIPTION }}</value>
+                <value></value>
             </property>
         </objectSummary>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

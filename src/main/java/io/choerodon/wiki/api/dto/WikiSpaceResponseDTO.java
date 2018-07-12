@@ -6,10 +6,10 @@ package io.choerodon.wiki.api.dto;
 public class WikiSpaceResponseDTO {
 
     private Long id;
+    private String resourceType;
     private String name;
     private String icon;
     private String path;
-    private String description;
     private Boolean isSynchro;
     private Long objectVersionNumber;
 
@@ -45,14 +45,6 @@ public class WikiSpaceResponseDTO {
         this.path = path;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Boolean getSynchro() {
         return isSynchro;
     }
@@ -67,5 +59,13 @@ public class WikiSpaceResponseDTO {
 
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(String resourceType) {
+        this.resourceType = resourceType;
     }
 }

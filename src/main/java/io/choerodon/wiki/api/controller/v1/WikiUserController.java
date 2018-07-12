@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.api.dto.WikiUserDTO;
@@ -35,14 +36,14 @@ public class WikiUserController {
      * @param wikiUserDTO 用户信息
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "创建wiki用户")
     @PostMapping
     public ResponseEntity<Boolean> create(
             @ApiParam(value = "用户信息", required = true)
             @RequestBody @Valid WikiUserDTO wikiUserDTO) {
 
-        return Optional.ofNullable(wikiUserService.create(wikiUserDTO,GetUserNameUtil.getUsername()))
+        return Optional.ofNullable(wikiUserService.create(wikiUserDTO, GetUserNameUtil.getUsername()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.user.create"));
     }
@@ -53,7 +54,7 @@ public class WikiUserController {
      * @param userName 用户名
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "wiki用户是否存在")
     @GetMapping("/{user_name}")
     public ResponseEntity<Boolean> checkUser(
@@ -71,7 +72,7 @@ public class WikiUserController {
      * @param pageName 用户名
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "删除wiki底下的文档")
     @GetMapping("/delete/{page_name}")
     public ResponseEntity<Boolean> delete(

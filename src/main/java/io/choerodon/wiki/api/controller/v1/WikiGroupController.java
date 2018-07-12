@@ -1,7 +1,7 @@
 package io.choerodon.wiki.api.controller.v1;
 
-import javax.validation.Valid;
 import java.util.Optional;
+import javax.validation.Valid;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.api.dto.WikiGroupDTO;
@@ -38,7 +39,7 @@ public class WikiGroupController {
      * @param wikiGroupDTO 用户信息
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "创建wiki组")
     @PostMapping
     public ResponseEntity<Boolean> create(

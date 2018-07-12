@@ -302,10 +302,31 @@ public interface WikiClient {
             @Path("project") String project,
             @Body FormBody body);
 
+    //获取页面资源
     @GET("/rest/wikis/{client}/spaces/XWiki/pages/{param1}/objects")
     Call<String> getPageClassResource(
             @Header("username") String username,
             @Path("client") String client,
             @Path("param1") String param1);
 
+    //创建页面
+    @Headers({"Content-Type:application/xml;charset=UTF-8"})
+    @PUT("/rest/wikis/{client}/spaces/{param1}/pages/{name}")
+    Call<ResponseBody> createPage1Name(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("name") String name,
+            @Body RequestBody xmlParam);
+
+    //创建页面
+    @Headers({"Content-Type:application/xml;charset=UTF-8"})
+    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/pages/{name}")
+    Call<ResponseBody> createPage2Name(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("param2") String param2,
+            @Path("name") String name,
+            @Body RequestBody xmlParam);
 }

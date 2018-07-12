@@ -8,10 +8,9 @@ databaseChangeLog(logicalFilePath: 'dba/wiki_space.groovy') {
             }
             column(name: 'resource_id', type: 'BIGINT UNSIGNED', remarks: '资源 ID')
             column(name: 'resource_type', type: 'VARCHAR(32)', remarks: '资源类型')
-            column(name: 'name', type: 'VARCHAR(128)', remarks: '空间名称')
+            column(name: 'name', type: 'VARCHAR(64)', remarks: '空间名称')
             column(name: 'icon', type: 'VARCHAR(64)', remarks: '空间图标')
-            column(name: 'path', type: 'VARCHAR(128)', remarks: '空间地址')
-            column(name: 'description', type: 'VARCHAR(1000)', remarks: '空间描述')
+            column(name: 'path', type: 'VARCHAR(256)', remarks: '空间地址')
             column(name: 'is_synchro', type: 'TINYINT UNSIGNED', remarks: '状态')
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")

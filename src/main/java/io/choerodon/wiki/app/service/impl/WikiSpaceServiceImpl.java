@@ -31,6 +31,7 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 public class WikiSpaceServiceImpl implements WikiSpaceService {
 
     private static final String LOCATION = "bin/view/";
+    private static final String TYPE = "project";
 
     private WikiSpaceRepository wikiSpaceRepository;
     private WikiSpaceAsynService wikiSpaceAsynService;
@@ -53,17 +54,12 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId,String username, String type) {
+    public void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String username, String type) {
         checkName(resourceId, wikiSpaceDTO.getName(), type);
         String path = getPath(resourceId, type);
 
         WikiSpaceE wikiSpaceE = new WikiSpaceE();
         wikiSpaceE.setIcon(wikiSpaceDTO.getIcon());
-        if (wikiSpaceDTO.getDescription() != null) {
-            wikiSpaceE.setDescription(wikiSpaceDTO.getDescription());
-        } else {
-            wikiSpaceE.setDescription("");
-        }
         wikiSpaceE.setResourceId(resourceId);
         wikiSpaceE.setResourceType(type);
         wikiSpaceE.setSynchro(false);
@@ -71,16 +67,16 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(type);
         switch (wikiSpaceResourceType) {
             case ORGANIZATION:
-                createOrgSpace(wikiSpaceE, wikiSpaceDTO,username);
+                createOrgSpace(wikiSpaceE, wikiSpaceDTO, username);
                 break;
             case PROJECT:
-                createProjectSpace(wikiSpaceE, wikiSpaceDTO,username);
+                createProjectSpace(wikiSpaceE, wikiSpaceDTO, username);
                 break;
             case ORGANIZATION_S:
-                createOrgUnderSpace(wikiSpaceE, wikiSpaceDTO, path,username);
+                createOrgUnderSpace(wikiSpaceE, wikiSpaceDTO, path, username);
                 break;
             case PROJECT_S:
-                createProjectUnderSpace(wikiSpaceE, wikiSpaceDTO, path,username);
+                createProjectUnderSpace(wikiSpaceE, wikiSpaceDTO, path, username);
                 break;
             default:
                 break;
@@ -105,18 +101,13 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public WikiSpaceResponseDTO update(Long id, WikiSpaceDTO wikiSpaceDTO,String username, String type) {
+    public WikiSpaceResponseDTO update(Long id, WikiSpaceDTO wikiSpaceDTO, String username, String type) {
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
         if (wikiSpaceE != null && wikiSpaceE.getSynchro()) {
             Map<String, String> params = new HashMap<>();
             if (!wikiSpaceE.getIcon().equals(wikiSpaceDTO.getIcon())) {
                 params.put("{{ SPACE_ICON }}", wikiSpaceDTO.getIcon());
                 wikiSpaceE.setIcon(wikiSpaceDTO.getIcon());
-            }
-            if (wikiSpaceDTO.getDescription() != null &&
-                    !wikiSpaceE.getDescription().equals(wikiSpaceDTO.getDescription())) {
-                params.put("{{ DESCRIPTION }}", wikiSpaceDTO.getDescription());
-                wikiSpaceE.setDescription(wikiSpaceDTO.getDescription());
             }
             if (!params.isEmpty()) {
                 params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
@@ -127,19 +118,19 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                     params.put("{{ SPACE_PARENT }}", path[0]);
                     InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                     String xmlParam = FileUtil.replaceReturnString(inputStream, params);
-                    iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam,username);
+                    iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, username);
                 } else if (type.equals(WikiSpaceResourceType.PROJECT_S.getResourceType())) {
                     params.put("{{ SPACE_ROOT }}", path[0]);
                     params.put("{{ SPACE_PARENT }}", path[1]);
                     InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome2.xml");
                     String xmlParam = FileUtil.replaceReturnString(inputStream, params);
-                    iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xmlParam,username);
+                    iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xmlParam, username);
                 }
-                return ConvertHelper.convert(wikiSpaceRepository.update(wikiSpaceE),WikiSpaceResponseDTO.class);
+                return ConvertHelper.convert(wikiSpaceRepository.update(wikiSpaceE), WikiSpaceResponseDTO.class);
             }
         }
 
-        return ConvertHelper.convert(wikiSpaceE,WikiSpaceResponseDTO.class);
+        return ConvertHelper.convert(wikiSpaceE, WikiSpaceResponseDTO.class);
     }
 
     private String getPath(Long resourceId, String type) {
@@ -162,25 +153,25 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         return "";
     }
 
-    private void createOrgSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO,String username) {
+    private void createOrgSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String username) {
         String orgName = "O-" + wikiSpaceDTO.getName();
         wikiSpaceE.setPath(orgName);
         wikiSpaceE.setName(orgName);
         WikiSpaceE orgSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createOrgSpace(orgName, orgSpace,username);
+        wikiSpaceAsynService.createOrgSpace(orgName, orgSpace, username);
     }
 
-    private void createProjectSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO,String username) {
+    private void createProjectSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String username) {
         String[] names = wikiSpaceDTO.getName().split("/");
         String param1 = "O-" + names[0];
         String param2 = "P-" + names[1];
         wikiSpaceE.setPath(param1 + "/" + param2);
         wikiSpaceE.setName(param2);
         WikiSpaceE projectSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createOrgUnderSpace(param1, param2, projectSpace,username);
+        wikiSpaceAsynService.createOrgUnderSpace(param1, param2, projectSpace, username, TYPE);
     }
 
-    private void createOrgUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path,String username) {
+    private void createOrgUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path, String username) {
         if (StringUtils.isEmpty(path)) {
             throw new CommonException("error.param.empty");
         }
@@ -188,10 +179,10 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setPath(path + "/" + orgUnderName);
         wikiSpaceE.setName(orgUnderName);
         WikiSpaceE orgUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createOrgUnderSpace(path, orgUnderName, orgUnderSpace,username);
+        wikiSpaceAsynService.createOrgUnderSpace(path, orgUnderName, orgUnderSpace, username, null);
     }
 
-    private void createProjectUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path,String username) {
+    private void createProjectUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path, String username) {
         if (StringUtils.isEmpty(path)) {
             throw new CommonException("error.param.empty");
         }
@@ -200,6 +191,6 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setPath(path + "/" + projectUnderName);
         wikiSpaceE.setName(projectUnderName);
         WikiSpaceE projectUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createProjectUnderSpace(param[0], param[1], projectUnderName, projectUnderSpace,username);
+        wikiSpaceAsynService.createProjectUnderSpace(param[0], param[1], projectUnderName, projectUnderSpace, username);
     }
 }

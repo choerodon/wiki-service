@@ -26,14 +26,13 @@ public class WikiEventHandler {
 
     private static final String IAM_SERVICE = "iam-service";
     private static final String ORG_SERVICE = "organization-service";
-    private static final String ORG_ICON = "chart-organisation";
-    private static final String PROJECT_ICON = "branch";
+    private static final String ORG_ICON = "domain";
+    private static final String PROJECT_ICON = "project";
     private static final String USERNAME = "admin";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiEventHandler.class);
 
     private WikiSpaceService wikiSpaceService;
-
-    WikiGroupService wikiGroupService;
+    private WikiGroupService wikiGroupService;
 
     public WikiEventHandler(WikiSpaceService wikiSpaceService, WikiGroupService wikiGroupService) {
         this.wikiSpaceService = wikiSpaceService;
@@ -117,7 +116,7 @@ public class WikiEventHandler {
     @EventListener(topic = IAM_SERVICE, businessType = "createUser")
     public void handleCreateUserEvent(EventPayload<GitlabUserDTO> payload) {
         GitlabUserDTO gitlabUserDTO = payload.getData();
-        wikiGroupService.createWikiUserToGroup(gitlabUserDTO,USERNAME);
+        wikiGroupService.createWikiUserToGroup(gitlabUserDTO, USERNAME);
     }
 
     /**

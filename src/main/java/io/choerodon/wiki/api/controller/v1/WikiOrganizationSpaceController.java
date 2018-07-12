@@ -12,6 +12,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.CustomPageRequest;
@@ -42,7 +43,7 @@ public class WikiOrganizationSpaceController {
      * @param name           空间名
      * @return
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "检查组织下空间名唯一性")
     @GetMapping(value = "/check")
     public ResponseEntity<Boolean> checkName(
@@ -62,7 +63,7 @@ public class WikiOrganizationSpaceController {
      * @param wikiSpaceDTO   空间信息
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "组织下创建wiki空间")
     @PostMapping
     public ResponseEntity create(
@@ -83,7 +84,7 @@ public class WikiOrganizationSpaceController {
      * @param searchParam    查询参数
      * @return Page of WikiSpaceResponseDTO
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "分页查询组织下创建的空间")
     @CustomPageRequest
     @PostMapping(value = "/list_by_options")
@@ -95,7 +96,7 @@ public class WikiOrganizationSpaceController {
             @ApiParam(value = "查询参数")
             @RequestBody(required = false) String searchParam) {
         return Optional.ofNullable(wikiSpaceService.listWikiSpaceByPage(organizationId,
-                WikiSpaceResourceType.ORGANIZATION_S.getResourceType(), pageRequest, searchParam))
+                WikiSpaceResourceType.ORGANIZATION.getResourceType(), pageRequest, searchParam))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.query"));
     }
@@ -107,7 +108,7 @@ public class WikiOrganizationSpaceController {
      * @param id             空间id
      * @return DevopsServiceDTO
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "查询组织下单个wiki空间")
     @GetMapping(value = "/{id}")
     public ResponseEntity<WikiSpaceResponseDTO> query(
@@ -128,7 +129,7 @@ public class WikiOrganizationSpaceController {
      * @param wikiSpaceDTO   空间信息
      * @return Boolean
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "更新组织下单个空间")
     @PutMapping(value = "/{id}")
     public ResponseEntity<WikiSpaceResponseDTO> update(@ApiParam(value = "组织ID", required = true)
@@ -137,7 +138,7 @@ public class WikiOrganizationSpaceController {
                                                        @PathVariable Long id,
                                                        @ApiParam(value = "空间信息", required = true)
                                                        @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO,GetUserNameUtil.getUsername(),
+        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, GetUserNameUtil.getUsername(),
                 WikiSpaceResourceType.ORGANIZATION_S.getResourceType()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.update"));

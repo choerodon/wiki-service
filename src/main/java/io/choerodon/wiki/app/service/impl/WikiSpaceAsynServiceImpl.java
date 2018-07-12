@@ -4,12 +4,15 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.app.service.WikiSpaceAsynService;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
+import io.choerodon.wiki.domain.service.IWikiCreatePageService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebPreferencesService;
 import io.choerodon.wiki.infra.common.FileUtil;
@@ -23,29 +26,45 @@ import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
 @Async
 public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WikiSpaceAsynServiceImpl.class);
+
+    private static final String PAGE = "页面";
+    private static final String TYPE = "project";
+    private static final String USERNAME = "admin";
+
     private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
     private IWikiSpaceWebPreferencesService iWikiSpaceWebPreferencesService;
+    private IWikiCreatePageService iWikiCreatePageService;
     private WikiSpaceMapper wikiSpaceMapper;
 
     public WikiSpaceAsynServiceImpl(IWikiSpaceWebHomeService iWikiSpaceWebHomeService,
                                     IWikiSpaceWebPreferencesService iWikiSpaceWebPreferencesService,
+                                    IWikiCreatePageService iWikiCreatePageService,
                                     WikiSpaceMapper wikiSpaceMapper) {
         this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
         this.iWikiSpaceWebPreferencesService = iWikiSpaceWebPreferencesService;
+        this.iWikiCreatePageService = iWikiCreatePageService;
         this.wikiSpaceMapper = wikiSpaceMapper;
     }
 
     @Override
     public void createOrgSpace(String orgName, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace1WebHome(orgName, getWebHome1XmlStr(wikiSpaceE), username);
-        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace1WebPreferences(orgName, getWebPreferencesXmlStr(wikiSpaceE), username);
+        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace1WebPreferences(orgName, getWebPreferencesXmlStr(wikiSpaceE), USERNAME);
+        int pageCode = iWikiCreatePageService.createPage1Code(orgName, PAGE, getPageXmlStr(), username);
+        LOGGER.info("webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode + "  pageCode: " + pageCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
     @Override
-    public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username) {
+    public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username, String type) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
+        if (TYPE.equals(type)) {
+            int pageCode = iWikiCreatePageService.CreatePage2Code(param1, param2, PAGE, getPageXmlStr(), username);
+            LOGGER.info("pageCode:" + pageCode);
+        }
+        LOGGER.info("webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
@@ -53,6 +72,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     public void createProjectUnderSpace(String param1, String param2, String projectUnderName, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace3WebHome(param1, param2, projectUnderName, getWebHome3XmlStr(param1, param2, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace3WebPreferences(param1, param2, projectUnderName, getWebPreferencesXmlStr(wikiSpaceE), username);
+        LOGGER.info("webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
@@ -75,7 +95,6 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
         params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
-        params.put("{{ DESCRIPTION }}", wikiSpaceE.getDescription());
         return FileUtil.replaceReturnString(inputStream, params);
     }
 
@@ -87,7 +106,6 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         params.put("{{ SPACE_PARENT }}", parent);
         params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
-        params.put("{{ DESCRIPTION }}", wikiSpaceE.getDescription());
         return FileUtil.replaceReturnString(inputStream, params);
     }
 
@@ -100,7 +118,6 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         params.put("{{ SPACE_PARENT }}", parent);
         params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
-        params.put("{{ DESCRIPTION }}", wikiSpaceE.getDescription());
         return FileUtil.replaceReturnString(inputStream, params);
     }
 
@@ -110,4 +127,11 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         params.put("{{ SPACE_NAME }}", wikiSpaceE.getName());
         return FileUtil.replaceReturnString(inputStream, params);
     }
+
+    private String getPageXmlStr() {
+        InputStream inputStream = this.getClass().getResourceAsStream("/xml/page.xml");
+        Map<String, String> params = new HashMap<>();
+        return FileUtil.replaceReturnString(inputStream, params);
+    }
+
 }

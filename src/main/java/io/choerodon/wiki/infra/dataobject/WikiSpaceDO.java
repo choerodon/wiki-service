@@ -24,7 +24,6 @@ public class WikiSpaceDO extends AuditDomain {
     private String name;
     private String icon;
     private String path;
-    private String description;
     private Boolean isSynchro;
 
     public Long getId() {
@@ -73,14 +72,6 @@ public class WikiSpaceDO extends AuditDomain {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Boolean getSynchro() {

@@ -7,7 +7,7 @@
          ws.*
         FROM wiki_space ws
         WHERE ws.resource_id = #{resourceId}
-        AND ws.resource_type = #{type}
+        AND ws.resource_type LIKE CONCAT(CONCAT('%', #{type, jdbcType=VARCHAR}),'%')
         <if test='searchParam != null'>
             <if test='searchParam.icon != null and searchParam.icon.size > 0'>
                 AND
@@ -21,17 +21,10 @@
                     ws.name LIKE CONCAT(CONCAT('%', #{name, jdbcType=VARCHAR}),'%')
                 </foreach>
             </if>
-            <if test='searchParam.description != null and searchParam.description.size > 0'>
-                AND
-                <foreach collection="searchParam.description" item="description" open="(" separator=" OR " close=")">
-                    ws.description LIKE CONCAT(CONCAT('%', #{description, jdbcType=VARCHAR}),'%')
-                </foreach>
-            </if>
         </if>
         <if test='param != null and param != ""'>
             AND (ws.icon LIKE CONCAT(CONCAT('%', #{param, jdbcType=VARCHAR}),'%')
-            OR ws.name LIKE CONCAT(CONCAT('%', #{param, jdbcType=VARCHAR}),'%')
-            OR ws.description LIKE CONCAT(CONCAT('%', #{param, jdbcType=VARCHAR}),'%'))
+            OR ws.name LIKE CONCAT(CONCAT('%', #{param, jdbcType=VARCHAR}),'%'))
         </if>
     </select>
 

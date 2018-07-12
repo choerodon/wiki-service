@@ -13,11 +13,8 @@ public class WikiSpaceDTO {
     private String icon;
 
     @NotNull
-    @Size(min = 1, max = 128, message = "error.name.size")
+    @Size(min = 1, max = 64, message = "error.name.size")
     private String name;
-
-    @Size(min = 0, max = 1000, message = "error.describe.size")
-    private String description;
 
     public String getIcon() {
         return icon;
@@ -33,13 +30,5 @@ public class WikiSpaceDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

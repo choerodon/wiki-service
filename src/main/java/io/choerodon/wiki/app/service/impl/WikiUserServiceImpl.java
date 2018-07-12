@@ -55,6 +55,4 @@ public class WikiUserServiceImpl implements WikiUserService {
         params.put("{{ USER_EMAIL }}", wikiUserE.getEmail());
         return FileUtil.replaceReturnString(inputStream, params);
     }
-
-
 }

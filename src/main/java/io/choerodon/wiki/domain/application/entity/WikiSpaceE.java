@@ -11,7 +11,6 @@ public class WikiSpaceE {
     private String name;
     private String icon;
     private String path;
-    private String description;
     private Boolean isSynchro;
     private Long objectVersionNumber;
 
@@ -61,14 +60,6 @@ public class WikiSpaceE {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Boolean getSynchro() {
