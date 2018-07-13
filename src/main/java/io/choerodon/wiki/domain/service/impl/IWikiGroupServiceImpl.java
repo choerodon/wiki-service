@@ -131,9 +131,9 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     }
 
     @Override
-    public Boolean addRightsToOrg(String organizationCode, String organizationName, List<String> rights, String username) {
+    public Boolean addRightsToOrg(String organizationCode, String organizationName, List<String> rights,Boolean isAdmin, String username) {
         try {
-            String groupName = "O-" + organizationCode + "UserGroup";
+            String groupName = "O-" + organizationCode + (isAdmin? "AdminGroup":"UserGroup");
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
                 throw new CommonException("error.query.group");
@@ -149,7 +149,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "1")
                     .add("property#groups", "XWiki." + groupName).add("property#levels", levels).build();
 
-            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, organizationName, body);
+            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, "O-"+organizationName, body);
             Response response = call.execute();
             if (response.code() == 201) {
                 return true;
@@ -162,9 +162,9 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     }
 
     @Override
-    public Boolean addRightsToProject(String projectName, String projectCode, String organizationName,List<String> rights, String username) {
+    public Boolean addRightsToProject(String projectName, String projectCode, String organizationName,List<String> rights,Boolean isAdmin, String username) {
         try {
-            String groupName = "P-" + projectCode + "UserGroup";
+            String groupName = "P-" + projectCode + (isAdmin?"AdminGroup":"UserGroup");
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
                 throw new CommonException("error.query.group");
@@ -181,7 +181,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "1")
                     .add("property#groups", "XWiki." + groupName).add("property#levels", levels).build();
 
-            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, organizationName, projectName, body);
+            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, "O-"+organizationName, "P-"+projectName, body);
             Response response = call.execute();
             if (response.code() == 201) {
                 return true;

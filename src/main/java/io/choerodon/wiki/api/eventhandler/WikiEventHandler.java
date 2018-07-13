@@ -91,6 +91,7 @@ public class WikiEventHandler {
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setProjectCode(projectEvent.getProjectCode());
         wikiGroupDTO.setProjectName(projectEvent.getProjectName());
+        wikiGroupDTO.setOrganizationName(projectEvent.getOrganizationName());
         wikiGroupService.create(wikiGroupDTO, USERNAME, true, false);
         wikiGroupService.setUserToGroup(adminGroupName, projectEvent.getUserId(), USERNAME);
         wikiGroupDTO.setGroupName(userGroupName);

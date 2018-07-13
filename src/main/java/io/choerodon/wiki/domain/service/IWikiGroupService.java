@@ -15,7 +15,7 @@ public interface IWikiGroupService {
 
     Boolean disableProjectGroupView(String projectName, String projectCode, String organizationName,String username);
 
-    Boolean addRightsToOrg(String organizationCode, String organizationName, List<String> rights,String username);
+    Boolean addRightsToOrg(String organizationCode, String organizationName, List<String> rights, Boolean isAdmin, String username);
 
-    Boolean addRightsToProject(String projectName, String projectCode, String organizationName,List<String> rights,String username);
+    Boolean addRightsToProject(String projectName, String projectCode, String organizationName,List<String> rights, Boolean isAdmin, String username);
 }

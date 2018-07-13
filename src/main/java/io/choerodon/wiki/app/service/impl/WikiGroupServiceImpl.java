@@ -57,18 +57,18 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             if (isAdmin) {
                 if (isOrg) {
                     //给组织组分配admin权限
-                    iWikiGroupService.addRightsToOrg(wikiGroupDTO.getOrganizationCode(),wikiGroupDTO.getOrganizationName(),adminRightsList,username);
+                    iWikiGroupService.addRightsToOrg(wikiGroupDTO.getOrganizationCode(),wikiGroupDTO.getOrganizationName(),adminRightsList,isAdmin,username);
                 } else {
                     //给项目组分配admin权限
-                    iWikiGroupService.addRightsToProject(wikiGroupDTO.getProjectName(),wikiGroupDTO.getProjectCode(),wikiGroupDTO.getOrganizationName(),adminRightsList,username);
+                    iWikiGroupService.addRightsToProject(wikiGroupDTO.getProjectName(),wikiGroupDTO.getProjectCode(),wikiGroupDTO.getOrganizationName(),adminRightsList, isAdmin,username);
                 }
             } else {
                 if (isOrg) {
                     //给组织组分配user权限
-                    iWikiGroupService.addRightsToOrg(wikiGroupDTO.getOrganizationCode(),wikiGroupDTO.getOrganizationName(),userRightsList,username);
+                    iWikiGroupService.addRightsToOrg(wikiGroupDTO.getOrganizationCode(),wikiGroupDTO.getOrganizationName(),userRightsList,isAdmin,username);
                 } else {
                     //给项目组分配user权限
-                    iWikiGroupService.addRightsToProject(wikiGroupDTO.getProjectName(),wikiGroupDTO.getProjectCode(),wikiGroupDTO.getOrganizationName(),userRightsList,username);
+                    iWikiGroupService.addRightsToProject(wikiGroupDTO.getProjectName(),wikiGroupDTO.getProjectCode(),wikiGroupDTO.getOrganizationName(),userRightsList, isAdmin,username);
                 }
 
             }
