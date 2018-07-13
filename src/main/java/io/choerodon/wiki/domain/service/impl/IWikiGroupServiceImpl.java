@@ -2,6 +2,7 @@ package io.choerodon.wiki.domain.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "0")
                     .add("property#groups", "XWiki." + groupName).add("property#levels", "view").build();
 
+            URLEncoder.encode(organizationName,"UTF-8");
             Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, organizationName, body);
             Response response = call.execute();
             if (response.code() == 201) {
@@ -118,6 +120,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "0")
                     .add("property#groups", "XWiki." + groupName).add("property#levels", "view").build();
 
+            URLEncoder.encode(organizationName,"UTF-8");
             Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, organizationName, projectName, body);
             Response response = call.execute();
             if (response.code() == 201) {
@@ -149,7 +152,9 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "1")
                     .add("property#groups", "XWiki." + groupName).add("property#levels", levels).build();
 
-            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, "O-"+organizationName, body);
+            String encodeStr = "O-"+organizationName;
+            URLEncoder.encode(encodeStr,"UTF-8");
+            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, encodeStr, body);
             Response response = call.execute();
             logger.info("u:"+username);
             logger.info("client"+client);
@@ -184,7 +189,9 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "1")
                     .add("property#groups", "XWiki." + groupName).add("property#levels", levels).build();
 
-            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, "O-"+organizationName, "P-"+projectName, body);
+            String encodeStr = "O-"+organizationName;
+            URLEncoder.encode(encodeStr,"UTF-8");
+            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, encodeStr, "P-"+projectName, body);
             Response response = call.execute();
             if (response.code() == 201) {
                 return true;

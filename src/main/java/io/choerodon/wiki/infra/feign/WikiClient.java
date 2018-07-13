@@ -287,7 +287,6 @@ public interface WikiClient {
             @Path("param1") String param1,
             @Body FormBody body);
 
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
     @POST("/rest/wikis/{client}/spaces/{organization}/pages/WebPreferences/objects")
     Call<ResponseBody> offerRightToOrgGroupView(
             @Header("username") String username,
@@ -295,7 +294,6 @@ public interface WikiClient {
             @Path("organization") String organization,
             @Body FormBody body);
 
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
     @POST("/rest/wikis/{client}/spaces/{organization}/spaces/{project}/pages/WebPreferences/objects")
     Call<ResponseBody> offerRightToProjectGroupView(
             @Header("username") String username,
