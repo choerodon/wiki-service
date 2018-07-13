@@ -151,8 +151,9 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
 
             Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, "O-"+organizationName, body);
             Response response = call.execute();
+            logger.info("u:"+username);
+            logger.info("client"+client);
             logger.info("O-"+organizationName+":"+response.code());
-            logger.info("body:"+body.toString());
             if (response.code() == 201) {
                 return true;
             }
