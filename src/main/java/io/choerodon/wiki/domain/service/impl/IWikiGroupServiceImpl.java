@@ -3,6 +3,7 @@ package io.choerodon.wiki.domain.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.FormBody;
@@ -51,11 +52,11 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             if (response.code() == 201 || response.code() == 202) {
                 return true;
             } else {
-                return false;
+                throw new CommonException("error.create.group");
             }
         } catch (IOException e) {
             logger.error(e.getMessage());
-            return false;
+            throw new CommonException("error.create.group");
         }
     }
 
@@ -93,7 +94,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "0")
                     .add("property#groups", "XWiki." + groupName).add("property#levels", "view").build();
 
-            Call<ResponseBody> call = wikiClient.disableOrgGroupView(username, client, organizationName, body);
+            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, organizationName, body);
             Response response = call.execute();
             if (response.code() == 201) {
                 return true;
@@ -117,7 +118,70 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "0")
                     .add("property#groups", "XWiki." + groupName).add("property#levels", "view").build();
 
-            Call<ResponseBody> call = wikiClient.disableProjectGroupView(username, client, organizationName, projectName, body);
+            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, organizationName, projectName, body);
+            Response response = call.execute();
+            if (response.code() == 201) {
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean addRightsToOrg(String organizationCode, String organizationName, List<String> rights, String username) {
+        try {
+            String groupName = "O-" + organizationCode + "UserGroup";
+            Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
+            if (!falg) {
+                throw new CommonException("error.query.group");
+            }
+            StringBuffer stringBuffer = new StringBuffer();
+            for(String right:rights){
+                stringBuffer.append(right);
+                stringBuffer.append(",");
+            }
+            String levels = stringBuffer.toString();
+            levels = levels.substring(0,levels.length()-1);
+
+            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "1")
+                    .add("property#groups", "XWiki." + groupName).add("property#levels", levels).build();
+
+            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, organizationName, body);
+            Response response = call.execute();
+            if (response.code() == 201) {
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean addRightsToProject(String projectName, String projectCode, String organizationName,List<String> rights, String username) {
+        try {
+            String groupName = "P-" + projectCode + "UserGroup";
+            Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
+            if (!falg) {
+                throw new CommonException("error.query.group");
+            }
+
+            StringBuffer stringBuffer = new StringBuffer();
+            for(String right:rights){
+                stringBuffer.append(right);
+                stringBuffer.append(",");
+            }
+            String levels = stringBuffer.toString();
+            levels = levels.substring(0,levels.length()-1);
+
+            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "1")
+                    .add("property#groups", "XWiki." + groupName).add("property#levels", levels).build();
+
+            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, organizationName, projectName, body);
             Response response = call.execute();
             if (response.code() == 201) {
                 return true;

@@ -288,14 +288,14 @@ public interface WikiClient {
             @Body FormBody body);
 
     @POST("/rest/wikis/{client}/spaces/{organization}/pages/WebPreferences/objects")
-    Call<ResponseBody> disableOrgGroupView(
+    Call<ResponseBody> offerRightToOrgGroupView(
             @Header("username") String username,
             @Path("client") String client,
             @Path("organization") String organization,
             @Body FormBody body);
 
     @POST("/rest/wikis/{client}/spaces/{organization}/spaces/{project}/pages/WebPreferences/objects")
-    Call<ResponseBody> disableProjectGroupView(
+    Call<ResponseBody> offerRightToProjectGroupView(
             @Header("username") String username,
             @Path("client") String client,
             @Path("organization") String organization,

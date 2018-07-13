@@ -1,5 +1,7 @@
 package io.choerodon.wiki.infra.feign.fallback;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -28,6 +30,11 @@ public class IamServiceClientFallback implements IamServiceClient {
     @Override
     public ResponseEntity<ProjectDO> queryIamProject(Long projectId) {
         return new ResponseEntity("error.project.get", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<UserDO>> queryUsersByIds(List<Long> ids) {
+        return new ResponseEntity("error.user.get", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

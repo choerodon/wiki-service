@@ -1,5 +1,8 @@
 package io.choerodon.wiki.infra.persistence.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -54,6 +57,22 @@ public class IamRepositoryImpl implements IamRepository {
             throw new CommonException("error.project.get");
         }
         return ConvertHelper.convert(projectDO.getBody(), ProjectE.class);
+    }
+
+    @Override
+    public UserE queryUserById(Long userId) {
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(userId);
+        ResponseEntity<List<UserDO>> responseEntity = iamServiceClient.queryUsersByIds(userIds);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.user.get");
+        }
+        List<UserDO> list = responseEntity.getBody();
+        if(list!=null && list.size()==1){
+            return ConvertHelper.convert(list.get(0), UserE.class);
+        }else {
+            throw new CommonException("error.user.query");
+        }
     }
 
 }

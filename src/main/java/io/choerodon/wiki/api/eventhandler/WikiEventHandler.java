@@ -56,14 +56,20 @@ public class WikiEventHandler {
         wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
-        //创建组
-        WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
+
         String adminGroupName = "O-" + organizationEventPayload.getCode() + "AdminGroup";
         String userGroupName = "O-" + organizationEventPayload.getCode() + "UserGroup";
+
+        WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
         wikiGroupDTO.setGroupName(adminGroupName);
-        wikiGroupService.create(wikiGroupDTO, USERNAME);
+        wikiGroupDTO.setOrganizationCode(organizationEventPayload.getCode());
+        wikiGroupDTO.setOrganizationName(organizationEventPayload.getName());
+        wikiGroupService.create(wikiGroupDTO, USERNAME, true, true);
+
+        wikiGroupService.setUserToGroup(adminGroupName, organizationEventPayload.getUserId(), USERNAME);
+
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, USERNAME);
+        wikiGroupService.create(wikiGroupDTO, USERNAME, false, true);
     }
 
     /**
@@ -83,9 +89,12 @@ public class WikiEventHandler {
         String adminGroupName = "P-" + projectEvent.getProjectCode() + "AdminGroup";
         String userGroupName = "P-" + projectEvent.getProjectCode() + "UserGroup";
         wikiGroupDTO.setGroupName(adminGroupName);
-        wikiGroupService.create(wikiGroupDTO, USERNAME);
+        wikiGroupDTO.setProjectCode(projectEvent.getProjectCode());
+        wikiGroupDTO.setProjectName(projectEvent.getProjectName());
+        wikiGroupService.create(wikiGroupDTO, USERNAME, true, false);
+        wikiGroupService.setUserToGroup(adminGroupName, projectEvent.getUserId(), USERNAME);
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, USERNAME);
+        wikiGroupService.create(wikiGroupDTO, USERNAME, false, false);
     }
 
 

@@ -11,7 +11,7 @@ import io.choerodon.wiki.api.dto.WikiGroupDTO;
  */
 public interface WikiGroupService {
 
-    Boolean create(WikiGroupDTO wikiGroupDTO, String username);
+    Boolean create(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg);
 
     void createWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList, String username);
 
@@ -22,4 +22,6 @@ public interface WikiGroupService {
     void disableOrganizationGroup(Long orgId, String username);
 
     void disableProjectGroup(Long projectId, String username);
+
+    void setUserToGroup(String groupName, Long userId, String username);
 }

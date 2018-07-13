@@ -14,4 +14,6 @@ public interface IamRepository {
     OrganizationE queryOrganizationById(Long organizationId);
 
     ProjectE queryIamProject(Long projectId);
+
+    UserE queryUserById(Long userId);
 }

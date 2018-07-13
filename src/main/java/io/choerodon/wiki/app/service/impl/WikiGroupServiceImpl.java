@@ -1,6 +1,7 @@
 package io.choerodon.wiki.app.service.impl;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,10 +46,32 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     }
 
     @Override
-    public Boolean create(WikiGroupDTO wikiGroupDTO, String username) {
+    public Boolean create(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg) {
         Boolean flag = iWikiUserService.checkDocExsist(username, wikiGroupDTO.getGroupName());
         if (!flag) {
-            return iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
+            iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
+            String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
+            List<String> adminRightsList = Arrays.asList(adminRights);
+            String[] userRights = {"login", "view", "creator", "comment", "script", "programming"};
+            List<String> userRightsList = Arrays.asList(userRights);
+            if (isAdmin) {
+                if (isOrg) {
+                    //给组织组分配admin权限
+                    iWikiGroupService.addRightsToOrg(wikiGroupDTO.getOrganizationCode(),wikiGroupDTO.getOrganizationName(),adminRightsList,username);
+                } else {
+                    //给项目组分配admin权限
+                    iWikiGroupService.addRightsToProject(wikiGroupDTO.getProjectName(),wikiGroupDTO.getProjectCode(),wikiGroupDTO.getOrganizationName(),adminRightsList,username);
+                }
+            } else {
+                if (isOrg) {
+                    //给组织组分配user权限
+                    iWikiGroupService.addRightsToOrg(wikiGroupDTO.getOrganizationCode(),wikiGroupDTO.getOrganizationName(),userRightsList,username);
+                } else {
+                    //给项目组分配user权限
+                    iWikiGroupService.addRightsToProject(wikiGroupDTO.getProjectName(),wikiGroupDTO.getProjectCode(),wikiGroupDTO.getOrganizationName(),userRightsList,username);
+                }
+
+            }
         }
         return false;
     }
@@ -139,6 +162,17 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             iWikiGroupService.disableProjectGroupView(projectE.getName(), projectE.getCode(), organization.getName(), username);
         } else {
             throw new CommonException("error.query.project");
+        }
+    }
+
+    @Override
+    public void setUserToGroup(String groupName, Long userId, String username) {
+        UserE userE = iamRepository.queryUserById(userId);
+        if (userE != null && userE.getLoginName() != null) {
+            String loginName = userE.getLoginName();
+            iWikiGroupService.createGroupUsers(groupName, loginName, username);
+        } else {
+            throw new CommonException("error.query.user");
         }
     }
 

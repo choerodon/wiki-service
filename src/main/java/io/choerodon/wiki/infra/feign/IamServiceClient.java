@@ -1,9 +1,12 @@
 package io.choerodon.wiki.infra.feign;
 
+import java.util.List;
+
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO;
@@ -25,5 +28,8 @@ public interface IamServiceClient {
 
     @GetMapping(value = "/v1/projects/{projectId}")
     ResponseEntity<ProjectDO> queryIamProject(@PathVariable("projectId") Long projectId);
+
+    @GetMapping(value = "/v1/users/ids")
+    ResponseEntity<List<UserDO>> queryUsersByIds(@RequestBody List<Long> ids);
 
 }
