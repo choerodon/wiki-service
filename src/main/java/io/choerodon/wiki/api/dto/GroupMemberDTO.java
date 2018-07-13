@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Ernst on 2018/7/9.
  */
-public class GitlabGroupMemberDTO {
+public class GroupMemberDTO {
 
     private Long userId;
 

@@ -8,10 +8,7 @@ import org.springframework.stereotype.Component;
 
 import io.choerodon.core.event.EventPayload;
 import io.choerodon.event.consumer.annotation.EventListener;
-import io.choerodon.wiki.api.dto.GitlabGroupMemberDTO;
-import io.choerodon.wiki.api.dto.GitlabUserDTO;
-import io.choerodon.wiki.api.dto.WikiGroupDTO;
-import io.choerodon.wiki.api.dto.WikiSpaceDTO;
+import io.choerodon.wiki.api.dto.*;
 import io.choerodon.wiki.app.service.WikiGroupService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
@@ -103,45 +100,46 @@ public class WikiEventHandler {
      * 角色同步事件
      */
     @EventListener(topic = IAM_SERVICE, businessType = "updateMemberRole")
-    public void handleCreateGroupMemberEvent(EventPayload<List<GitlabGroupMemberDTO>> payload) {
-        List<GitlabGroupMemberDTO> gitlabGroupMemberDTOList = payload.getData();
-        loggerInfo(gitlabGroupMemberDTOList);
-
-        wikiGroupService.createWikiGroupUsers(gitlabGroupMemberDTOList, USERNAME);
+    public void handleCreateGroupMemberEvent(EventPayload<List<GroupMemberDTO>> payload) {
+        List<GroupMemberDTO> groupMemberDTOList = payload.getData();
+        loggerInfo(groupMemberDTOList);
+        wikiGroupService.createWikiGroupUsers(groupMemberDTOList, USERNAME);
     }
 
     /**
      * 角色同步事件,去除角色
      */
     @EventListener(topic = IAM_SERVICE, businessType = "deleteMemberRole")
-    public void handledeleteMemberRoleEvent(EventPayload<List<GitlabGroupMemberDTO>> payload) {
-        List<GitlabGroupMemberDTO> gitlabGroupMemberDTOList = payload.getData();
-        loggerInfo(gitlabGroupMemberDTOList);
-        wikiGroupService.deleteWikiGroupUsers(gitlabGroupMemberDTOList);
+    public void handledeleteMemberRoleEvent(EventPayload<List<GroupMemberDTO>> payload) {
+        List<GroupMemberDTO> groupMemberDTOList = payload.getData();
+        loggerInfo(groupMemberDTOList);
+        wikiGroupService.deleteWikiGroupUsers(groupMemberDTOList, USERNAME);
     }
 
     /**
      * 用户创建事件
      */
     @EventListener(topic = IAM_SERVICE, businessType = "createUser")
-    public void handleCreateUserEvent(EventPayload<GitlabUserDTO> payload) {
-        GitlabUserDTO gitlabUserDTO = payload.getData();
-        wikiGroupService.createWikiUserToGroup(gitlabUserDTO, USERNAME);
+    public void handleCreateUserEvent(EventPayload<UserDTO> payload) {
+        UserDTO userDTO = payload.getData();
+        wikiGroupService.createWikiUserToGroup(userDTO, USERNAME);
     }
 
     /**
      * 组织禁用事件
      */
-/*    @EventListener(topic = IAM_SERVICE, businessType = "")
-    public void handleOrganizationDisableEvent(EventPayload payload) {
-
-    }*/
+    @EventListener(topic = IAM_SERVICE, businessType = "disableOrganization")
+    public void handleOrganizationDisableEvent(EventPayload<OrganizationDTO> payload) {
+        OrganizationDTO organizationDTO = payload.getData();
+        wikiGroupService.disableOrganizationGroup(organizationDTO.getOrganizationId(), USERNAME);
+    }
 
     /**
      * 项目禁用事件
      */
-/*    @EventListener(topic = IAM_SERVICE, businessType = "")
-    public void handleProjectDisableEvent(EventPayload payload) {
-
-    }*/
+    @EventListener(topic = IAM_SERVICE, businessType = "disableProject")
+    public void handleProjectDisableEvent(EventPayload<ProjectDTO> payload) {
+        ProjectDTO projectDTO = payload.getData();
+        wikiGroupService.disableProjectGroup(projectDTO.getProjectId(), USERNAME);
+    }
 }

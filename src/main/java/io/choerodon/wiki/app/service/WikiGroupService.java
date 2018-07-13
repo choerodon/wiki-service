@@ -2,8 +2,8 @@ package io.choerodon.wiki.app.service;
 
 import java.util.List;
 
-import io.choerodon.wiki.api.dto.GitlabGroupMemberDTO;
-import io.choerodon.wiki.api.dto.GitlabUserDTO;
+import io.choerodon.wiki.api.dto.GroupMemberDTO;
+import io.choerodon.wiki.api.dto.UserDTO;
 import io.choerodon.wiki.api.dto.WikiGroupDTO;
 
 /**
@@ -13,11 +13,11 @@ public interface WikiGroupService {
 
     Boolean create(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg);
 
-    void createWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList, String username);
+    void createWikiGroupUsers(List<GroupMemberDTO> groupMemberDTOList, String username);
 
-    void deleteWikiGroupUsers(List<GitlabGroupMemberDTO> gitlabGroupMemberList);
+    void deleteWikiGroupUsers(List<GroupMemberDTO> groupMemberDTOList, String username);
 
-    void createWikiUserToGroup(GitlabUserDTO gitlabUserDTO, String username);
+    void createWikiUserToGroup(UserDTO userDTO, String username);
 
     void disableOrganizationGroup(Long orgId, String username);
 

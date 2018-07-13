@@ -5,5 +5,7 @@ package io.choerodon.wiki.domain.service;
  */
 public interface IWikiClassService {
 
-    void getPageClassResource(String pageName,String username);
+    String getPageClassResource(String pageName, String username);
+
+    void deletePageClass(String username, String name, int objectNumber);
 }

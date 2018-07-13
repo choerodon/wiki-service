@@ -2,6 +2,7 @@ package io.choerodon.wiki.domain.service.impl;
 
 import java.io.IOException;
 
+import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import io.choerodon.wiki.infra.feign.WikiClient;
 public class IWikiClassServiceImpl implements IWikiClassService {
 
     private static final Logger logger = LoggerFactory.getLogger(IWikiClassServiceImpl.class);
+    private static final String CLASSNAME = "XWiki.XWikiGroups";
 
     @Value("${wiki.client}")
     private String client;
@@ -29,10 +31,21 @@ public class IWikiClassServiceImpl implements IWikiClassService {
     }
 
     @Override
-    public void getPageClassResource(String pageName,String username) {
+    public String getPageClassResource(String pageName, String username) {
         try {
-            Response<String> response = wikiClient.getPageClassResource(username,client, pageName).execute();
-            String xmlString = response.body();
+            Response<ResponseBody> response = wikiClient.getPageClassResource(username, client, pageName).execute();
+            return response.body().string();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+        return "";
+    }
+
+    @Override
+    public void deletePageClass(String username, String name, int objectNumber) {
+        try {
+            Response<ResponseBody> response = wikiClient.deletePageClass(username, client, name, CLASSNAME, objectNumber).execute();
+            logger.info("Delete the status code returned by the page object: " + response.code());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

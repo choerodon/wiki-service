@@ -306,7 +306,7 @@ public interface WikiClient {
 
     //获取页面资源
     @GET("/rest/wikis/{client}/spaces/XWiki/pages/{param1}/objects")
-    Call<String> getPageClassResource(
+    Call<ResponseBody> getPageClassResource(
             @Header("username") String username,
             @Path("client") String client,
             @Path("param1") String param1);
@@ -331,4 +331,14 @@ public interface WikiClient {
             @Path("param2") String param2,
             @Path("name") String name,
             @Body RequestBody xmlParam);
+
+    //删除页面里的对象
+    @Headers({"Content-Type:application/xml;charset=UTF-8"})
+    @DELETE("/rest/wikis/{client}/spaces/XWiki/pages/{name}/objects/{className}/{objectNumber}")
+    Call<ResponseBody> deletePageClass(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("name") String name,
+            @Path("className") String className,
+            @Path("objectNumber") int objectNumber);
 }

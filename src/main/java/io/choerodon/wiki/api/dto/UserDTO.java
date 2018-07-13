@@ -1,9 +1,9 @@
 package io.choerodon.wiki.api.dto;
 
 /**
- * Created by zzy on 2018/3/23.
+ * Created by Zenger on 2018/7/3.
  */
-public class GitlabUserDTO {
+public class UserDTO {
 
     private String username;
     private String email;
