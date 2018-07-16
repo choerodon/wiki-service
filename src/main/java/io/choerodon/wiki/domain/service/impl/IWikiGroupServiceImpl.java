@@ -87,6 +87,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     public Boolean disableOrgGroupView(String organizationCode, String organizationName, String username) {
         try {
             String groupName = "O-" + organizationCode + "UserGroup";
+            String param = "O-" + organizationName;
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
                 throw new CommonException("error.query.group");
@@ -95,8 +96,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "0")
                     .add("property#groups", "XWiki." + groupName).add("property#levels", "view").build();
 
-            URLEncoder.encode(organizationName,"UTF-8");
-            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, organizationName, body);
+            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, param, body);
             Response response = call.execute();
             if (response.code() == 201) {
                 return true;

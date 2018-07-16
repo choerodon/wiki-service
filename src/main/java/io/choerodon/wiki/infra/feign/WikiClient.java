@@ -274,12 +274,14 @@ public interface WikiClient {
             @Path("groupName") String groupName,
             @Body RequestBody xmlParam);
 
+    @Headers({"Content-Type:application/xml;charset=UTF-8"})
     @DELETE("/rest/wikis/{client}/spaces/XWiki/pages/{param1}?objects=true")
     Call<ResponseBody> deletePage(
             @Header("username") String username,
             @Path("client") String client,
             @Path("param1") String param1);
 
+    @Headers({"Content-Type:application/xml;charset=UTF-8"})
     @POST("/rest/wikis/{client}/spaces/XWiki/pages/{param1}/objects")
     Call<ResponseBody> createGroupUsers(
             @Header("username") String username,
@@ -287,6 +289,7 @@ public interface WikiClient {
             @Path("param1") String param1,
             @Body FormBody body);
 
+    @Headers({"Content-Type:application/xml;charset=UTF-8"})
     @POST("/rest/wikis/{client}/spaces/{organization}/pages/WebPreferences/objects")
     Call<ResponseBody> offerRightToOrgGroupView(
             @Header("username") String username,

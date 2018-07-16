@@ -161,7 +161,6 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         } else {
             throw new CommonException("error.query.organization");
         }
-
     }
 
     @Override
