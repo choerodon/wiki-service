@@ -115,12 +115,64 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         groupMemberDTOList.stream()
                 .filter(groupMember -> !groupMember.getResourceType().equals(SITE))
                 .forEach(groupMember -> {
-                    String groupName = getGroupName(groupMember);
-                    if (!StringUtils.isEmpty(groupName)) {
-                        String number = getObjectNumber(groupName, username, groupMember.getUsername());
-                        if (!StringUtils.isEmpty(number)) {
-                            //删除角色
-                            iWikiClassService.deletePageClass(username, groupName, Integer.valueOf(number));
+                    List<String> roleLabels = groupMember.getRoleLabels();
+                    if (roleLabels == null || roleLabels.size() == 0) {
+                        String adminGroupName = getGroupNameBuffer(groupMember).append("AdminGroup").toString();
+                        String userGroupName = getGroupNameBuffer(groupMember).append("UserGroup").toString();
+                        if (!StringUtils.isEmpty(adminGroupName)) {
+                            String number = getObjectNumber(adminGroupName, username, groupMember.getUsername());
+                            if (!StringUtils.isEmpty(number)) {
+                                //删除角色
+                                iWikiClassService.deletePageClass(username, adminGroupName, Integer.valueOf(number));
+                            }
+                        }
+                        if (!StringUtils.isEmpty(userGroupName)) {
+                            String number = getObjectNumber(userGroupName, username, groupMember.getUsername());
+                            if (!StringUtils.isEmpty(number)) {
+                                //删除角色
+                                iWikiClassService.deletePageClass(username, userGroupName, Integer.valueOf(number));
+                            }
+                        }
+                    } else {
+                        if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
+                            String adminGroupName = getGroupNameBuffer(groupMember).append("AdminGroup").toString();
+                            if (!StringUtils.isEmpty(adminGroupName)) {
+                                String number = getObjectNumber(adminGroupName, username, groupMember.getUsername());
+                                if (!StringUtils.isEmpty(number)) {
+                                    //删除角色
+                                    iWikiClassService.deletePageClass(username, adminGroupName, Integer.valueOf(number));
+                                }
+                            }
+                        }
+                        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
+                            String adminGroupName = getGroupNameBuffer(groupMember).append("AdminGroup").toString();
+                            if (!StringUtils.isEmpty(adminGroupName)) {
+                                String number = getObjectNumber(adminGroupName, username, groupMember.getUsername());
+                                if (!StringUtils.isEmpty(number)) {
+                                    //删除角色
+                                    iWikiClassService.deletePageClass(username, adminGroupName, Integer.valueOf(number));
+                                }
+                            }
+                        }
+                        if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
+                            String userGroupName = getGroupNameBuffer(groupMember).append("UserGroup").toString();
+                            if (!StringUtils.isEmpty(userGroupName)) {
+                                String number = getObjectNumber(userGroupName, username, groupMember.getUsername());
+                                if (!StringUtils.isEmpty(number)) {
+                                    //删除角色
+                                    iWikiClassService.deletePageClass(username, userGroupName, Integer.valueOf(number));
+                                }
+                            }
+                        }
+                        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())){
+                            String userGroupName = getGroupNameBuffer(groupMember).append("UserGroup").toString();
+                            if (!StringUtils.isEmpty(userGroupName)) {
+                                String number = getObjectNumber(userGroupName, username, groupMember.getUsername());
+                                if (!StringUtils.isEmpty(number)) {
+                                    //删除角色
+                                    iWikiClassService.deletePageClass(username, userGroupName, Integer.valueOf(number));
+                                }
+                            }
                         }
                     }
                 });
@@ -238,8 +290,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                     String pageName = recordEle.elementTextTrim("pageName");
                     if (groupName.equals(pageName)) {
                         String headline = recordEle.elementTextTrim("headline");
-                        if (loginName.equals(headline.split("\\.")[1])) {
-                            return recordEle.elementTextTrim("number");
+                        if (!StringUtils.isEmpty(headline)) {
+                            if (loginName.equals(headline.split("\\.")[1])) {
+                                return recordEle.elementTextTrim("number");
+                            }
                         }
                     }
                 }
