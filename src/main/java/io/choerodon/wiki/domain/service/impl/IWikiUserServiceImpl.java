@@ -2,6 +2,7 @@ package io.choerodon.wiki.domain.service.impl;
 
 import java.io.IOException;
 
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -28,6 +29,9 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     @Value("${wiki.client}")
     private String client;
 
+    @Value("${wiki.default-group}")
+    private String defaultGroup;
+
     private WikiClient wikiClient;
 
     public IWikiUserServiceImpl(WikiClient wikiClient) {
@@ -42,7 +46,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
                     client, param1, requestBody);
             Response response = call.execute();
             if (response.code() == 201 || response.code() == 202) {
-                return true;
+                return addUserToDefaultGroup(param1, username);
             } else {
                 return false;
             }
@@ -50,6 +54,16 @@ public class IWikiUserServiceImpl implements IWikiUserService {
             logger.error(e.getMessage());
             return false;
         }
+    }
+
+    private Boolean addUserToDefaultGroup(String param1, String username) throws IOException {
+        FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + param1).build();
+        Call<ResponseBody> addGroupCall = wikiClient.createGroupUsers(username, client, defaultGroup, body);
+        Response addGroupResponse = addGroupCall.execute();
+        if (addGroupResponse.code() == 201) {
+            return true;
+        }
+        return false;
     }
 
     @Override

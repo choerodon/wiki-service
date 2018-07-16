@@ -38,6 +38,7 @@ wiki:
   client: xwiki
   url: http://xwiki-staging.saas.hand-china.com
   token: Choerodon
+  default-group: XWiki.XWikiAllGroup
 eureka:
   instance:
     preferIpAddress: true
