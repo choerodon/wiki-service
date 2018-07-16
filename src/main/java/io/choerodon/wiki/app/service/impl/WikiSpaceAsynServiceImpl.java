@@ -23,7 +23,6 @@ import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
  * Created by Zenger on 2018/7/5.
  */
 @Component
-@Async
 public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiSpaceAsynServiceImpl.class);
@@ -57,6 +56,19 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     }
 
     @Override
+    public void createProjectSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username, String type) {
+        int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
+        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
+        if (TYPE.equals(type)) {
+            int pageCode = iWikiCreatePageService.CreatePage2Code(param1, param2, PAGE, getPageXmlStr(), username);
+            LOGGER.info("pageCode:" + pageCode);
+        }
+        LOGGER.info("webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
+        checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
+    }
+
+    @Override
+    @Async
     public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username, String type) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
@@ -69,6 +81,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     }
 
     @Override
+    @Async
     public void createProjectUnderSpace(String param1, String param2, String projectUnderName, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace3WebHome(param1, param2, projectUnderName, getWebHome3XmlStr(param1, param2, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace3WebPreferences(param1, param2, projectUnderName, getWebPreferencesXmlStr(wikiSpaceE), username);

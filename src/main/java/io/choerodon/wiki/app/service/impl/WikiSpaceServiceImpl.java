@@ -168,7 +168,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setPath(param1 + "/" + param2);
         wikiSpaceE.setName(param2);
         WikiSpaceE projectSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createOrgUnderSpace(param1, param2, projectSpace, username, TYPE);
+        wikiSpaceAsynService.createProjectSpace(param1, param2, projectSpace, username, TYPE);
     }
 
     private void createOrgUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path, String username) {
