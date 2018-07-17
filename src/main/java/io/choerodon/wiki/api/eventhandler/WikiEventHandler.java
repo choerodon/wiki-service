@@ -53,7 +53,6 @@ public class WikiEventHandler {
         wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
-
         String adminGroupName = "O-" + organizationEventPayload.getCode() + "AdminGroup";
         String userGroupName = "O-" + organizationEventPayload.getCode() + "UserGroup";
 

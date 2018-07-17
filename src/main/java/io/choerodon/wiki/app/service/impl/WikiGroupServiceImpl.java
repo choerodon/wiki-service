@@ -233,6 +233,15 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         LOGGER.info("loginName : " + userE.getLoginName());
         if (userE.getLoginName() != null) {
             String loginName = userE.getLoginName();
+            Boolean isUserExist = iWikiUserService.checkDocExsist(username, loginName);
+            if (!isUserExist) {
+                WikiUserE wikiUserE = new WikiUserE();
+                wikiUserE.setLastName(loginName);
+                wikiUserE.setFirstName(loginName);
+                wikiUserE.setEmail(userE.getEmail());
+
+                iWikiUserService.createUser(wikiUserE, loginName, getUserXml(wikiUserE), username);
+            }
             iWikiGroupService.createGroupUsers(groupName, loginName, username);
         } else {
             throw new CommonException("error.query.user");

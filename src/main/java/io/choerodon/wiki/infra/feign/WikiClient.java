@@ -281,7 +281,7 @@ public interface WikiClient {
             @Path("client") String client,
             @Path("param1") String param1);
 
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
+    @Headers({"Content-Type:application/x-www-form-urlencoded;charset=UTF-8"})
     @POST("/rest/wikis/{client}/spaces/XWiki/pages/{param1}/objects")
     Call<ResponseBody> createGroupUsers(
             @Header("username") String username,
