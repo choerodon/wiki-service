@@ -1,5 +1,7 @@
 package io.choerodon.wiki.infra.config;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -37,7 +39,12 @@ public class RetrofitConfig {
             Request request = requestBuilder.build();
             return chain.proceed(request);
         });
-        OkHttpClient okHttpClient = okHttpClientBuilder.build();
+
+        OkHttpClient okHttpClient = okHttpClientBuilder.
+                connectTimeout(60, TimeUnit.SECONDS).
+                readTimeout(60, TimeUnit.SECONDS).
+                writeTimeout(60, TimeUnit.SECONDS).
+                build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(wikiUrl)
