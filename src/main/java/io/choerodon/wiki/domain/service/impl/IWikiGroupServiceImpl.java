@@ -65,14 +65,16 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     public Boolean createGroupUsers(String groupName, String loginName, String username) {
         try {
             //如果组不存在则新建组
-            Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
-            if (!falg) {
+            Boolean flag = iWikiUserService.checkDocExsist(username, groupName);
+            logger.info("flag : " + flag);
+            if (!flag) {
                 this.createGroup(groupName,username);
             }
 
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + loginName).build();
             Call<ResponseBody> call = wikiClient.createGroupUsers(username, client, groupName, body);
             Response response = call.execute();
+            logger.info("code : " + response.code());
             if (response.code() == 201) {
                 return true;
             }

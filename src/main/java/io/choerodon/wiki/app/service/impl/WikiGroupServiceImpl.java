@@ -1,8 +1,5 @@
 package io.choerodon.wiki.app.service.impl;
 
-import java.io.InputStream;
-import java.util.*;
-
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -11,6 +8,9 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.util.*;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
@@ -164,7 +164,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                                 }
                             }
                         }
-                        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())){
+                        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
                             String userGroupName = getGroupNameBuffer(groupMember).append("UserGroup").toString();
                             if (!StringUtils.isEmpty(userGroupName)) {
                                 String number = getObjectNumber(userGroupName, username, groupMember.getUsername());
@@ -230,7 +230,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void setUserToGroup(String groupName, Long userId, String username) {
         UserE userE = iamRepository.queryUserById(userId);
-        if (userE != null && userE.getLoginName() != null) {
+        LOGGER.info("loginName : " + userE.getLoginName());
+        if (userE.getLoginName() != null) {
             String loginName = userE.getLoginName();
             iWikiGroupService.createGroupUsers(groupName, loginName, username);
         } else {
