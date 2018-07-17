@@ -36,7 +36,7 @@ public class WikiUserController {
      * @param wikiUserDTO 用户信息
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "创建wiki用户")
     @PostMapping
     public ResponseEntity<Boolean> create(
@@ -54,7 +54,7 @@ public class WikiUserController {
      * @param userName 用户名
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "wiki用户是否存在")
     @GetMapping("/{user_name}")
     public ResponseEntity<Boolean> checkUser(
@@ -72,7 +72,7 @@ public class WikiUserController {
      * @param pageName 用户名
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "删除wiki底下的文档")
     @GetMapping("/delete/{page_name}")
     public ResponseEntity<Boolean> delete(
