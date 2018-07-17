@@ -60,7 +60,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
             String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
             List<String> adminRightsList = Arrays.asList(adminRights);
-            String[] userRights = {"login", "view", "creator", "comment", "script", "programming"};
+            String[] userRights = {"login", "view", "creator", "comment"};
             List<String> userRightsList = Arrays.asList(userRights);
             if (isAdmin) {
                 if (isOrg) {
