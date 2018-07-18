@@ -19,6 +19,7 @@ public class ProjectConverter implements ConvertorI<ProjectE, ProjectDO, Object>
     public ProjectE doToEntity(ProjectDO dataObject) {
         ProjectE projectE = new ProjectE();
         BeanUtils.copyProperties(dataObject, projectE);
+        projectE.initOrganizationE(dataObject.getOrganizationId());
         return projectE;
     }
 }

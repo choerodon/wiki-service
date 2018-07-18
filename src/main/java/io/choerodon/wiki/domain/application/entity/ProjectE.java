@@ -55,4 +55,8 @@ public class ProjectE {
     public void setOrganization(OrganizationE organization) {
         this.organization = organization;
     }
+
+    public void initOrganizationE(Long id){
+        organization = new OrganizationE(id);
+    }
 }

@@ -65,7 +65,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
             String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
             List<String> adminRightsList = Arrays.asList(adminRights);
-            String[] userRights = {"login", "view", "creator", "comment"};
+            String[] userRights = {"login", "view", "edit", "creator", "comment"};
             List<String> userRightsList = Arrays.asList(userRights);
             if (isAdmin) {
                 if (isOrg) {
@@ -206,7 +206,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         "P-" + projectE.getName(), username);
                 for (Integer i : list) {
                     //删除角色
-                    iWikiClassService.deletePageClass(username, "O-" + organization.getName(), WEBPREFERENCES, XWIKIGLOBALRIGHTS, i);
+                    iWikiClassService.deleteProjectPageClass(username, "O-" + organization.getName(),"P-" + projectE.getName(), WEBPREFERENCES, XWIKIGLOBALRIGHTS, i);
                 }
             }
         } else {
