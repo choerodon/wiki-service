@@ -1,5 +1,8 @@
 package io.choerodon.wiki.app.service.impl;
 
+import java.io.InputStream;
+import java.util.*;
+
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -8,9 +11,6 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.io.InputStream;
-import java.util.*;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
@@ -27,6 +27,7 @@ import io.choerodon.wiki.domain.service.IWikiClassService;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.common.FileUtil;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.common.enums.OrganizationSpaceType;
 
 /**
@@ -36,6 +37,10 @@ import io.choerodon.wiki.infra.common.enums.OrganizationSpaceType;
 public class WikiGroupServiceImpl implements WikiGroupService {
 
     private static final String SITE = "site";
+    private static final String SPACE = "XWiki";
+    private static final String WEBPREFERENCES = "WebPreferences";
+    private static final String XWIKIGROUPS = "XWiki.XWikiGroups";
+    private static final String XWIKIGLOBALRIGHTS = "XWiki.XWikiGlobalRights";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiGroupServiceImpl.class);
 
     private IWikiGroupService iWikiGroupService;
@@ -116,64 +121,13 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 .filter(groupMember -> !groupMember.getResourceType().equals(SITE))
                 .forEach(groupMember -> {
                     List<String> roleLabels = groupMember.getRoleLabels();
-                    if (roleLabels == null || roleLabels.size() == 0) {
-                        String adminGroupName = getGroupNameBuffer(groupMember).append("AdminGroup").toString();
-                        String userGroupName = getGroupNameBuffer(groupMember).append("UserGroup").toString();
-                        if (!StringUtils.isEmpty(adminGroupName)) {
-                            String number = getObjectNumber(adminGroupName, username, groupMember.getUsername());
-                            if (!StringUtils.isEmpty(number)) {
-                                //删除角色
-                                iWikiClassService.deletePageClass(username, adminGroupName, Integer.valueOf(number));
-                            }
-                        }
-                        if (!StringUtils.isEmpty(userGroupName)) {
-                            String number = getObjectNumber(userGroupName, username, groupMember.getUsername());
-                            if (!StringUtils.isEmpty(number)) {
-                                //删除角色
-                                iWikiClassService.deletePageClass(username, userGroupName, Integer.valueOf(number));
-                            }
-                        }
+                    if (roleLabels == null || roleLabels.isEmpty()) {
+                        String adminGroupName = getGroupNameBuffer(groupMember).append(Stage.ADMIN_GROUP).toString();
+                        String userGroupName = getGroupNameBuffer(groupMember).append(Stage.USER_GROUP).toString();
+                        deletePageClass(adminGroupName, username, groupMember.getUsername());
+                        deletePageClass(userGroupName, username, groupMember.getUsername());
                     } else {
-                        if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
-                            String adminGroupName = getGroupNameBuffer(groupMember).append("AdminGroup").toString();
-                            if (!StringUtils.isEmpty(adminGroupName)) {
-                                String number = getObjectNumber(adminGroupName, username, groupMember.getUsername());
-                                if (!StringUtils.isEmpty(number)) {
-                                    //删除角色
-                                    iWikiClassService.deletePageClass(username, adminGroupName, Integer.valueOf(number));
-                                }
-                            }
-                        }
-                        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
-                            String adminGroupName = getGroupNameBuffer(groupMember).append("AdminGroup").toString();
-                            if (!StringUtils.isEmpty(adminGroupName)) {
-                                String number = getObjectNumber(adminGroupName, username, groupMember.getUsername());
-                                if (!StringUtils.isEmpty(number)) {
-                                    //删除角色
-                                    iWikiClassService.deletePageClass(username, adminGroupName, Integer.valueOf(number));
-                                }
-                            }
-                        }
-                        if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
-                            String userGroupName = getGroupNameBuffer(groupMember).append("UserGroup").toString();
-                            if (!StringUtils.isEmpty(userGroupName)) {
-                                String number = getObjectNumber(userGroupName, username, groupMember.getUsername());
-                                if (!StringUtils.isEmpty(number)) {
-                                    //删除角色
-                                    iWikiClassService.deletePageClass(username, userGroupName, Integer.valueOf(number));
-                                }
-                            }
-                        }
-                        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
-                            String userGroupName = getGroupNameBuffer(groupMember).append("UserGroup").toString();
-                            if (!StringUtils.isEmpty(userGroupName)) {
-                                String number = getObjectNumber(userGroupName, username, groupMember.getUsername());
-                                if (!StringUtils.isEmpty(number)) {
-                                    //删除角色
-                                    iWikiClassService.deletePageClass(username, userGroupName, Integer.valueOf(number));
-                                }
-                            }
-                        }
+                        deleteGroupMember(roleLabels, groupMember, username);
                     }
                 });
     }
@@ -186,7 +140,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             Long orgId = user.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
             String orgCode = organization.getCode();
-            String groupName = "O-" + orgCode + "UserGroup";
+            String groupName = "O-" + orgCode + Stage.USER_GROUP;
 
             //如果用户不存在则新建
             Boolean flag = iWikiUserService.checkDocExsist(loginName, loginName);
@@ -216,12 +170,45 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     }
 
     @Override
+    public void enableOrganizationGroup(Long orgId, String username) {
+        OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+        if (organization != null) {
+            List<Integer> list = getGlobalRightsObjectNumber("O-" + organization.getName(), null, username);
+            for (Integer i : list) {
+                //删除角色
+                iWikiClassService.deletePageClass(username, "O-" + organization.getName(), WEBPREFERENCES, XWIKIGLOBALRIGHTS, i);
+            }
+        } else {
+            throw new CommonException("error.query.organization");
+        }
+    }
+
+    @Override
     public void disableProjectGroup(Long projectId, String username) {
         ProjectE projectE = iamRepository.queryIamProject(projectId);
         if (projectE != null) {
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
             iWikiGroupService.disableProjectGroupView(projectE.getName(), projectE.getCode(), organization.getName(), username);
+        } else {
+            throw new CommonException("error.query.project");
+        }
+    }
+
+    @Override
+    public void enableProjectGroup(Long projectId, String username) {
+        ProjectE projectE = iamRepository.queryIamProject(projectId);
+        if (projectE != null) {
+            Long orgId = projectE.getOrganization().getId();
+            OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+            if (organization != null) {
+                List<Integer> list = getGlobalRightsObjectNumber("O-" + organization.getName(),
+                        "P-" + projectE.getName(), username);
+                for (Integer i : list) {
+                    //删除角色
+                    iWikiClassService.deletePageClass(username, "O-" + organization.getName(), WEBPREFERENCES, XWIKIGLOBALRIGHTS, i);
+                }
+            }
         } else {
             throw new CommonException("error.query.project");
         }
@@ -251,18 +238,18 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     private String getGroupName(GroupMemberDTO groupMemberDTO) {
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
         if (roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) || roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType())) {
-            return getGroupNameBuffer(groupMemberDTO).append("AdminGroup").toString();
+            return getGroupNameBuffer(groupMemberDTO).append(Stage.ADMIN_GROUP).toString();
         } else if (roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) || roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType())) {
-            return getGroupNameBuffer(groupMemberDTO).append("UserGroup").toString();
+            return getGroupNameBuffer(groupMemberDTO).append(Stage.USER_GROUP).toString();
         } else {
             return "";
         }
     }
 
-    private StringBuffer getGroupNameBuffer(GroupMemberDTO groupMemberDTO) {
+    private StringBuilder getGroupNameBuffer(GroupMemberDTO groupMemberDTO) {
         Long resourceId = groupMemberDTO.getResourceId();
         String resourceType = groupMemberDTO.getResourceType();
-        StringBuffer groupName = new StringBuffer();
+        StringBuilder groupName = new StringBuilder();
         if (ResourceLevel.ORGANIZATION.value().equals(resourceType)) {
             groupName.append("O-");
             //通过组织id获取组织code
@@ -288,9 +275,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         return FileUtil.replaceReturnString(inputStream, params);
     }
 
-    private String getObjectNumber(String groupName, String username, String loginName) {
+    private List<Integer> getGroupsObjectNumber(String groupName, String username, String loginName) {
+        List<Integer> list = new ArrayList<>();
         try {
-            String page = iWikiClassService.getPageClassResource(groupName, username);
+            String page = iWikiClassService.getPageClassResource(SPACE, groupName, XWIKIGROUPS, username);
             if (!StringUtils.isEmpty(page)) {
                 Document doc = DocumentHelper.parseText(page);
                 Element rootElt = doc.getRootElement();
@@ -300,10 +288,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                     String pageName = recordEle.elementTextTrim("pageName");
                     if (groupName.equals(pageName)) {
                         String headline = recordEle.elementTextTrim("headline");
-                        if (!StringUtils.isEmpty(headline)) {
-                            if (loginName.equals(headline.split("\\.")[1])) {
-                                return recordEle.elementTextTrim("number");
-                            }
+                        if (!StringUtils.isEmpty(headline) && loginName.equals(headline.split("\\.")[1])) {
+                            list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
                         }
                     }
                 }
@@ -312,6 +298,66 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             LOGGER.error(e.getMessage());
         }
 
-        return "";
+        return list;
+    }
+
+    private List<Integer> getGlobalRightsObjectNumber(String org, String project, String username) {
+        List<Integer> list = new ArrayList<>();
+        try {
+            String page;
+            if (project == null) {
+                page = iWikiClassService.getPageClassResource(org, WEBPREFERENCES, XWIKIGLOBALRIGHTS, username);
+            } else {
+                page = iWikiClassService.getProjectPageClassResource(org, project, WEBPREFERENCES, XWIKIGLOBALRIGHTS, username);
+            }
+            if (!StringUtils.isEmpty(page)) {
+                Document doc = DocumentHelper.parseText(page);
+                Element rootElt = doc.getRootElement();
+                Iterator iter = rootElt.elementIterator("objectSummary");
+                while (iter.hasNext()) {
+                    Element recordEle = (Element) iter.next();
+                    String className = recordEle.elementTextTrim("className");
+                    if (XWIKIGLOBALRIGHTS.equals(className)) {
+                        String headline = recordEle.elementTextTrim("headline");
+                        if (!StringUtils.isEmpty(headline) && Integer.valueOf(headline) == 0) {
+                            list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
+                        }
+                    }
+                }
+            }
+        } catch (DocumentException e) {
+            LOGGER.error(e.getMessage());
+        }
+
+        return list;
+    }
+
+    private void deletePageClass(String pageName, String username, String deleteUsername) {
+        if (!StringUtils.isEmpty(pageName)) {
+            List<Integer> list = getGroupsObjectNumber(pageName, username, deleteUsername);
+            for (Integer i : list) {
+                //删除角色
+                iWikiClassService.deletePageClass(username, SPACE, pageName, XWIKIGROUPS, i);
+            }
+        }
+    }
+
+    public void deleteGroupMember(List<String> roleLabels, GroupMemberDTO groupMember, String username) {
+        if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
+            String adminGroupName = getGroupNameBuffer(groupMember).append(Stage.ADMIN_GROUP).toString();
+            deletePageClass(adminGroupName, username, groupMember.getUsername());
+        }
+        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
+            String adminGroupName = getGroupNameBuffer(groupMember).append(Stage.ADMIN_GROUP).toString();
+            deletePageClass(adminGroupName, username, groupMember.getUsername());
+        }
+        if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
+            String userGroupName = getGroupNameBuffer(groupMember).append(Stage.USER_GROUP).toString();
+            deletePageClass(userGroupName, username, groupMember.getUsername());
+        }
+        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
+            String userGroupName = getGroupNameBuffer(groupMember).append(Stage.USER_GROUP).toString();
+            deletePageClass(userGroupName, username, groupMember.getUsername());
+        }
     }
 }

@@ -306,12 +306,24 @@ public interface WikiClient {
             @Path("project") String project,
             @Body FormBody body);
 
-    //获取页面资源
-    @GET("/rest/wikis/{client}/spaces/XWiki/pages/{param1}/objects")
+    //获取组织页面资源
+    @GET("/rest/wikis/{client}/spaces/{param1}/pages/{param2}/objects/{className}")
     Call<ResponseBody> getPageClassResource(
             @Header("username") String username,
             @Path("client") String client,
-            @Path("param1") String param1);
+            @Path("param1") String param1,
+            @Path("param2") String param2,
+            @Path("className") String className);
+
+    //获取项目页面资源
+    @GET("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/pages/{param3}/objects/{className}")
+    Call<ResponseBody> getProjectPageClassResource(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("param2") String param2,
+            @Path("param3") String param3,
+            @Path("className") String className);
 
     //创建页面
     @Headers({"Content-Type:application/xml;charset=UTF-8"})
@@ -334,12 +346,23 @@ public interface WikiClient {
             @Path("name") String name,
             @Body RequestBody xmlParam);
 
-    //删除页面里的对象
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @DELETE("/rest/wikis/{client}/spaces/XWiki/pages/{name}/objects/{className}/{objectNumber}")
+    //删除组织页面里的对象
+    @DELETE("/rest/wikis/{client}/spaces/{param1}/pages/{name}/objects/{className}/{objectNumber}")
     Call<ResponseBody> deletePageClass(
             @Header("username") String username,
             @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("name") String name,
+            @Path("className") String className,
+            @Path("objectNumber") int objectNumber);
+
+    //删除项目页面里的对象
+    @DELETE("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/pages/{name}/objects/{className}/{objectNumber}")
+    Call<ResponseBody> deleteProjectPageClass(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("param2") String param2,
             @Path("name") String name,
             @Path("className") String className,
             @Path("objectNumber") int objectNumber);

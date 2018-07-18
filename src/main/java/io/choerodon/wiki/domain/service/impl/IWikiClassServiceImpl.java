@@ -18,8 +18,7 @@ import io.choerodon.wiki.infra.feign.WikiClient;
 @Service
 public class IWikiClassServiceImpl implements IWikiClassService {
 
-    private static final Logger logger = LoggerFactory.getLogger(IWikiClassServiceImpl.class);
-    private static final String CLASSNAME = "XWiki.XWikiGroups";
+    private static final Logger LOGGER = LoggerFactory.getLogger(IWikiClassServiceImpl.class);
 
     @Value("${wiki.client}")
     private String client;
@@ -31,23 +30,50 @@ public class IWikiClassServiceImpl implements IWikiClassService {
     }
 
     @Override
-    public String getPageClassResource(String pageName, String username) {
+    public String getPageClassResource(String space, String pageName, String className, String username) {
         try {
-            Response<ResponseBody> response = wikiClient.getPageClassResource(username, client, pageName).execute();
+            Response<ResponseBody> response = wikiClient.getPageClassResource(username, client, space, pageName, className).execute();
             return response.body().string();
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
         return "";
     }
 
     @Override
-    public void deletePageClass(String username, String name, int objectNumber) {
+    public String getProjectPageClassResource(String org, String project, String pageName, String className, String username) {
         try {
-            Response<ResponseBody> response = wikiClient.deletePageClass(username, client, name, CLASSNAME, objectNumber).execute();
-            logger.info("Delete the status code returned by the page object: " + response.code());
+            Response<ResponseBody> response = wikiClient.getProjectPageClassResource(username,
+                    client, org, project, pageName, className).execute();
+            return response.body().string();
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
+        }
+        return "";
+    }
+
+    @Override
+    public void deletePageClass(String username, String space, String name, String className, int objectNumber) {
+        try {
+            Response<ResponseBody> response = wikiClient.deletePageClass(username, client, space, name, className, objectNumber).execute();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Delete the status code returned by the page object: " + response.code());
+            }
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteProjectPageClass(String username, String org, String project, String name, String className, int objectNumber) {
+        try {
+            Response<ResponseBody> response = wikiClient.deleteProjectPageClass(username, client, org, project,
+                    name, className, objectNumber).execute();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Delete the status code returned by the page object: " + response.code());
+            }
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
         }
     }
 }

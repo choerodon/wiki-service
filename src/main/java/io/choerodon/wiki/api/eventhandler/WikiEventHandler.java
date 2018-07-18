@@ -13,6 +13,7 @@ import io.choerodon.wiki.app.service.WikiGroupService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
 import io.choerodon.wiki.domain.application.event.ProjectEvent;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
@@ -53,8 +54,8 @@ public class WikiEventHandler {
         wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
-        String adminGroupName = "O-" + organizationEventPayload.getCode() + "AdminGroup";
-        String userGroupName = "O-" + organizationEventPayload.getCode() + "UserGroup";
+        String adminGroupName = "O-" + organizationEventPayload.getCode() + Stage.ADMIN_GROUP;
+        String userGroupName = "O-" + organizationEventPayload.getCode() + Stage.USER_GROUP;
 
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
         wikiGroupDTO.setGroupName(adminGroupName);
@@ -82,8 +83,8 @@ public class WikiEventHandler {
                 WikiSpaceResourceType.PROJECT.getResourceType());
         //创建组
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
-        String adminGroupName = "P-" + projectEvent.getProjectCode() + "AdminGroup";
-        String userGroupName = "P-" + projectEvent.getProjectCode() + "UserGroup";
+        String adminGroupName = "P-" + projectEvent.getProjectCode() + Stage.ADMIN_GROUP;
+        String userGroupName = "P-" + projectEvent.getProjectCode() + Stage.USER_GROUP;
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setProjectCode(projectEvent.getProjectCode());
         wikiGroupDTO.setProjectName(projectEvent.getProjectName());
@@ -140,5 +141,23 @@ public class WikiEventHandler {
     public void handleProjectDisableEvent(EventPayload<ProjectDTO> payload) {
         ProjectDTO projectDTO = payload.getData();
         wikiGroupService.disableProjectGroup(projectDTO.getProjectId(), USERNAME);
+    }
+
+    /**
+     * 组织启用事件
+     */
+    @EventListener(topic = IAM_SERVICE, businessType = "enableOrganization")
+    public void handleOrganizationEnableEvent(EventPayload<OrganizationDTO> payload) {
+        OrganizationDTO organizationDTO = payload.getData();
+        wikiGroupService.enableOrganizationGroup(organizationDTO.getOrganizationId(), USERNAME);
+    }
+
+    /**
+     * 项目启用事件
+     */
+    @EventListener(topic = IAM_SERVICE, businessType = "enableProject")
+    public void handleProjectEnableEvent(EventPayload<ProjectDTO> payload) {
+        ProjectDTO projectDTO = payload.getData();
+        wikiGroupService.enableProjectGroup(projectDTO.getProjectId(), USERNAME);
     }
 }

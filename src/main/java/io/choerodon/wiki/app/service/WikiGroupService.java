@@ -21,7 +21,11 @@ public interface WikiGroupService {
 
     void disableOrganizationGroup(Long orgId, String username);
 
+    void enableOrganizationGroup(Long orgId, String username);
+
     void disableProjectGroup(Long projectId, String username);
+
+    void enableProjectGroup(Long projectId, String username);
 
     void setUserToGroup(String groupName, Long userId, String username);
 }

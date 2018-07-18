@@ -16,6 +16,7 @@ import retrofit2.Response;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.application.entity.WikiUserE;
 import io.choerodon.wiki.domain.service.IWikiUserService;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -39,9 +40,9 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     }
 
     @Override
-    public Boolean createUser(WikiUserE wikiUserE, String param1, String xmlParam,String username) {
+    public Boolean createUser(WikiUserE wikiUserE, String param1, String xmlParam, String username) {
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             Call<ResponseBody> call = wikiClient.createUser(username,
                     client, param1, requestBody);
             Response response = call.execute();
@@ -60,10 +61,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
         FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + param1).build();
         Call<ResponseBody> addGroupCall = wikiClient.createGroupUsers(username, client, defaultGroup, body);
         Response addGroupResponse = addGroupCall.execute();
-        if (addGroupResponse.code() == 201) {
-            return true;
-        }
-        return false;
+        return addGroupResponse.code() == 201 ? true : false;
     }
 
     @Override

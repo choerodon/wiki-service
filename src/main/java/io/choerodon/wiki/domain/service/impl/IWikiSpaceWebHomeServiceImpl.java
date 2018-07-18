@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import retrofit2.Response;
 
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -35,7 +36,7 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     public int createSpace1WebHome(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace1WebHome(username,
                     client, param1, requestBody).execute();
         } catch (IOException e) {
@@ -49,7 +50,7 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     public int createSpace2WebHome(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace2WebHome(username,
                     client, param1, param2, requestBody).execute();
         } catch (IOException e) {
@@ -63,7 +64,7 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     public int createSpace3WebHome(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace3WebHome(username,
                     client, param1, param2, param3, requestBody).execute();
         } catch (IOException e) {

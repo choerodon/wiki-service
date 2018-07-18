@@ -21,6 +21,7 @@ import retrofit2.Response;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.infra.common.FileUtil;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -46,7 +47,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     @Override
     public Boolean createGroup(String groupName, String username) {
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), getGroupXml());
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), getGroupXml());
             Call<ResponseBody> call = wikiClient.createGroup(username,
                     client, groupName, requestBody);
             Response response = call.execute();
@@ -66,143 +67,129 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
         try {
             //如果组不存在则新建组
             Boolean flag = iWikiUserService.checkDocExsist(username, groupName);
-            logger.info("flag : " + flag);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Does the group exist? " + flag);
+            }
             if (!flag) {
-                this.createGroup(groupName,username);
+                this.createGroup(groupName, username);
             }
 
             FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + loginName).build();
             Call<ResponseBody> call = wikiClient.createGroupUsers(username, client, groupName, body);
             Response response = call.execute();
-            logger.info("code : " + response.code());
+            if (logger.isDebugEnabled()) {
+                logger.debug("Create the code returned by the group user : " + response.code());
+            }
             if (response.code() == 201) {
                 return true;
             }
-            return false;
         } catch (IOException e) {
             logger.error(e.getMessage());
-            return false;
         }
+        return false;
     }
 
     @Override
     public Boolean disableOrgGroupView(String organizationCode, String organizationName, String username) {
         try {
-            String groupName = "O-" + organizationCode + "UserGroup";
-            String param = "O-" + organizationName;
+            String groupName = "O-" + organizationCode + Stage.USER_GROUP;
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
-                throw new CommonException("error.query.group");
+                throw new CommonException(Stage.ERROR_QUERY_GROUP);
             }
 
-            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "0")
-                    .add("property#groups", "XWiki." + groupName).add("property#levels", "view").build();
-
-            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, param, body);
+            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client,
+                    "O-" + organizationName, getBody(groupName, "0", "view"));
             Response response = call.execute();
             if (response.code() == 201) {
                 return true;
             }
-            return false;
         } catch (IOException e) {
             logger.error(e.getMessage());
-            return false;
         }
+
+        return false;
     }
 
     @Override
     public Boolean disableProjectGroupView(String projectName, String projectCode, String organizationName, String username) {
         try {
-            String groupName = "P-" + projectCode + "UserGroup";
+            String groupName = "P-" + projectCode + Stage.USER_GROUP;
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
-                throw new CommonException("error.query.group");
+                throw new CommonException(Stage.ERROR_QUERY_GROUP);
             }
 
-            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "0")
-                    .add("property#groups", "XWiki." + groupName).add("property#levels", "view").build();
-
-            URLEncoder.encode(organizationName,"UTF-8");
-            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, organizationName, projectName, body);
+            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client,
+                    "O-" + organizationName, "P-" + projectName, getBody(groupName, "0", "view"));
             Response response = call.execute();
             if (response.code() == 201) {
                 return true;
             }
-            return false;
         } catch (IOException e) {
             logger.error(e.getMessage());
-            return false;
         }
+
+        return false;
     }
 
     @Override
-    public Boolean addRightsToOrg(String organizationCode, String organizationName, List<String> rights,Boolean isAdmin, String username) {
+    public Boolean addRightsToOrg(String organizationCode, String organizationName, List<String> rights, Boolean isAdmin, String username) {
         try {
-            String groupName = "O-" + organizationCode + (isAdmin? "AdminGroup":"UserGroup");
+            String groupName = "O-" + organizationCode + (isAdmin ? Stage.ADMIN_GROUP : Stage.USER_GROUP);
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
-                throw new CommonException("error.query.group");
+                throw new CommonException(Stage.ERROR_QUERY_GROUP);
             }
-            StringBuffer stringBuffer = new StringBuffer();
-            for(String right:rights){
-                stringBuffer.append(right);
-                stringBuffer.append(",");
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String right : rights) {
+                stringBuilder.append(right);
+                stringBuilder.append(",");
             }
-            String levels = stringBuffer.toString();
-            levels = levels.substring(0,levels.length()-1);
+            String levels = stringBuilder.toString();
+            levels = levels.substring(0, levels.length() - 1);
 
-            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "1")
-                    .add("property#groups", "XWiki." + groupName).add("property#levels", levels).build();
-
-            String encodeStr = "O-"+organizationName;
-            URLEncoder.encode(encodeStr,"UTF-8");
-            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, encodeStr, body);
+            String encodeStr = "O-" + organizationName;
+            URLEncoder.encode(encodeStr, "UTF-8");
+            Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, encodeStr, getBody(groupName, "1", levels));
             Response response = call.execute();
-            logger.info("u:"+username);
-            logger.info("client"+client);
-            logger.info("O-"+organizationName+":"+response.code());
+
             if (response.code() == 201) {
                 return true;
             }
-            return false;
         } catch (IOException e) {
             logger.error(e.getMessage());
-            return false;
         }
+        return false;
     }
 
     @Override
-    public Boolean addRightsToProject(String projectName, String projectCode, String organizationName,List<String> rights,Boolean isAdmin, String username) {
+    public Boolean addRightsToProject(String projectName, String projectCode, String organizationName, List<String> rights, Boolean isAdmin, String username) {
         try {
-            String groupName = "P-" + projectCode + (isAdmin?"AdminGroup":"UserGroup");
+            String groupName = "P-" + projectCode + (isAdmin ? Stage.ADMIN_GROUP : Stage.USER_GROUP);
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
-                throw new CommonException("error.query.group");
+                throw new CommonException(Stage.ERROR_QUERY_GROUP);
             }
 
-            StringBuffer stringBuffer = new StringBuffer();
-            for(String right:rights){
-                stringBuffer.append(right);
-                stringBuffer.append(",");
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String right : rights) {
+                stringBuilder.append(right);
+                stringBuilder.append(",");
             }
-            String levels = stringBuffer.toString();
-            levels = levels.substring(0,levels.length()-1);
+            String levels = stringBuilder.toString();
+            levels = levels.substring(0, levels.length() - 1);
 
-            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", "1")
-                    .add("property#groups", "XWiki." + groupName).add("property#levels", levels).build();
-
-            String encodeStr = "O-"+organizationName;
-            URLEncoder.encode(encodeStr,"UTF-8");
-            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, encodeStr, "P-"+projectName, body);
+            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, "O-" + organizationName,
+                    "P-" + projectName, getBody(groupName, "1", levels));
             Response response = call.execute();
             if (response.code() == 201) {
                 return true;
             }
-            return false;
         } catch (IOException e) {
             logger.error(e.getMessage());
-            return false;
         }
+        return false;
     }
 
     private String getGroupXml() {
@@ -211,4 +198,8 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
         return FileUtil.replaceReturnString(inputStream, params);
     }
 
+    private FormBody getBody(String groupName, String allow, String levels) {
+        return new FormBody.Builder().add("className", "XWiki.XWikiGlobalRights").add("property#allow", allow)
+                .add("property#groups", "XWiki." + groupName).add("property#levels", levels).build();
+    }
 }

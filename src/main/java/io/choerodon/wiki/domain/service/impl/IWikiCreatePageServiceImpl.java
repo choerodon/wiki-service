@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import retrofit2.Response;
 
 import io.choerodon.wiki.domain.service.IWikiCreatePageService;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -35,7 +36,7 @@ public class IWikiCreatePageServiceImpl implements IWikiCreatePageService {
     public int createPage1Code(String param1, String name, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createPage1Name(username,
                     client, param1, name, requestBody).execute();
         } catch (IOException e) {
@@ -46,10 +47,10 @@ public class IWikiCreatePageServiceImpl implements IWikiCreatePageService {
     }
 
     @Override
-    public int CreatePage2Code(String param1, String param2, String name, String xmlParam, String username) {
+    public int createPage2Code(String param1, String param2, String name, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createPage2Name(username,
                     client, param1, param2, name, requestBody).execute();
         } catch (IOException e) {

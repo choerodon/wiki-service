@@ -7,5 +7,5 @@ public interface IWikiCreatePageService {
 
     int createPage1Code(String param1, String name, String xmlParam, String username);
 
-    int CreatePage2Code(String param1, String param2, String name, String xmlParam, String username);
+    int createPage2Code(String param1, String param2, String name, String xmlParam, String username);
 }

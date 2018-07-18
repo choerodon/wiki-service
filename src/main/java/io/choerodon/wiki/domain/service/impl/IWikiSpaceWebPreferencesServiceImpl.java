@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import retrofit2.Response;
 
 import io.choerodon.wiki.domain.service.IWikiSpaceWebPreferencesService;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -35,7 +36,7 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
     public int createSpace1WebPreferences(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace1WebPreferences(username,
                     client, param1, requestBody).execute();
         } catch (IOException e) {
@@ -49,7 +50,7 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
     public int createSpace2WebPreferences(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace2WebPreferences(username,
                     client, param1, param2, requestBody).execute();
         } catch (IOException e) {
@@ -63,7 +64,7 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
     public int createSpace3WebPreferences(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace3WebPreferences(username,
                     client, param1, param2, param3, requestBody).execute();
         } catch (IOException e) {

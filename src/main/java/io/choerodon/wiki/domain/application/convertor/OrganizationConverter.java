@@ -14,7 +14,6 @@ public class OrganizationConverter implements ConvertorI<OrganizationE, Organiza
 
     @Override
     public OrganizationE doToEntity(OrganizationDO dataObject) {
-        OrganizationE organizationE = new OrganizationE(dataObject.getId(), dataObject.getName(), dataObject.getCode());
-        return organizationE;
+        return new OrganizationE(dataObject.getId(), dataObject.getName(), dataObject.getCode());
     }
 }

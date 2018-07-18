@@ -60,7 +60,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
         if (TYPE.equals(type)) {
-            int pageCode = iWikiCreatePageService.CreatePage2Code(param1, param2, PAGE, getPageXmlStr(), username);
+            int pageCode = iWikiCreatePageService.createPage2Code(param1, param2, PAGE, getPageXmlStr(), username);
             LOGGER.info("pageCode:" + pageCode);
         }
         LOGGER.info("webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
@@ -73,7 +73,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
         if (TYPE.equals(type)) {
-            int pageCode = iWikiCreatePageService.CreatePage2Code(param1, param2, PAGE, getPageXmlStr(), username);
+            int pageCode = iWikiCreatePageService.createPage2Code(param1, param2, PAGE, getPageXmlStr(), username);
             LOGGER.info("pageCode:" + pageCode);
         }
         LOGGER.info("webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import retrofit2.Response;
 
 import io.choerodon.wiki.domain.service.IWikiSpaceCodeSheetService;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -20,7 +21,7 @@ import io.choerodon.wiki.infra.feign.WikiClient;
 @Service
 public class IWikiSpaceCodeSheetServiceImpl implements IWikiSpaceCodeSheetService {
 
-    private static final Logger logger = LoggerFactory.getLogger(IWikiSpaceWebPreferencesServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(IWikiSpaceCodeSheetServiceImpl.class);
 
     @Value("${wiki.client}")
     private String client;
@@ -35,7 +36,7 @@ public class IWikiSpaceCodeSheetServiceImpl implements IWikiSpaceCodeSheetServic
     public int createSpace1CodeSheet(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace1Sheet(username,
                     client, param1, param1, requestBody).execute();
         } catch (IOException e) {
@@ -49,7 +50,7 @@ public class IWikiSpaceCodeSheetServiceImpl implements IWikiSpaceCodeSheetServic
     public int createSpace2CodeSheet(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace2Sheet(username,
                     client, param1, param2, param2, requestBody).execute();
         } catch (IOException e) {
@@ -63,7 +64,7 @@ public class IWikiSpaceCodeSheetServiceImpl implements IWikiSpaceCodeSheetServic
     public int createSpace3CodeSheet(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace3Sheet(username,
                     client, param1, param2, param3, param3, requestBody).execute();
         } catch (IOException e) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import retrofit2.Response;
 
 import io.choerodon.wiki.domain.service.IWikiSpaceCodeTemplateProvideService;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -20,7 +21,7 @@ import io.choerodon.wiki.infra.feign.WikiClient;
 @Service
 public class IWikiSpaceCodeTemplateProvideServiceImpl implements IWikiSpaceCodeTemplateProvideService {
 
-    private static final Logger logger = LoggerFactory.getLogger(IWikiSpaceWebPreferencesServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(IWikiSpaceCodeTemplateProvideServiceImpl.class);
 
     @Value("${wiki.client}")
     private String client;
@@ -35,7 +36,7 @@ public class IWikiSpaceCodeTemplateProvideServiceImpl implements IWikiSpaceCodeT
     public int createSpace1CodeTemplateProvide(String param1, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace1TemplateProvider(username,
                     client, param1, param1, requestBody).execute();
         } catch (IOException e) {
@@ -49,7 +50,7 @@ public class IWikiSpaceCodeTemplateProvideServiceImpl implements IWikiSpaceCodeT
     public int createSpace2CodeTemplateProvide(String param1, String param2, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace2TemplateProvider(username,
                     client, param1, param2, param2, requestBody).execute();
         } catch (IOException e) {
@@ -63,7 +64,7 @@ public class IWikiSpaceCodeTemplateProvideServiceImpl implements IWikiSpaceCodeT
     public int createSpace3CodeTemplateProvide(String param1, String param2, String param3, String xmlParam, String username) {
         Response<ResponseBody> response = null;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("Content-Type, application/xml"), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace3TemplateProvider(username,
                     client, param1, param2, param3, param3, requestBody).execute();
         } catch (IOException e) {

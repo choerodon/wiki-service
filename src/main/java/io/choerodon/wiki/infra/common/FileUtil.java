@@ -7,9 +7,15 @@ import java.util.Map;
 import io.choerodon.core.exception.CommonException;
 
 /**
- * Created by Zenger on 2018/7/3.
+ *
+ * @author Zenger
+ * @date 2018/7/3
  */
 public class FileUtil {
+
+    private FileUtil(){
+
+    }
 
     /**
      * 通过inputStream流 替换文件的参数
