@@ -1,21 +1,15 @@
 package io.choerodon.wiki.infra.dataobject.iam;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import io.choerodon.mybatis.domain.AuditDomain;
-
 /**
  * Created by ernst on 2018/7/9.
  */
-public class ProjectDO extends AuditDomain {
+public class ProjectDO {
 
-    @Id
-    @GeneratedValue
     private Long id;
     private String name;
     private Long organizationId;
     private String code;
+    private Boolean enabled;
 
     public ProjectDO() {
 
@@ -55,5 +49,13 @@ public class ProjectDO extends AuditDomain {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import io.choerodon.core.domain.Page;
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO;
 import io.choerodon.wiki.infra.dataobject.iam.ProjectDO;
 import io.choerodon.wiki.infra.dataobject.iam.UserDO;
@@ -37,4 +38,13 @@ public class IamServiceClientFallback implements IamServiceClient {
         return new ResponseEntity("error.user.get", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @Override
+    public ResponseEntity<Page<OrganizationDO>> list(int page, int size) {
+        return new ResponseEntity("error.organization.get", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<Page<ProjectDO>> list(Long organizationId) {
+        return new ResponseEntity("error.project.get", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

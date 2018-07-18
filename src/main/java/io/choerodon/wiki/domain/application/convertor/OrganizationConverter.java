@@ -1,5 +1,6 @@
 package io.choerodon.wiki.domain.application.convertor;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.core.convertor.ConvertorI;
@@ -14,6 +15,8 @@ public class OrganizationConverter implements ConvertorI<OrganizationE, Organiza
 
     @Override
     public OrganizationE doToEntity(OrganizationDO dataObject) {
-        return new OrganizationE(dataObject.getId(), dataObject.getName(), dataObject.getCode());
+        OrganizationE organizationE = new OrganizationE();
+        BeanUtils.copyProperties(dataObject,organizationE);
+        return organizationE;
     }
 }

@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.convertor.ConvertPageHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
+import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
-import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO;
 import io.choerodon.wiki.infra.dataobject.iam.ProjectDO;
 import io.choerodon.wiki.infra.dataobject.iam.UserDO;
@@ -75,4 +77,31 @@ public class IamRepositoryImpl implements IamRepository {
         }
     }
 
+    @Override
+    public Page<OrganizationE> pageByOrganization(int page, int size) {
+        ResponseEntity<Page<OrganizationDO>> responseEntity = iamServiceClient.pageByOrganization(page,size);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<OrganizationDO> organizationDOPage = responseEntity.getBody();
+        if (organizationDOPage != null && !organizationDOPage.isEmpty()) {
+            return ConvertPageHelper.convertPage(organizationDOPage,OrganizationE.class);
+        } else {
+            throw new CommonException("error.organization.get");
+        }
+    }
+
+    @Override
+    public Page<ProjectE> pageByProject(Long organizationId, int page, int size) {
+        ResponseEntity<Page<ProjectDO>> responseEntity = iamServiceClient.pageByProject(organizationId,page,size);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<ProjectDO> projectDOPage = responseEntity.getBody();
+        if (projectDOPage != null && !projectDOPage.isEmpty()) {
+            return ConvertPageHelper.convertPage(projectDOPage,ProjectE.class);
+        } else {
+            throw new CommonException("error.organization.get");
+        }
+    }
 }

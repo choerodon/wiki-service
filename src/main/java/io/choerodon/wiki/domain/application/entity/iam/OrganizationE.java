@@ -4,21 +4,18 @@ package io.choerodon.wiki.domain.application.entity.iam;
  * Created by ernst on 2018/7/9.
  */
 public class OrganizationE {
+
     private Long id;
     private String name;
     private String code;
+    private Boolean enabled;
+    private Long projectCount;
 
     public OrganizationE() {
     }
 
     public OrganizationE(Long id) {
         this.id = id;
-    }
-
-    public OrganizationE(Long id, String name, String code) {
-        this.id = id;
-        this.name = name;
-        this.code = code;
     }
 
     public Long getId() {
@@ -43,5 +40,21 @@ public class OrganizationE {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Long getProjectCount() {
+        return projectCount;
+    }
+
+    public void setProjectCount(Long projectCount) {
+        this.projectCount = projectCount;
     }
 }

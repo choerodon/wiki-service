@@ -12,6 +12,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.CustomPageRequest;
@@ -42,7 +43,7 @@ public class WikiProjectSpaceController {
      * @param name      空间名
      * @return
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
     @ApiOperation(value = "检查项目下空间名唯一性")
     @GetMapping(value = "/check")
     public ResponseEntity<Boolean> checkName(
@@ -62,7 +63,7 @@ public class WikiProjectSpaceController {
      * @param wikiSpaceDTO 空间信息
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
     @ApiOperation(value = "项目下创建wiki空间")
     @PostMapping
     public ResponseEntity create(
@@ -83,7 +84,9 @@ public class WikiProjectSpaceController {
      * @param searchParam 查询参数
      * @return Page of WikiSpaceResponseDTO
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "分页查询项目下创建的空间")
     @CustomPageRequest
     @PostMapping(value = "/list_by_options")
@@ -107,7 +110,7 @@ public class WikiProjectSpaceController {
      * @param id        空间id
      * @return DevopsServiceDTO
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.PROJECT,roles = {InitRoleCode.PROJECT_OWNER})
     @ApiOperation(value = "查询项目下单个wiki空间")
     @GetMapping(value = "/{id}")
     public ResponseEntity<WikiSpaceResponseDTO> query(
@@ -128,7 +131,7 @@ public class WikiProjectSpaceController {
      * @param wikiSpaceDTO 空间信息
      * @return Boolean
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
     @ApiOperation(value = "更新项目下单个空间")
     @PutMapping(value = "/{id}")
     public ResponseEntity<WikiSpaceResponseDTO> update(@ApiParam(value = "组织ID", required = true)

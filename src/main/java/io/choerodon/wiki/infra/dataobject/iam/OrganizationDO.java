@@ -5,11 +5,12 @@ package io.choerodon.wiki.infra.dataobject.iam;
  * Created by ernst on 2018/7/9.
  */
 public class OrganizationDO {
+
     private Long id;
     private String name;
     private String code;
-    private Long passwordPolicyId;
-    private Long objectVersionNumber;
+    private Boolean enabled;
+    private Long projectCount;
 
     public Long getId() {
         return id;
@@ -27,27 +28,27 @@ public class OrganizationDO {
         this.name = name;
     }
 
-    public Long getPasswordPolicyId() {
-        return passwordPolicyId;
-    }
-
-    public void setPasswordPolicyId(Long passwordPolicyId) {
-        this.passwordPolicyId = passwordPolicyId;
-    }
-
-    public Long getObjectVersionNumber() {
-        return objectVersionNumber;
-    }
-
-    public void setObjectVersionNumber(Long objectVersionNumber) {
-        this.objectVersionNumber = objectVersionNumber;
-    }
-
     public String getCode() {
         return code;
     }
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Long getProjectCount() {
+        return projectCount;
+    }
+
+    public void setProjectCount(Long projectCount) {
+        this.projectCount = projectCount;
     }
 }

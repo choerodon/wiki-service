@@ -1,6 +1,5 @@
 package io.choerodon.wiki.domain.application.entity;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
@@ -9,13 +8,13 @@ import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
  * Created by Zenger on 2018/3/28.
  */
 @Component
-@Scope("prototype")
 public class ProjectE {
+
     private Long id;
     private String name;
     private String code;
     private OrganizationE organization;
-
+    private Boolean enabled;
 
     public ProjectE() {
     }
@@ -58,5 +57,13 @@ public class ProjectE {
 
     public void initOrganizationE(Long id){
         organization = new OrganizationE(id);
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }
