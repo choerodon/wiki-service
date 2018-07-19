@@ -42,7 +42,7 @@ env:
     WIKI_CLIENT: xwiki
     WIKI_URL: http://xwiki-alpha.saas.hand-china.com
     WIKI_TOKEN: Choerodon
-    SECURITY_BASIC_ENABLE: false
+    WIKI_DEFAULT_GROUP: XWiki.XWikiAllGroup
 
 metrics:
   path: /prometheus
