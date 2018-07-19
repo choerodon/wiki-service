@@ -43,7 +43,9 @@ public class WikiProjectSpaceController {
      * @param name      空间名
      * @return
      */
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "检查项目下空间名唯一性")
     @GetMapping(value = "/check")
     public ResponseEntity<Boolean> checkName(
@@ -63,7 +65,9 @@ public class WikiProjectSpaceController {
      * @param wikiSpaceDTO 空间信息
      * @return responseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "项目下创建wiki空间")
     @PostMapping
     public ResponseEntity create(
@@ -110,7 +114,9 @@ public class WikiProjectSpaceController {
      * @param id        空间id
      * @return DevopsServiceDTO
      */
-    @Permission(level = ResourceLevel.PROJECT,roles = {InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "查询项目下单个wiki空间")
     @GetMapping(value = "/{id}")
     public ResponseEntity<WikiSpaceResponseDTO> query(
@@ -131,7 +137,9 @@ public class WikiProjectSpaceController {
      * @param wikiSpaceDTO 空间信息
      * @return Boolean
      */
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "更新项目下单个空间")
     @PutMapping(value = "/{id}")
     public ResponseEntity<WikiSpaceResponseDTO> update(@ApiParam(value = "组织ID", required = true)

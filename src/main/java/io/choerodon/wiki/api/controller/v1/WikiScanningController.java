@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.app.service.WikiScanningService;
+import io.choerodon.wiki.infra.common.Stage;
 
 /**
  * Created by Zenger on 2018/7/18.
@@ -32,7 +34,9 @@ public class WikiScanningController {
      * @param organizationId 组织id
      * @return DevopsServiceDTO
      */
-    @Permission(level = ResourceLevel.ORGANIZATION)
+    @Permission(level = ResourceLevel.ORGANIZATION,
+            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
+                    Stage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "扫描组织和项目")
     @GetMapping(value = "/scann")
     public ResponseEntity query(
