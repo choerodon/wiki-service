@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page xmlns="http://www.xwiki.org">
+    <language></language>
+    <majorVersion>1</majorVersion>
+    <minorVersion>1</minorVersion>
+    <hidden>true</hidden>
+    <comment></comment>
+    <content></content>
+    <objects>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.TemplateProviderClass</className>
+            <number>0</number>
+            <headline>edit</headline>
+            <property name="action" type="StaticList">
+                <attribute name="name" value="action"/>
+                <attribute name="prettyName" value="Action on create"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="select"/>
+                <attribute name="multiSelect" value="0"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" "/>
+                <attribute name="cache" value="0"/>
+                <attribute name="separators" value=" ,|"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="3"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="sort" value="none"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <attribute name="values" value="edit|saveandedit"/>
+                <attribute name="allowedValues" value="edit,saveandedit"/>
+                <value>edit</value>
+            </property>
+            <property name="creationRestrictions" type="DBList">
+                <attribute name="name" value="creationRestrictions"/>
+                <attribute name="prettyName" value="Creation Restrictions"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="1"/>
+                <attribute name="displayType" value="input"/>
+                <attribute name="multiSelect" value="1"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" ,"/>
+                <attribute name="cache" value="0"/>
+                <attribute name="classname" value=""/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="idField" value=""/>
+                <attribute name="number" value="9"/>
+                <attribute name="picker" value="1"/>
+                <attribute name="separators" value=","/>
+                <attribute name="sort" value="none"/>
+                <attribute name="sql" value="select distinct doc.web from XWikiDocument doc"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <attribute name="valueField" value=""/>
+                <attribute name="allowedValues" value=""/>
+                <value>wwwe</value>
+            </property>
+            <property name="creationRestrictionsAreSuggestions" type="Boolean">
+                <attribute name="name" value="creationRestrictionsAreSuggestions"/>
+                <attribute name="prettyName" value="Creation Restrictions Are Suggestions"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="displayFormType" value="checkbox"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="defaultValue" value=""/>
+                <attribute name="displayType" value=""/>
+                <attribute name="number" value="10"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value>1</value>
+            </property>
+            <property name="description" type="String">
+                <attribute name="name" value="description"/>
+                <attribute name="prettyName" value="description"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="4"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value></value>
+            </property>
+            <property name="icon" type="String">
+                <attribute name="name" value="icon"/>
+                <attribute name="prettyName" value="icon"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="6"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value>application</value>
+            </property>
+            <property name="name" type="String">
+                <attribute name="name" value="name"/>
+                <attribute name="prettyName" value="name"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="1"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value>wwwe.entry.name</value>
+            </property>
+            <property name="spaces" type="DBList">
+                <attribute name="name" value="spaces"/>
+                <attribute name="prettyName" value="spaces"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="0"/>
+                <attribute name="displayType" value="checkbox"/>
+                <attribute name="multiSelect" value="1"/>
+                <attribute name="size" value="10"/>
+                <attribute name="separator" value=","/>
+                <attribute name="cache" value="0"/>
+                <attribute name="classname" value=""/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="idField" value=""/>
+                <attribute name="number" value="7"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="separators" value=","/>
+                <attribute name="sort" value="none"/>
+                <attribute name="sql" value="select distinct doc.web from XWikiDocument doc order by doc.web"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <attribute name="valueField" value=""/>
+                <attribute name="allowedValues" value=""/>
+                <value></value>
+            </property>
+            <property name="template" type="String">
+                <attribute name="name" value="template"/>
+                <attribute name="prettyName" value="template"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="2"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value></value>
+            </property>
+            <property name="terminal" type="Boolean">
+                <attribute name="name" value="terminal"/>
+                <attribute name="prettyName" value="terminal"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="displayFormType" value="select"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="defaultValue" value=""/>
+                <attribute name="displayType" value=""/>
+                <attribute name="number" value="5"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value>0</value>
+            </property>
+            <property name="visibilityRestrictions" type="DBList">
+                <attribute name="name" value="visibilityRestrictions"/>
+                <attribute name="prettyName" value="Visibility Restrictions"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="relationalStorage" value="1"/>
+                <attribute name="displayType" value="input"/>
+                <attribute name="multiSelect" value="1"/>
+                <attribute name="size" value="1"/>
+                <attribute name="separator" value=" ,"/>
+                <attribute name="cache" value="0"/>
+                <attribute name="classname" value=""/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="idField" value=""/>
+                <attribute name="number" value="8"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="separators" value=","/>
+                <attribute name="sort" value="none"/>
+                <attribute name="sql" value="select distinct doc.web from XWikiDocument doc order by doc.web"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <attribute name="valueField" value=""/>
+                <attribute name="allowedValues" value=""/>
+                <value></value>
+            </property>
+        </objectSummary>
+    </objects>
+</page>

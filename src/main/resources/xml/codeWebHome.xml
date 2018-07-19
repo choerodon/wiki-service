@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page xmlns="http://www.xwiki.org">
+    <name>WebHome</name>
+    <title>Code</title>
+    <translations/>
+    <syntax>xwiki/2.1</syntax>
+    <language></language>
+    <majorVersion>1</majorVersion>
+    <minorVersion>2</minorVersion>
+    <hidden>true</hidden> 
+    <content>{{translation key="appWithinMinutes.codeSpace.description" /}}
+
+{{velocity}}
+#if ("$xwiki.getUserPreference('displayHiddenDocuments')" != '1')
+  {{info}}
+    {{translation key="appWithinMinutes.codeSpace.hiddenPagesInfo" /}}
+  {{/info}}
+#end
+
+#set ($escapedDocumentReference = $services.rendering.escape($services.model.serialize($doc.documentReference,
+  'default'), 'xwiki/2.1'))
+{{documentTree showTranslations="false" showAttachments="false"
+  filterHiddenDocuments="false" root="document:$escapedDocumentReference" /}}
+{{/velocity}}</content>
+    <objects/>
+</page>

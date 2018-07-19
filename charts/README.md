@@ -78,6 +78,7 @@ env.open.SPRING_CLOUD_CONFIG_URI|配置中心地址
 env.open.EUREKA_CLIENT_SERVICEURL_DEFAULTZONE|注册服务地址
 env.open.SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS|kafk地址
 env.open.SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES|zookeeper地址
-env.open.SERVICES_GITLAB_URL|gitlab地址
-persistence.enabled|是否启用持久化存储
-persistence.existingClaim|绑定的pvc名称
+env.open.WIKI_CLIENT|默认的wiki名称
+env.open.WIKI_URL|wiki系统的地址
+env.open.WIKI_TOKEN|wiki请求认证的token
+env.open.WIKI_DEFAULT_GROUP|wiki默认的所有用户组

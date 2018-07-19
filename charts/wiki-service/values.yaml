@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: registry.cn-hangzhou.aliyuncs.com/choerodon-devops/devops-service
+  repository: registry.cn-hangzhou.aliyuncs.com/choerodon-wiki/wiki-service
   pullPolicy: Always
 
 preJob:
@@ -21,24 +21,29 @@ preJob:
     mysql:
       host: 192.168.12.175
       port: 3306
-      database: demo_service
+      database: wiki_service
       username: root
       password: choerodon
 
 deployment:
-  managementPort: 8091
+  managementPort: 9991
 
 env:
   open:
     EUREKA_DEFAULT_ZONE: http://register-server.io-choerodon:8000/eureka/
-    SPRING_DATASOURCE_URL: jdbc:mysql://localhost/demo_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    SPRING_DATASOURCE_URL: jdbc:mysql://localhost/wiki_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
     SPRING_DATASOURCE_USERNAME: root
     SPRING_DATASOURCE_PASSWORD: choerodon
     CHOERODON_EVENT_CONSUMER_KAFKA_BOOTSTRAP_SERVERS: kafka-0.kafka-headless.kafka.svc.cluster.local:9092,kafka-1.kafka-headless.kafka.svc.cluster.local:9092,kafka-2.kafka-headless.kafka.svc.cluster.local:9092
     SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka-0.kafka-headless.kafka.svc.cluster.local:9092,kafka-1.kafka-headless.kafka.svc.cluster.local:9092,kafka-2.kafka-headless.kafka.svc.cluster.local:9092
     SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES: zookeeper-0.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-1.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-2.zookeeper-headless.zookeeper.svc.cluster.local:2181
     SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.apache.kafka.common.serialization.ByteArraySerializer
+    SPRING_CLOUD_CONFIG_ENABLED: true
     SPRING_CLOUD_CONFIG_URI: http://config-server.framework:8010/
+    WIKI_CLIENT: xwiki
+    WIKI_URL: http://xwiki-alpha.saas.hand-china.com
+    WIKI_TOKEN: Choerodon
+    WIKI_DEFAULT_GROUP: XWikiAllGroup
 
 metrics:
   path: /prometheus
@@ -56,9 +61,10 @@ persistence:
   # subPath:
 
 service:
-  enabled: false
+  name: wiki-service
+  enable: false
   type: ClusterIP
-  port: 8090
+  port: 9990
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -67,7 +73,7 @@ resources:
   # lines,adjust them as necessary,and remove the curly braces after 'resources:'.
   limits:
     # cpu: 100m
-    memory: 2Gi
+    memory: 4Gi
   requests:
     # cpu: 100m
-    memory: 1.5Gi
+    memory: 2Gi

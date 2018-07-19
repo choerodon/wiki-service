@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page xmlns="http://www.xwiki.org">
+    <wiki>xwiki</wiki>
+    <author>XWiki.admin</author>
+    <translations/>
+    <syntax>xwiki/2.0</syntax>
+    <language></language>
+    <majorVersion>3</majorVersion>
+    <minorVersion>1</minorVersion>
+    <hidden>true</hidden>
+    <comment>Updated class property</comment>
+    <content></content>
+    <objects>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>AppWithinMinutes.MetadataClass</className>
+            <number>0</number>
+            <headline></headline>
+            <property name="dataSpaceName" type="String">
+                <attribute name="name" value="dataSpaceName"/>
+                <attribute name="prettyName" value="Data Space Name"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="1"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value></value>
+            </property>
+        </objectSummary>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.ClassSheetBinding</className>
+            <number>0</number>
+            <headline></headline>
+            <property name="sheet" type="String">
+                <attribute name="name" value="sheet"/>
+                <attribute name="prettyName" value="Sheet"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="1"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value></value>
+            </property>
+        </objectSummary>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.DocumentSheetBinding</className>
+            <number>0</number>
+            <headline>AppWithinMinutes.ClassEditSheet</headline>
+            <property name="sheet" type="String">
+                <attribute name="name" value="sheet"/>
+                <attribute name="prettyName" value="Sheet"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="1"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value>AppWithinMinutes.ClassEditSheet</value>
+            </property>
+        </objectSummary>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.DocumentSheetBinding</className>
+            <number>1</number>
+            <headline>XWiki.ClassSheet</headline>
+            <property name="sheet" type="String">
+                <attribute name="name" value="sheet"/>
+                <attribute name="prettyName" value="Sheet"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="customDisplay" value=""/>
+                <attribute name="number" value="1"/>
+                <attribute name="picker" value="0"/>
+                <attribute name="validationMessage" value=""/>
+                <attribute name="validationRegExp" value=""/>
+                <value>XWiki.ClassSheet</value>
+            </property>
+        </objectSummary>
+    </objects>
+</page>

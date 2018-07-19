@@ -6,45 +6,54 @@
 
     <groupId>choerodon-c7nkb</groupId>
     <artifactId>wiki-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
+    <!--加parent-->
     <parent>
         <groupId>io.choerodon</groupId>
         <artifactId>choerodon-framework-parent</artifactId>
-        <version>0.6.0.RELEASE</version>
+        <version>0.7.0.RELEASE</version>
     </parent>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <finalName>app</finalName>
+    </build>
+
+    <properties>
+        <choerodon.starters.version>0.5.3.RELEASE</choerodon.starters.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-swagger</artifactId>
-            <version>0.5.0.RELEASE</version>
+            <version>${choerodon.starters.version}</version>
         </dependency>
         <dependency>
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-core</artifactId>
-            <version>0.5.0.RELEASE</version>
+            <version>${choerodon.starters.version}</version>
         </dependency>
         <dependency>
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-oauth-resource</artifactId>
-            <version>0.5.0.RELEASE</version>
+            <version>${choerodon.starters.version}</version>
         </dependency>
         <dependency>
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-feign-replay</artifactId>
-            <version>0.5.0.RELEASE</version>
+            <version>${choerodon.starters.version}</version>
         </dependency>
         <dependency>
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-mybatis-mapper</artifactId>
-            <version>0.5.0.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>io.choerodon</groupId>
-            <artifactId>choerodon-starter-hitoa</artifactId>
-            <version>0.5.0.RELEASE</version>
+            <version>${choerodon.starters.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -72,6 +81,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- config server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -87,6 +101,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zuul</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-kafka</artifactId>
             <exclusions>
                 <exclusion>
@@ -98,7 +116,7 @@
         <dependency>
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-bus</artifactId>
-            <version>0.5.0.RELEASE</version>
+            <version>${choerodon.starters.version}</version>
         </dependency>
         <!-- test -->
         <dependency>
@@ -106,6 +124,11 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
         </dependency>
         <!--监控相关依赖 -->
         <dependency><!-- 如果服务需要监控功能则需要此依赖 -->
@@ -120,12 +143,36 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-sleuth-stream</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.choerodon</groupId>
+            <artifactId>choerodon-starter-event-consumer</artifactId>
+            <version>${choerodon.starters.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.choerodon</groupId>
+            <artifactId>choerodon-starter-event-producer</artifactId>
+            <version>${choerodon.starters.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-jackson</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-simplexml</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>2.1.1</version>
+        </dependency>
     </dependencies>
-
-    <build>
-        <finalName>app</finalName>
-    </build>
-
 </project>
 

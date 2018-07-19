@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page xmlns="http://www.xwiki.org">
+    <objects>
+        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <className>XWiki.XWikiGroups</className>
+            <property name="member" type="String">
+                <attribute name="name" value="member"/>
+                <attribute name="prettyName" value="Member"/>
+                <attribute name="unmodifiable" value="0"/>
+                <attribute name="disabled" value="0"/>
+                <attribute name="size" value="30"/>
+                <attribute name="number" value="1"/>
+            </property>
+        </objectSummary>
+    </objects>
+</page>

@@ -1,0 +1,145 @@
+package io.choerodon.wiki.infra.persistence.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.convertor.ConvertPageHelper;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.wiki.domain.application.entity.ProjectE;
+import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
+import io.choerodon.wiki.domain.application.entity.iam.RoleE;
+import io.choerodon.wiki.domain.application.entity.iam.UserE;
+import io.choerodon.wiki.domain.application.repository.IamRepository;
+import io.choerodon.wiki.domain.application.valueobject.RoleAssignmentSearch;
+import io.choerodon.wiki.infra.dataobject.iam.*;
+import io.choerodon.wiki.infra.feign.IamServiceClient;
+
+/**
+ * Created by younger on 2018/3/29.
+ */
+@Component
+public class IamRepositoryImpl implements IamRepository {
+
+    private IamServiceClient iamServiceClient;
+
+    public IamRepositoryImpl(IamServiceClient iamServiceClient) {
+        this.iamServiceClient = iamServiceClient;
+    }
+
+
+    @Override
+    public UserE queryByLoginName(String userName) {
+        try {
+            ResponseEntity<UserDO> responseEntity = iamServiceClient.queryByLoginName(userName);
+            return ConvertHelper.convert(responseEntity.getBody(), UserE.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public OrganizationE queryOrganizationById(Long organizationId) {
+        ResponseEntity<OrganizationDO> organization = iamServiceClient.queryOrganizationById(organizationId);
+        if (organization.getStatusCode().is2xxSuccessful()) {
+            return ConvertHelper.convert(organization.getBody(), OrganizationE.class);
+        } else {
+            throw new CommonException("error.organization.get");
+        }
+    }
+
+    @Override
+    public ProjectE queryIamProject(Long projectId) {
+        ResponseEntity<ProjectDO> projectDO = iamServiceClient.queryIamProject(projectId);
+        if (!projectDO.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.project.get");
+        }
+        return ConvertHelper.convert(projectDO.getBody(), ProjectE.class);
+    }
+
+    @Override
+    public UserE queryUserById(Long userId) {
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(userId);
+        ResponseEntity<List<UserDO>> responseEntity = iamServiceClient.queryUsersByIds(userIds);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.user.get");
+        }
+        List<UserDO> list = responseEntity.getBody();
+        if (list != null && list.size() == 1) {
+            return ConvertHelper.convert(list.get(0), UserE.class);
+        } else {
+            throw new CommonException("error.user.query");
+        }
+    }
+
+    @Override
+    public Page<OrganizationE> pageByOrganization(int page, int size) {
+        ResponseEntity<Page<OrganizationDO>> responseEntity = iamServiceClient.pageByOrganization(page, size);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<OrganizationDO> organizationDOPage = responseEntity.getBody();
+        if (organizationDOPage != null && !organizationDOPage.isEmpty()) {
+            return ConvertPageHelper.convertPage(organizationDOPage, OrganizationE.class);
+        } else {
+            throw new CommonException("error.organization.get");
+        }
+    }
+
+    @Override
+    public Page<ProjectE> pageByProject(Long organizationId, int page, int size) {
+        ResponseEntity<Page<ProjectDO>> responseEntity = iamServiceClient.pageByProject(organizationId, page, size);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<ProjectDO> projectDOPage = responseEntity.getBody();
+        if (projectDOPage != null && !projectDOPage.isEmpty()) {
+            return ConvertPageHelper.convertPage(projectDOPage, ProjectE.class);
+        } else {
+            throw new CommonException("error.organization.get");
+        }
+    }
+
+    @Override
+    public Page<RoleE> roleList(String code) {
+        RoleSearchDO roleSearchDO = new RoleSearchDO();
+        roleSearchDO.setCode(code);
+        ResponseEntity<Page<RoleDO>> responseEntity = iamServiceClient.roleList(roleSearchDO);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<RoleDO> roleDOPage = responseEntity.getBody();
+        if (roleDOPage != null && !roleDOPage.isEmpty()) {
+            return ConvertPageHelper.convertPage(roleDOPage, RoleE.class);
+        } else {
+            throw new CommonException("error.organization.get");
+        }
+    }
+
+    @Override
+    public Page<UserE> pagingQueryUsersByRoleIdOnProjectLevel(Long roleId, Long projectId, int page, int size) {
+        ResponseEntity<Page<UserDO>> responseEntity =
+                iamServiceClient.pagingQueryUsersByRoleIdOnProjectLevel(roleId, projectId, page, size, new RoleAssignmentSearch());
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<UserDO> userDOPage = responseEntity.getBody();
+        return ConvertPageHelper.convertPage(userDOPage, UserE.class);
+    }
+
+    @Override
+    public Page<UserE> pagingQueryUsersByRoleIdOnOrganizationLevel(Long roleId, Long organizationId, int page, int size) {
+        ResponseEntity<Page<UserDO>> responseEntity =
+                iamServiceClient.pagingQueryUsersByRoleIdOnOrganizationLevel(roleId, organizationId, page, size,new RoleAssignmentSearch());
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<UserDO> userDOPage = responseEntity.getBody();
+        return ConvertPageHelper.convertPage(userDOPage, UserE.class);
+    }
+}
