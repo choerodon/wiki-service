@@ -1,24 +1,17 @@
 # Wiki Service
-`Wiki Service` is the core service of Choerodon.  
-
-Integrated several open source tools to automate the process of `planning`, `coding`, `building`, `testing`, and `deployment`, `operation`, `monitoring`.
- After a little simple configuration, then you'll get the most smoothest development experience.
+Wiki Service is responsible for establishing communication with [XWiki](https://www.xwiki.org), handling XWiki related logic and forwarding it to other services.
 
 ## Feature
-`DevOps Service` contains features as follows:
-- Application management
-- Version control (Using gitflow workflow)
-- Application version management
-- CI/CD dashboard
-- Deploy management
-- Ingress management
+`Wiki Service` contains features as follows:
+- User synchronization
+- Role synchronization
+- Organization synchronization
+- Project synchronization
+- Create space
 
 ## Requirements
 - Java8
-- [GitLab Service](https://github.com/choerodon/gitlab-service)
 - [Iam Service](https://github.com/choerodon/iam-service)
-- [Harbor](https://vmware.github.io/harbor/cn/)
-- [Kubenetes](https://kubernetes.io/)
 - [MySQL](https://www.mysql.com)
 - [Kafka](https://kafka.apache.org)
 
@@ -27,12 +20,12 @@ Integrated several open source tools to automate the process of `planning`, `cod
 
     ```sql
     CREATE USER 'choerodon'@'%' IDENTIFIED BY "choerodon";
-    CREATE DATABASE devops_service DEFAULT CHARACTER SET utf8;
-    GRANT ALL PRIVILEGES ON devops_service.* TO choerodon@'%';
+    CREATE DATABASE wiki_service DEFAULT CHARACTER SET utf8;
+    GRANT ALL PRIVILEGES ON wiki_service.* TO choerodon@'%';
     FLUSH PRIVILEGES;
     ```
 1. run command `sh init-local-database.sh`
-1. run command as follow or run `DevopsServiceApplication` in IntelliJ IDEA
+1. run command as follow or run `WikiServiceApplication` in IntelliJ IDEA
 
     ```bash
     mvn clean spring-boot:run
@@ -42,7 +35,7 @@ Integrated several open source tools to automate the process of `planning`, `cod
 - `go-register-server`: Register server
 - `config-server`：Configure server
 - `kafka`
-- `mysql`: devops_service database
+- `mysql`: wiki_service database
 
 ## Reporting Issues
 If you find any shortcomings or bugs, please describe them in the  [issue](https://github.com/choerodon/choerodon/issues/new?template=issue_template.md).

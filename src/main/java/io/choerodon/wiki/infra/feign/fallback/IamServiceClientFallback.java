@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import io.choerodon.core.domain.Page;
-import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO;
-import io.choerodon.wiki.infra.dataobject.iam.ProjectDO;
-import io.choerodon.wiki.infra.dataobject.iam.UserDO;
+import io.choerodon.wiki.domain.application.valueobject.RoleAssignmentSearch;
+import io.choerodon.wiki.infra.dataobject.iam.*;
 import io.choerodon.wiki.infra.feign.IamServiceClient;
 
 /**
@@ -46,5 +46,28 @@ public class IamServiceClientFallback implements IamServiceClient {
     @Override
     public ResponseEntity<Page<ProjectDO>> pageByProject(Long organizationId, int page, int size) {
         return new ResponseEntity("error.project.get", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<Page<RoleDO>> roleList(RoleSearchDO role) {
+        return new ResponseEntity("error.role.get", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<Page<UserDO>> pagingQueryUsersByRoleIdOnProjectLevel(Long roleId,
+                                                                               Long sourceId,
+                                                                               int page,
+                                                                               int size,
+                                                                               @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO) {
+        return new ResponseEntity("error.user.get", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<Page<UserDO>> pagingQueryUsersByRoleIdOnOrganizationLevel(Long roleId,
+                                                                                    Long sourceId,
+                                                                                    int page,
+                                                                                    int size,
+                                                                                    @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO) {
+        return new ResponseEntity("error.user.get", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

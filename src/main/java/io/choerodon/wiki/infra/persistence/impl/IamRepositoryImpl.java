@@ -12,11 +12,11 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
+import io.choerodon.wiki.domain.application.entity.iam.RoleE;
 import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
-import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO;
-import io.choerodon.wiki.infra.dataobject.iam.ProjectDO;
-import io.choerodon.wiki.infra.dataobject.iam.UserDO;
+import io.choerodon.wiki.domain.application.valueobject.RoleAssignmentSearch;
+import io.choerodon.wiki.infra.dataobject.iam.*;
 import io.choerodon.wiki.infra.feign.IamServiceClient;
 
 /**
@@ -70,22 +70,22 @@ public class IamRepositoryImpl implements IamRepository {
             throw new CommonException("error.user.get");
         }
         List<UserDO> list = responseEntity.getBody();
-        if(list!=null && list.size()==1){
+        if (list != null && list.size() == 1) {
             return ConvertHelper.convert(list.get(0), UserE.class);
-        }else {
+        } else {
             throw new CommonException("error.user.query");
         }
     }
 
     @Override
     public Page<OrganizationE> pageByOrganization(int page, int size) {
-        ResponseEntity<Page<OrganizationDO>> responseEntity = iamServiceClient.pageByOrganization(page,size);
+        ResponseEntity<Page<OrganizationDO>> responseEntity = iamServiceClient.pageByOrganization(page, size);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw new CommonException("error.organization.get");
         }
         Page<OrganizationDO> organizationDOPage = responseEntity.getBody();
         if (organizationDOPage != null && !organizationDOPage.isEmpty()) {
-            return ConvertPageHelper.convertPage(organizationDOPage,OrganizationE.class);
+            return ConvertPageHelper.convertPage(organizationDOPage, OrganizationE.class);
         } else {
             throw new CommonException("error.organization.get");
         }
@@ -93,15 +93,53 @@ public class IamRepositoryImpl implements IamRepository {
 
     @Override
     public Page<ProjectE> pageByProject(Long organizationId, int page, int size) {
-        ResponseEntity<Page<ProjectDO>> responseEntity = iamServiceClient.pageByProject(organizationId,page,size);
+        ResponseEntity<Page<ProjectDO>> responseEntity = iamServiceClient.pageByProject(organizationId, page, size);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw new CommonException("error.organization.get");
         }
         Page<ProjectDO> projectDOPage = responseEntity.getBody();
         if (projectDOPage != null && !projectDOPage.isEmpty()) {
-            return ConvertPageHelper.convertPage(projectDOPage,ProjectE.class);
+            return ConvertPageHelper.convertPage(projectDOPage, ProjectE.class);
         } else {
             throw new CommonException("error.organization.get");
         }
+    }
+
+    @Override
+    public Page<RoleE> roleList(String code) {
+        RoleSearchDO roleSearchDO = new RoleSearchDO();
+        roleSearchDO.setCode(code);
+        ResponseEntity<Page<RoleDO>> responseEntity = iamServiceClient.roleList(roleSearchDO);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<RoleDO> roleDOPage = responseEntity.getBody();
+        if (roleDOPage != null && !roleDOPage.isEmpty()) {
+            return ConvertPageHelper.convertPage(roleDOPage, RoleE.class);
+        } else {
+            throw new CommonException("error.organization.get");
+        }
+    }
+
+    @Override
+    public Page<UserE> pagingQueryUsersByRoleIdOnProjectLevel(Long roleId, Long projectId, int page, int size) {
+        ResponseEntity<Page<UserDO>> responseEntity =
+                iamServiceClient.pagingQueryUsersByRoleIdOnProjectLevel(roleId, projectId, page, size, new RoleAssignmentSearch());
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<UserDO> userDOPage = responseEntity.getBody();
+        return ConvertPageHelper.convertPage(userDOPage, UserE.class);
+    }
+
+    @Override
+    public Page<UserE> pagingQueryUsersByRoleIdOnOrganizationLevel(Long roleId, Long organizationId, int page, int size) {
+        ResponseEntity<Page<UserDO>> responseEntity =
+                iamServiceClient.pagingQueryUsersByRoleIdOnOrganizationLevel(roleId, organizationId, page, size,new RoleAssignmentSearch());
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.organization.get");
+        }
+        Page<UserDO> userDOPage = responseEntity.getBody();
+        return ConvertPageHelper.convertPage(userDOPage, UserE.class);
     }
 }
