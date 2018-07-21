@@ -45,9 +45,31 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
         return ConvertHelper.convertList(wikiSpaceMapper.select(wikiSpaceDO), WikiSpaceE.class);
     }
 
+    public Boolean deleteSpaceById(Long id) {
+        if (wikiSpaceMapper.deleteByPrimaryKey(id) != 1) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public WikiSpaceE insert(WikiSpaceE wikiSpaceE) {
         WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
+        if (wikiSpaceMapper.insert(wikiSpaceDO) != 1) {
+            throw new CommonException("error.space.insert");
+        }
+        return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
+    }
+
+    public WikiSpaceE insertIfNotExist(WikiSpaceE wikiSpaceE) {
+        WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
+        WikiSpaceDO wikiSpaceDOCheck = new WikiSpaceDO();
+        wikiSpaceDOCheck.setResourceId(wikiSpaceDO.getResourceId());
+        wikiSpaceDOCheck.setResourceType(wikiSpaceDO.getResourceType());
+        WikiSpaceDO wikiSpaceDOCheck2 = wikiSpaceMapper.selectOne(wikiSpaceDOCheck);
+        if (wikiSpaceDOCheck2 != null) {
+            return ConvertHelper.convert(wikiSpaceDOCheck2, WikiSpaceE.class);
+        }
         if (wikiSpaceMapper.insert(wikiSpaceDO) != 1) {
             throw new CommonException("error.space.insert");
         }

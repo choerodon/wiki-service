@@ -50,6 +50,23 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
     @Override
     @Async
+    public void syncOrg(Long orgId) {
+        OrganizationE organizationE = iamRepository.queryOrganizationById(orgId);
+        List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
+                organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        if (wikiSpaceEList != null && !wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getSynchro()) {
+            setProject(organizationE);
+        } else {
+            setOrganization(organizationE);
+        }
+    }
+
+    public Boolean deleteSpaceById(Long id) {
+        return wikiSpaceRepository.deleteSpaceById(id);
+    }
+
+    @Override
+    @Async
     public void scanning() {
         List<OrganizationE> organizationEList = new ArrayList<>();
         Page<OrganizationE> pageByOrganization = iamRepository.pageByOrganization(0, 400);
@@ -147,7 +164,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                     setWikiProjectGroupUser(projectE, userGroupName, Stage.USER_GROUP);
 
                     if (!projectE.getEnabled()) {
-                        wikiGroupService.enableProjectGroup(projectE.getId(), USERNAME);
+                        wikiGroupService.disableProjectGroup(projectE.getId(), USERNAME);
                     }
                 }
             });
