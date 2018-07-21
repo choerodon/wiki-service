@@ -57,12 +57,18 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     @Async
     public void syncOrg(Long orgId) {
         OrganizationE organizationE = iamRepository.queryOrganizationById(orgId);
-        List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
-                organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
-        if (wikiSpaceEList != null && !wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getSynchro()) {
-            setProject(organizationE);
-        } else {
-            setOrganization(organizationE);
+        if (organizationE != null) {
+            logger.info("entry organization is : " + organizationE.getName());
+            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
+                    organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
+            logger.info("wikiSpaceList size : " + wikiSpaceEList.size());
+            if (!wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getSynchro()) {
+                setProject(organizationE);
+            } else {
+                setOrganization(organizationE);
+            }
+        }else {
+            logger.warn("failed to get organization, id is " + orgId);
         }
     }
 
