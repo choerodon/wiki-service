@@ -3,6 +3,8 @@ package io.choerodon.wiki.app.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +24,15 @@ import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
 import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
+import io.choerodon.wiki.infra.persistence.impl.WikiSpaceRepositoryImpl;
 
 /**
  * Created by Zenger on 2018/7/18.
  */
 @Service
 public class WikiScanningServiceImpl implements WikiScanningService {
+
+    private static final Logger logger = LoggerFactory.getLogger(WikiScanningServiceImpl.class);
 
     private static final String ORG_ICON = "domain";
     private static final String PROJECT_ICON = "project";
@@ -93,6 +98,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     public void setOrganization(OrganizationE organizationE){
+        logger.info("sync organization : " + organizationE.getName());
         //创建组织
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationE.getName());
@@ -121,7 +127,6 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     public void setProject(OrganizationE organizationE){
-        if (organizationE.getProjectCount() != 0) {
             List<ProjectE> projectEList = new ArrayList<>();
             Page<ProjectE> projectEPage = iamRepository.pageByProject(organizationE.getId(), 0, 400);
             projectEList.addAll(projectEPage.getContent());
@@ -137,6 +142,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 List<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.getWikiSpaceList(
                         projectE.getId(), WikiSpaceResourceType.PROJECT.getResourceType());
                 if (wikiSpaceES == null || wikiSpaceES.isEmpty()) {
+                    logger.info("sync project : " + projectE.getName());
                     WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
                     wikiSpaceDTO.setName(organizationE.getName() + "/" + projectE.getName());
                     wikiSpaceDTO.setIcon(PROJECT_ICON);
@@ -168,7 +174,6 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                     }
                 }
             });
-        }
     }
 
     public void setWikiProjectGroupUser(ProjectE projectE, String groupName, String group) {
