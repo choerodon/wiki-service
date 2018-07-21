@@ -84,7 +84,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             }
         }
 
-        organizationEList.stream().forEach(organizationE -> {
+        organizationEList.forEach(organizationE -> {
             if (organizationE.getEnabled()) {
                 List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
                         organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
@@ -138,7 +138,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 }
             }
 
-            projectEList.stream().forEach(projectE -> {
+            projectEList.forEach(projectE -> {
                 List<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.getWikiSpaceList(
                         projectE.getId(), WikiSpaceResourceType.PROJECT.getResourceType());
                 if (wikiSpaceES == null || wikiSpaceES.isEmpty()) {
