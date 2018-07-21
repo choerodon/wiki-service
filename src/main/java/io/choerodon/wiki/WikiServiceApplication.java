@@ -11,7 +11,7 @@ import io.choerodon.resource.annoation.EnableChoerodonResourceServer;
 
 @SpringBootApplication
 @EnableEurekaClient
-//@EnableChoerodonResourceServer
+@EnableChoerodonResourceServer
 @EnableFeignClients("io.choerodon")
 @EnableAsync
 public class WikiServiceApplication {
