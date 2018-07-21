@@ -13,14 +13,18 @@ public interface WikiSpaceRepository {
 
     List<WikiSpaceE> getWikiSpaceList(Long resourceId, String resourceType);
 
+    Boolean deleteSpaceById(Long id);
+
     WikiSpaceE insert(WikiSpaceE wikiSpaceE);
+
+    WikiSpaceE insertIfNotExist(WikiSpaceE wikiSpaceE);
 
     Page<WikiSpaceE> listWikiSpaceByPage(Long resourceId, String type,
                                          PageRequest pageRequest, String searchParam);
 
     WikiSpaceE selectById(Long id);
 
-    Boolean checkName(Long projectId, String name,String type);
+    Boolean checkName(Long projectId, String name, String type);
 
     WikiSpaceE update(WikiSpaceE wikiSpaceE);
 }

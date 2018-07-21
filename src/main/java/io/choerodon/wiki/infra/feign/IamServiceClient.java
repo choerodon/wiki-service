@@ -35,6 +35,9 @@ public interface IamServiceClient {
     @GetMapping(value = "/v1/organizations")
     ResponseEntity<Page<OrganizationDO>> pageByOrganization(@RequestParam("page") int page, @RequestParam("size") int size);
 
+    @GetMapping(value = "/v1/organizations/{organization_id}")
+    ResponseEntity<OrganizationDO> queryOrgById(@PathVariable(name = "organization_id") Long organizationId);
+
     @GetMapping(value = "/v1/organizations/{organization_id}/projects")
     ResponseEntity<Page<ProjectDO>> pageByProject(@PathVariable(name = "organization_id") Long organizationId,
                                                   @RequestParam("page") int page, @RequestParam("size") int size);
