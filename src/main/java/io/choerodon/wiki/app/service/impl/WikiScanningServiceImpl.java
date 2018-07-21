@@ -54,22 +54,28 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     @Override
-    @Async
     public void syncOrg(Long orgId) {
-        OrganizationE organizationE = iamRepository.queryOrganizationById(orgId);
-        if (organizationE != null) {
-            logger.info("entry organization is : " + organizationE.getName());
-            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
-                    organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
-            logger.info("wikiSpaceList size : " + wikiSpaceEList.size());
-            if (!wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getSynchro()) {
-                setProject(organizationE);
-            } else {
-                setOrganization(organizationE);
+        logger.info("entry org id : " + orgId);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OrganizationE organizationE = iamRepository.queryOrganizationById(orgId);
+                if (organizationE != null) {
+                    logger.info("entry organization is : " + organizationE.getName());
+                    List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
+                            organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
+                    logger.info("wikiSpaceList size : " + wikiSpaceEList.size());
+                    if (!wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getSynchro()) {
+                        setProject(organizationE);
+                    } else {
+                        setOrganization(organizationE);
+                    }
+                }else {
+                    logger.info("failed to get organization, id is " + orgId);
+                }
             }
-        }else {
-            logger.warn("failed to get organization, id is " + orgId);
-        }
+        });
+        thread.start();
     }
 
     public Boolean deleteSpaceById(Long id) {

@@ -13,7 +13,6 @@ import io.choerodon.resource.annoation.EnableChoerodonResourceServer;
 @EnableEurekaClient
 @EnableChoerodonResourceServer
 @EnableFeignClients("io.choerodon")
-@EnableAsync
 public class WikiServiceApplication {
 
     public static void main(String[] args){
