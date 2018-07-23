@@ -45,6 +45,7 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
         return ConvertHelper.convertList(wikiSpaceMapper.select(wikiSpaceDO), WikiSpaceE.class);
     }
 
+    @Override
     public Boolean deleteSpaceById(Long id) {
         if (wikiSpaceMapper.deleteByPrimaryKey(id) != 1) {
             return false;
@@ -61,6 +62,7 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
         return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
     }
 
+    @Override
     public WikiSpaceE insertIfNotExist(WikiSpaceE wikiSpaceE) {
         WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
         WikiSpaceDO wikiSpaceDOCheck = new WikiSpaceDO();
