@@ -95,13 +95,13 @@ public class IamRepositoryImpl implements IamRepository {
     public Page<ProjectE> pageByProject(Long organizationId, int page, int size) {
         ResponseEntity<Page<ProjectDO>> responseEntity = iamServiceClient.pageByProject(organizationId, page, size);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-            throw new CommonException("error.organization.get");
+            throw new CommonException("error.project.get");
         }
         Page<ProjectDO> projectDOPage = responseEntity.getBody();
         if (projectDOPage != null && !projectDOPage.isEmpty()) {
             return ConvertPageHelper.convertPage(projectDOPage, ProjectE.class);
         } else {
-            throw new CommonException("error.organization.get");
+            throw new CommonException("error.project.get");
         }
     }
 

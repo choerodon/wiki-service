@@ -83,12 +83,13 @@ public class WikiEventHandler {
                 WikiSpaceResourceType.PROJECT.getResourceType());
         //创建组
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
-        String adminGroupName = "P-" + projectEvent.getProjectCode() + Stage.ADMIN_GROUP;
-        String userGroupName = "P-" + projectEvent.getProjectCode() + Stage.USER_GROUP;
+        String adminGroupName = "P-" + projectEvent.getOrganizationCode() + "-" + projectEvent.getProjectCode() + Stage.ADMIN_GROUP;
+        String userGroupName = "P-" + projectEvent.getOrganizationCode() + "-" + projectEvent.getProjectCode() + Stage.USER_GROUP;
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setProjectCode(projectEvent.getProjectCode());
         wikiGroupDTO.setProjectName(projectEvent.getProjectName());
         wikiGroupDTO.setOrganizationName(projectEvent.getOrganizationName());
+        wikiGroupDTO.setOrganizationCode(projectEvent.getOrganizationCode());
         wikiGroupService.create(wikiGroupDTO, USERNAME, true, false);
         wikiGroupService.setUserToGroup(adminGroupName, projectEvent.getUserId(), USERNAME);
         wikiGroupDTO.setGroupName(userGroupName);

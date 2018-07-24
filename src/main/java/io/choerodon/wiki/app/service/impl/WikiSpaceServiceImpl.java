@@ -157,7 +157,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         String orgName = "O-" + wikiSpaceDTO.getName();
         wikiSpaceE.setPath(orgName);
         wikiSpaceE.setName(orgName);
-        WikiSpaceE orgSpace = wikiSpaceRepository.insert(wikiSpaceE);
+        WikiSpaceE orgSpace = wikiSpaceRepository.insertIfNotExist(wikiSpaceE);
         wikiSpaceAsynService.createOrgSpace(orgName, orgSpace, username);
     }
 
@@ -167,7 +167,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         String param2 = "P-" + names[1];
         wikiSpaceE.setPath(param1 + "/" + param2);
         wikiSpaceE.setName(param2);
-        WikiSpaceE projectSpace = wikiSpaceRepository.insert(wikiSpaceE);
+        WikiSpaceE projectSpace = wikiSpaceRepository.insertIfNotExist(wikiSpaceE);
         wikiSpaceAsynService.createProjectSpace(param1, param2, projectSpace, username, TYPE);
     }
 

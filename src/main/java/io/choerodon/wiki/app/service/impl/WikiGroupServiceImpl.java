@@ -60,9 +60,24 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     @Override
     public Boolean create(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg) {
-        Boolean flag = iWikiUserService.checkDocExsist(username, wikiGroupDTO.getGroupName());
-        if (!flag) {
+        if (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
             iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
+
+            Calendar ca = Calendar.getInstance();
+            long old = ca.getTimeInMillis();
+
+            try {
+                Thread.sleep(1500);
+                while (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
+                    Thread.sleep(1500);
+                    if (ca.getTimeInMillis() - old > 4500) {
+                        return false;
+                    }
+                }
+            } catch (InterruptedException e) {
+                LOGGER.error(e.getMessage());
+            }
+
             String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
             List<String> adminRightsList = Arrays.asList(adminRights);
             String[] userRights = {"login", "view", "edit", "creator", "comment"};
@@ -70,23 +85,24 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             if (isAdmin) {
                 if (isOrg) {
                     //给组织组分配admin权限
-                    iWikiGroupService.addRightsToOrg(wikiGroupDTO.getOrganizationCode(), wikiGroupDTO.getOrganizationName(), adminRightsList, isAdmin, username);
+                    iWikiGroupService.addRightsToOrg(wikiGroupDTO, adminRightsList, isAdmin, username);
                 } else {
                     //给项目组分配admin权限
-                    iWikiGroupService.addRightsToProject(wikiGroupDTO.getProjectName(), wikiGroupDTO.getProjectCode(), wikiGroupDTO.getOrganizationName(), adminRightsList, isAdmin, username);
+                    iWikiGroupService.addRightsToProject(wikiGroupDTO, adminRightsList, isAdmin, username);
                 }
             } else {
                 if (isOrg) {
                     //给组织组分配user权限
-                    iWikiGroupService.addRightsToOrg(wikiGroupDTO.getOrganizationCode(), wikiGroupDTO.getOrganizationName(), userRightsList, isAdmin, username);
+                    iWikiGroupService.addRightsToOrg(wikiGroupDTO, userRightsList, isAdmin, username);
                 } else {
                     //给项目组分配user权限
-                    iWikiGroupService.addRightsToProject(wikiGroupDTO.getProjectName(), wikiGroupDTO.getProjectCode(), wikiGroupDTO.getOrganizationName(), userRightsList, isAdmin, username);
+                    iWikiGroupService.addRightsToProject(wikiGroupDTO, userRightsList, isAdmin, username);
                 }
 
             }
         }
-        return false;
+
+        return true;
     }
 
     @Override
@@ -95,7 +111,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 .filter(groupMember -> !groupMember.getResourceType().equals(SITE))
                 .forEach(groupMember -> {
                     //将用户分配到组
-                    String groupName = getGroupName(groupMember);
+                    String groupName = getGroupName(groupMember, username);
 
                     //通过groupName给组添加成员
                     if (!StringUtils.isEmpty(groupName)) {
@@ -106,7 +122,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         wikiUserE.setFirstName(user.getLoginName());
                         wikiUserE.setEmail(user.getEmail());
                         String xmlParam = getUserXml(wikiUserE);
-                        if (!iWikiUserService.checkDocExsist(username, user.getLoginName())) {
+                        if (!checkDocExsist(username, user.getLoginName())) {
                             iWikiUserService.createUser(wikiUserE, user.getLoginName(), xmlParam, username);
                         }
 
@@ -122,8 +138,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 .forEach(groupMember -> {
                     List<String> roleLabels = groupMember.getRoleLabels();
                     if (roleLabels == null || roleLabels.isEmpty()) {
-                        String adminGroupName = getGroupNameBuffer(groupMember).append(Stage.ADMIN_GROUP).toString();
-                        String userGroupName = getGroupNameBuffer(groupMember).append(Stage.USER_GROUP).toString();
+                        String adminGroupName = getGroupNameBuffer(groupMember, username, Stage.ADMIN_GROUP).append(Stage.ADMIN_GROUP).toString();
+                        String userGroupName = getGroupNameBuffer(groupMember, username, Stage.USER_GROUP).append(Stage.USER_GROUP).toString();
                         deletePageClass(adminGroupName, username, groupMember.getUsername());
                         deletePageClass(userGroupName, username, groupMember.getUsername());
                     } else {
@@ -143,7 +159,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             String groupName = "O-" + orgCode + Stage.USER_GROUP;
 
             //如果用户不存在则新建
-            Boolean flag = iWikiUserService.checkDocExsist(loginName, loginName);
+            Boolean flag = checkDocExsist(loginName, loginName);
             if (!flag) {
                 WikiUserE wikiUserE = new WikiUserE();
                 wikiUserE.setLastName(loginName);
@@ -189,7 +205,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         if (projectE != null) {
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
-            iWikiGroupService.disableProjectGroupView(projectE.getName(), projectE.getCode(), organization.getName(), username);
+            iWikiGroupService.disableProjectGroupView(projectE.getName(), projectE.getCode(), organization.getName(), organization.getCode(), username);
         } else {
             throw new CommonException("error.query.project");
         }
@@ -206,7 +222,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         "P-" + projectE.getName(), username);
                 for (Integer i : list) {
                     //删除角色
-                    iWikiClassService.deleteProjectPageClass(username, "O-" + organization.getName(),"P-" + projectE.getName(), WEBPREFERENCES, XWIKIGLOBALRIGHTS, i);
+                    iWikiClassService.deleteProjectPageClass(username, "O-" + organization.getName(), "P-" + projectE.getName(), WEBPREFERENCES, XWIKIGLOBALRIGHTS, i);
                 }
             }
         } else {
@@ -217,10 +233,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void setUserToGroup(String groupName, Long userId, String username) {
         UserE userE = iamRepository.queryUserById(userId);
-        LOGGER.info("loginName : " + userE.getLoginName());
+        LOGGER.info("setUserToGroup: " + "groupName: " + groupName + ",user: " + userE.getLoginName());
         if (userE.getLoginName() != null) {
             String loginName = userE.getLoginName();
-            Boolean isUserExist = iWikiUserService.checkDocExsist(username, loginName);
+            Boolean isUserExist = checkDocExsist(loginName, loginName);
             if (!isUserExist) {
                 WikiUserE wikiUserE = new WikiUserE();
                 wikiUserE.setLastName(loginName);
@@ -235,18 +251,18 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         }
     }
 
-    private String getGroupName(GroupMemberDTO groupMemberDTO) {
+    private String getGroupName(GroupMemberDTO groupMemberDTO, String username) {
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
         if (roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) || roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType())) {
-            return getGroupNameBuffer(groupMemberDTO).append(Stage.ADMIN_GROUP).toString();
+            return getGroupNameBuffer(groupMemberDTO, username, Stage.ADMIN_GROUP).append(Stage.ADMIN_GROUP).toString();
         } else if (roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) || roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType())) {
-            return getGroupNameBuffer(groupMemberDTO).append(Stage.USER_GROUP).toString();
+            return getGroupNameBuffer(groupMemberDTO, username, Stage.USER_GROUP).append(Stage.USER_GROUP).toString();
         } else {
             return "";
         }
     }
 
-    private StringBuilder getGroupNameBuffer(GroupMemberDTO groupMemberDTO) {
+    private StringBuilder getGroupNameBuffer(GroupMemberDTO groupMemberDTO, String username, String type) {
         Long resourceId = groupMemberDTO.getResourceId();
         String resourceType = groupMemberDTO.getResourceType();
         StringBuilder groupName = new StringBuilder();
@@ -260,7 +276,12 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             groupName.append("P-");
             //通过项目id找到项目code
             ProjectE projectE = iamRepository.queryIamProject(resourceId);
-            groupName.append(projectE.getCode());
+            OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
+            if (iWikiUserService.checkDocExsist(username, "P-" + organizationE.getCode() + "-" + projectE.getCode() + type)) {
+                groupName.append(organizationE.getCode() + "-" + projectE.getCode());
+            } else if (iWikiUserService.checkDocExsist(username, "P-" + projectE.getCode() + type)) {
+                groupName.append(projectE.getCode());
+            }
         }
 
         return groupName;
@@ -344,20 +365,24 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     public void deleteGroupMember(List<String> roleLabels, GroupMemberDTO groupMember, String username) {
         if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
-            String adminGroupName = getGroupNameBuffer(groupMember).append(Stage.ADMIN_GROUP).toString();
+            String adminGroupName = getGroupNameBuffer(groupMember, username, Stage.ADMIN_GROUP).append(Stage.ADMIN_GROUP).toString();
             deletePageClass(adminGroupName, username, groupMember.getUsername());
         }
         if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
-            String adminGroupName = getGroupNameBuffer(groupMember).append(Stage.ADMIN_GROUP).toString();
+            String adminGroupName = getGroupNameBuffer(groupMember, username, Stage.ADMIN_GROUP).append(Stage.ADMIN_GROUP).toString();
             deletePageClass(adminGroupName, username, groupMember.getUsername());
         }
         if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
-            String userGroupName = getGroupNameBuffer(groupMember).append(Stage.USER_GROUP).toString();
+            String userGroupName = getGroupNameBuffer(groupMember, username, Stage.USER_GROUP).append(Stage.USER_GROUP).toString();
             deletePageClass(userGroupName, username, groupMember.getUsername());
         }
         if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
-            String userGroupName = getGroupNameBuffer(groupMember).append(Stage.USER_GROUP).toString();
+            String userGroupName = getGroupNameBuffer(groupMember, username, Stage.USER_GROUP).append(Stage.USER_GROUP).toString();
             deletePageClass(userGroupName, username, groupMember.getUsername());
         }
+    }
+
+    public Boolean checkDocExsist(String username, String groupName) {
+        return iWikiUserService.checkDocExsist(username, groupName);
     }
 }

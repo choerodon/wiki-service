@@ -3,6 +3,8 @@ package io.choerodon.wiki.app.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,8 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 @Service
 public class WikiScanningServiceImpl implements WikiScanningService {
 
+    private static final Logger logger = LoggerFactory.getLogger(WikiScanningServiceImpl.class);
+
     private static final String ORG_ICON = "domain";
     private static final String PROJECT_ICON = "project";
     private static final String USERNAME = "admin";
@@ -49,12 +53,33 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     @Override
-    @Async
+    @Async("org-pro-sync")
+    public void syncOrg(Long orgId) {
+        OrganizationE organizationE = iamRepository.queryOrganizationById(orgId);
+        if (organizationE != null) {
+            logger.info("entry organization is : " + organizationE.getName());
+            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
+                    organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
+            logger.info("wikiSpaceList size : " + wikiSpaceEList.size());
+            if (!wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getSynchro()) {
+                if (organizationE.getProjectCount() > 0) {
+                    setProject(organizationE);
+                }
+            } else {
+                setOrganization(organizationE);
+            }
+        } else {
+            logger.info("failed to get organization, id is " + orgId);
+        }
+    }
+
+    @Override
+    @Async("org-pro-sync")
     public void scanning() {
         List<OrganizationE> organizationEList = new ArrayList<>();
         Page<OrganizationE> pageByOrganization = iamRepository.pageByOrganization(0, 400);
-        organizationEList.addAll(pageByOrganization.getContent());
         int page = pageByOrganization.getTotalPages();
+        organizationEList.addAll(pageByOrganization.getContent());
         if (page > 1) {
             for (int i = 1; i < page; i++) {
                 Page<OrganizationE> list = iamRepository.pageByOrganization(i, 400);
@@ -62,12 +87,14 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             }
         }
 
-        organizationEList.stream().forEach(organizationE -> {
+        organizationEList.forEach(organizationE -> {
             if (organizationE.getEnabled()) {
                 List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
                         organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
                 if (wikiSpaceEList != null && !wikiSpaceEList.isEmpty()) {
-                    setProject(organizationE);
+                    if (organizationE.getProjectCount() > 0) {
+                        setProject(organizationE);
+                    }
                 } else {
                     setOrganization(organizationE);
                 }
@@ -75,7 +102,13 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         });
     }
 
-    public void setOrganization(OrganizationE organizationE){
+    @Override
+    public Boolean deleteSpaceById(Long id) {
+        return wikiSpaceRepository.deleteSpaceById(id);
+    }
+
+    public void setOrganization(OrganizationE organizationE) {
+        logger.info("sync organization : " + organizationE.getName());
         //创建组织
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationE.getName());
@@ -96,62 +129,64 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         wikiGroupDTO.setGroupName(userGroupName);
         wikiGroupService.create(wikiGroupDTO, USERNAME, false, true);
 
-        setProject(organizationE);
+        if (organizationE.getProjectCount() > 0) {
+            setProject(organizationE);
+        }
 
         if (!organizationE.getEnabled()) {
             wikiGroupService.disableOrganizationGroup(organizationE.getId(), USERNAME);
         }
     }
 
-    public void setProject(OrganizationE organizationE){
-        if (organizationE.getProjectCount() != 0) {
-            List<ProjectE> projectEList = new ArrayList<>();
-            Page<ProjectE> projectEPage = iamRepository.pageByProject(organizationE.getId(), 0, 400);
-            projectEList.addAll(projectEPage.getContent());
-            int projectPage = projectEPage.getTotalPages();
-            if (projectPage > 1) {
-                for (int i = 1; i < projectPage; i++) {
-                    Page<ProjectE> list = iamRepository.pageByProject(organizationE.getId(), i, 400);
-                    projectEList.addAll(list.getContent());
+    public void setProject(OrganizationE organizationE) {
+        List<ProjectE> projectEList = new ArrayList<>();
+        Page<ProjectE> projectEPage = iamRepository.pageByProject(organizationE.getId(), 0, 400);
+        int projectPage = projectEPage.getTotalPages();
+        projectEList.addAll(projectEPage.getContent());
+        if (projectPage > 1) {
+            for (int i = 1; i < projectPage; i++) {
+                Page<ProjectE> list = iamRepository.pageByProject(organizationE.getId(), i, 400);
+                projectEList.addAll(list.getContent());
+            }
+        }
+
+        projectEList.forEach(projectE -> {
+            List<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.getWikiSpaceList(
+                    projectE.getId(), WikiSpaceResourceType.PROJECT.getResourceType());
+            if (wikiSpaceES == null || wikiSpaceES.isEmpty()) {
+                logger.info("sync project : " + projectE.getName());
+                WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
+                wikiSpaceDTO.setName(organizationE.getName() + "/" + projectE.getName());
+                wikiSpaceDTO.setIcon(PROJECT_ICON);
+                wikiSpaceService.create(wikiSpaceDTO, projectE.getId(), USERNAME,
+                        WikiSpaceResourceType.PROJECT.getResourceType());
+
+                WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
+                String adminGroupName = "P-" + organizationE.getCode() + "-" + projectE.getCode() + Stage.ADMIN_GROUP;
+                String userGroupName = "P-" + organizationE.getCode() + "-" + projectE.getCode() + Stage.USER_GROUP;
+                wikiGroupDTO.setGroupName(adminGroupName);
+                wikiGroupDTO.setProjectCode(projectE.getCode());
+                wikiGroupDTO.setProjectName(projectE.getName());
+                wikiGroupDTO.setOrganizationName(organizationE.getName());
+                wikiGroupDTO.setOrganizationCode(organizationE.getCode());
+
+                //创建组并分配权限
+                wikiGroupService.create(wikiGroupDTO, USERNAME, true, false);
+                //管理员给组分配成员
+                setWikiProjectGroupUser(projectE, adminGroupName, Stage.ADMIN_GROUP);
+
+
+                wikiGroupDTO.setGroupName(userGroupName);
+                //创建组并分配权限
+                wikiGroupService.create(wikiGroupDTO, USERNAME, false, false);
+                //普通用户给组分配成员
+                setWikiProjectGroupUser(projectE, userGroupName, Stage.USER_GROUP);
+
+                if (!projectE.getEnabled()) {
+                    wikiGroupService.disableProjectGroup(projectE.getId(), USERNAME);
                 }
             }
-
-            projectEList.stream().forEach(projectE -> {
-                List<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.getWikiSpaceList(
-                        projectE.getId(), WikiSpaceResourceType.PROJECT.getResourceType());
-                if (wikiSpaceES == null || wikiSpaceES.isEmpty()) {
-                    WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
-                    wikiSpaceDTO.setName(organizationE.getName() + "/" + projectE.getName());
-                    wikiSpaceDTO.setIcon(PROJECT_ICON);
-                    wikiSpaceService.create(wikiSpaceDTO, projectE.getId(), USERNAME,
-                            WikiSpaceResourceType.PROJECT.getResourceType());
-
-                    WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
-                    String adminGroupName = "P-" + projectE.getCode() + Stage.ADMIN_GROUP;
-                    String userGroupName = "P-" + projectE.getCode() + Stage.USER_GROUP;
-                    wikiGroupDTO.setGroupName(adminGroupName);
-                    wikiGroupDTO.setProjectCode(projectE.getCode());
-                    wikiGroupDTO.setProjectName(projectE.getName());
-                    wikiGroupDTO.setOrganizationName(organizationE.getName());
-
-                    //创建组并分配权限
-                    wikiGroupService.create(wikiGroupDTO, USERNAME, true, false);
-                    //管理员给组分配成员
-                    setWikiProjectGroupUser(projectE, adminGroupName, Stage.ADMIN_GROUP);
-
-
-                    wikiGroupDTO.setGroupName(userGroupName);
-                    //创建组并分配权限
-                    wikiGroupService.create(wikiGroupDTO, USERNAME, false, false);
-                    //普通用户给组分配成员
-                    setWikiProjectGroupUser(projectE, userGroupName, Stage.USER_GROUP);
-
-                    if (!projectE.getEnabled()) {
-                        wikiGroupService.enableProjectGroup(projectE.getId(), USERNAME);
-                    }
-                }
-            });
-        }
+        });
     }
 
     public void setWikiProjectGroupUser(ProjectE projectE, String groupName, String group) {

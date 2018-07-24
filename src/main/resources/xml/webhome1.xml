@@ -36,10 +36,8 @@
         {{/html}}&#13;
         &#13;
         #set ($space = $doc.getSpace())&#13;
-        #set ($spaces = $space.split('\.'))&#13;
-        #set($application = $spaces.get(0))&#13;
         &#13;
-        {{activity subentries="3" entries="2" spaces=$application/}}&#13;
+        {{activity subentries="3" entries="2" spaces=$space/}}&#13;
         {{/velocity}}&#13;</content>
     <objects>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
