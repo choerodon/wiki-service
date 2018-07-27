@@ -2,8 +2,8 @@ package io.choerodon.wiki.infra.common;
 
 import io.choerodon.core.swagger.ChoerodonRouteData;
 import io.choerodon.swagger.annotation.ChoerodonExtraData;
-import io.choerodon.swagger.custom.extra.ExtraData;
-import io.choerodon.swagger.custom.extra.ExtraDataManager;
+import io.choerodon.swagger.swagger.extra.ExtraData;
+import io.choerodon.swagger.swagger.extra.ExtraDataManager;
 
 /**
  * @author wuguokai
