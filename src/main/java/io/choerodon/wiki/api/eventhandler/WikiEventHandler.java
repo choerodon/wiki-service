@@ -1,12 +1,16 @@
 package io.choerodon.wiki.api.eventhandler;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.core.event.EventPayload;
+import io.choerodon.core.saga.SagaDefinition;
+import io.choerodon.core.saga.SagaTask;
 import io.choerodon.event.consumer.annotation.EventListener;
 import io.choerodon.wiki.api.dto.*;
 import io.choerodon.wiki.app.service.WikiGroupService;
@@ -28,6 +32,7 @@ public class WikiEventHandler {
     private static final String PROJECT_ICON = "project";
     private static final String USERNAME = "admin";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiEventHandler.class);
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     private WikiSpaceService wikiSpaceService;
     private WikiGroupService wikiGroupService;
@@ -72,9 +77,16 @@ public class WikiEventHandler {
     /**
      * 创建项目事件
      */
-    @EventListener(topic = IAM_SERVICE, businessType = "createProject")
-    public void handleProjectCreateEvent(EventPayload<ProjectEvent> payload) {
-        ProjectEvent projectEvent = payload.getData();
+//    @EventListener(topic = IAM_SERVICE, businessType = "createProject")
+    @SagaTask(code = "iamCreateProject",
+            description = "iam服务的创建项目",
+            sagaCode = "iam-create-project",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 2)
+    public void handleProjectCreateEvent(String data) throws IOException {
+        ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
+//        ProjectEvent projectEvent = payload.getData();
         loggerInfo(projectEvent);
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
