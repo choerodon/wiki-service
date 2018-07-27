@@ -4,20 +4,6 @@ stages:
   - mvn-package
   - docker-build
 
-maven-test-branches:
-  stage: mvn-package
-  script:
-    - git_merge develop
-    - mvn package -U -DskipTests=false
-  only:
-    - branches
-  except:
-    - master
-    - tags
-    - develop
-    - /^release-.*$/
-    - /^hotfix-.*$/
-
 maven-test-docker:
   stage: mvn-package
   script:
@@ -25,22 +11,12 @@ maven-test-docker:
     - mvn package -U -DskipTests=false
     - mkdir -p /cache/${CI_PROJECT_NAME}-${CI_PROJECT_ID}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
     - cp target/app.jar /cache/${CI_PROJECT_NAME}-${CI_PROJECT_ID}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}/app.jar
-  only:
-    - tags
-    - develop
-    - /^release-.*$/
-    - /^hotfix-.*$/
 
 docker-build:
   stage: docker-build
   script:
     - docker_build
     - chart_build
-  only:
-    - tags
-    - develop
-    - /^release-.*$/
-    - /^hotfix-.*$/
 
 .auto_devops: &auto_devops |
     curl -o .auto_devops.sh \
