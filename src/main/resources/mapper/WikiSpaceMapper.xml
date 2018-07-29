@@ -7,7 +7,8 @@
          ws.*
         FROM wiki_space ws
         WHERE ws.resource_id = #{resourceId}
-        AND ws.resource_type LIKE CONCAT(CONCAT('%', #{type, jdbcType=VARCHAR}),'%')
+        AND ws.resource_type = #{type}
+        AND ws.status != 'deleted'
         <if test='searchParam != null'>
             <if test='searchParam.icon != null and searchParam.icon.size > 0'>
                 AND

@@ -11,7 +11,7 @@ public class WikiSpaceE {
     private String name;
     private String icon;
     private String path;
-    private Boolean isSynchro;
+    private String status;
     private Long objectVersionNumber;
 
     public Long getId() {
@@ -62,12 +62,12 @@ public class WikiSpaceE {
         this.path = path;
     }
 
-    public Boolean getSynchro() {
-        return isSynchro;
+    public String getStatus() {
+        return status;
     }
 
-    public void setSynchro(Boolean synchro) {
-        isSynchro = synchro;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Long getObjectVersionNumber() {

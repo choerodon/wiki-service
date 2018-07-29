@@ -86,7 +86,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     @Override
     public Boolean deletePage(String pageName, String username) {
         Call<ResponseBody> call = wikiClient.deletePage(username,
-                client, pageName);
+                client, Stage.SPACE, pageName);
         try {
             Response response = call.execute();
             if (response.code() == 204) {

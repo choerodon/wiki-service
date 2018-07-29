@@ -23,6 +23,7 @@ import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
 import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
@@ -61,7 +62,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
                     organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
             logger.info("wikiSpaceList size : " + wikiSpaceEList.size());
-            if (!wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getSynchro()) {
+            if (!wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
                 if (organizationE.getProjectCount() > 0) {
                     setProject(organizationE);
                 }
@@ -100,11 +101,6 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 }
             }
         });
-    }
-
-    @Override
-    public Boolean deleteSpaceById(Long id) {
-        return wikiSpaceRepository.deleteSpaceById(id);
     }
 
     public void setOrganization(OrganizationE organizationE) {

@@ -13,8 +13,6 @@ public interface WikiSpaceRepository {
 
     List<WikiSpaceE> getWikiSpaceList(Long resourceId, String resourceType);
 
-    Boolean deleteSpaceById(Long id);
-
     WikiSpaceE insert(WikiSpaceE wikiSpaceE);
 
     WikiSpaceE insertIfNotExist(WikiSpaceE wikiSpaceE);

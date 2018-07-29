@@ -1,9 +1,11 @@
 package io.choerodon.wiki.api.dto;
 
+import java.util.List;
+
 /**
- * Created by Zenger on 2018/7/5.
+ * Created by Zenger on 2018/7/28.
  */
-public class WikiSpaceResponseDTO {
+public class WikiSpaceListTreeDTO {
 
     private Long id;
     private Long resourceId;
@@ -13,6 +15,7 @@ public class WikiSpaceResponseDTO {
     private String path;
     private String status;
     private Long objectVersionNumber;
+    private List<WikiSpaceResponseDTO> wikiSpaceResponseDTOList;
 
     public Long getId() {
         return id;
@@ -68,6 +71,14 @@ public class WikiSpaceResponseDTO {
 
     public void setResourceType(String resourceType) {
         this.resourceType = resourceType;
+    }
+
+    public List<WikiSpaceResponseDTO> getWikiSpaceResponseDTOList() {
+        return wikiSpaceResponseDTOList;
+    }
+
+    public void setWikiSpaceResponseDTOList(List<WikiSpaceResponseDTO> wikiSpaceResponseDTOList) {
+        this.wikiSpaceResponseDTOList = wikiSpaceResponseDTOList;
     }
 
     public Long getResourceId() {

@@ -274,13 +274,6 @@ public interface WikiClient {
             @Path("groupName") String groupName,
             @Body RequestBody xmlParam);
 
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @DELETE("/rest/wikis/{client}/spaces/XWiki/pages/{param1}?objects=true")
-    Call<ResponseBody> deletePage(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1);
-
     @Headers({"Content-Type:application/x-www-form-urlencoded;charset=UTF-8"})
     @POST("/rest/wikis/{client}/spaces/XWiki/pages/{param1}/objects")
     Call<ResponseBody> createGroupUsers(
@@ -366,4 +359,21 @@ public interface WikiClient {
             @Path("name") String name,
             @Path("className") String className,
             @Path("objectNumber") int objectNumber);
+
+    //删除页面
+    @DELETE("/rest/wikis/{client}/spaces/{space}/pages/{name}?objects=true")
+    Call<ResponseBody> deletePage(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("space") String space,
+            @Path("name") String name);
+
+    //删除页面
+    @DELETE("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/pages/{name}?objects=true")
+    Call<ResponseBody> deletePage1(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("param2") String param2,
+            @Path("name") String name);
 }
