@@ -73,4 +73,30 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
 
         return response == null ? 500 : response.code();
     }
+
+    @Override
+    public int deletePage(String spaces, String page, String username) {
+        Response<ResponseBody> response = null;
+        try {
+            response = wikiClient.deletePage(username,
+                    client, spaces, page).execute();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+        return response == null ? 500 : response.code();
+    }
+
+    @Override
+    public int deletePage1(String org,String project, String page, String username) {
+        Response<ResponseBody> response = null;
+        try {
+            response = wikiClient.deletePage1(username,
+                    client, org,project, page).execute();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+        return response == null ? 500 : response.code();
+    }
 }

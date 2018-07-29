@@ -37,10 +37,6 @@ import io.choerodon.wiki.infra.common.enums.OrganizationSpaceType;
 public class WikiGroupServiceImpl implements WikiGroupService {
 
     private static final String SITE = "site";
-    private static final String SPACE = "XWiki";
-    private static final String WEBPREFERENCES = "WebPreferences";
-    private static final String XWIKIGROUPS = "XWiki.XWikiGroups";
-    private static final String XWIKIGLOBALRIGHTS = "XWiki.XWikiGlobalRights";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiGroupServiceImpl.class);
 
     private IWikiGroupService iWikiGroupService;
@@ -192,7 +188,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             List<Integer> list = getGlobalRightsObjectNumber("O-" + organization.getName(), null, username);
             for (Integer i : list) {
                 //删除角色
-                iWikiClassService.deletePageClass(username, "O-" + organization.getName(), WEBPREFERENCES, XWIKIGLOBALRIGHTS, i);
+                iWikiClassService.deletePageClass(username, "O-" + organization.getName(), Stage.WEBPREFERENCES, Stage.XWIKIGLOBALRIGHTS, i);
             }
         } else {
             throw new CommonException("error.query.organization");
@@ -222,7 +218,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         "P-" + projectE.getName(), username);
                 for (Integer i : list) {
                     //删除角色
-                    iWikiClassService.deleteProjectPageClass(username, "O-" + organization.getName(), "P-" + projectE.getName(), WEBPREFERENCES, XWIKIGLOBALRIGHTS, i);
+                    iWikiClassService.deleteProjectPageClass(username, "O-" + organization.getName(), "P-" + projectE.getName(), Stage.WEBPREFERENCES, Stage.XWIKIGLOBALRIGHTS, i);
                 }
             }
         } else {
@@ -299,7 +295,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     private List<Integer> getGroupsObjectNumber(String groupName, String username, String loginName) {
         List<Integer> list = new ArrayList<>();
         try {
-            String page = iWikiClassService.getPageClassResource(SPACE, groupName, XWIKIGROUPS, username);
+            String page = iWikiClassService.getPageClassResource(Stage.SPACE, groupName, Stage.XWIKIGROUPS, username);
             if (!StringUtils.isEmpty(page)) {
                 Document doc = DocumentHelper.parseText(page);
                 Element rootElt = doc.getRootElement();
@@ -327,9 +323,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         try {
             String page;
             if (project == null) {
-                page = iWikiClassService.getPageClassResource(org, WEBPREFERENCES, XWIKIGLOBALRIGHTS, username);
+                page = iWikiClassService.getPageClassResource(org, Stage.WEBPREFERENCES, Stage.XWIKIGLOBALRIGHTS, username);
             } else {
-                page = iWikiClassService.getProjectPageClassResource(org, project, WEBPREFERENCES, XWIKIGLOBALRIGHTS, username);
+                page = iWikiClassService.getProjectPageClassResource(org, project, Stage.WEBPREFERENCES, Stage.XWIKIGLOBALRIGHTS, username);
             }
             if (!StringUtils.isEmpty(page)) {
                 Document doc = DocumentHelper.parseText(page);
@@ -338,7 +334,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 while (iter.hasNext()) {
                     Element recordEle = (Element) iter.next();
                     String className = recordEle.elementTextTrim("className");
-                    if (XWIKIGLOBALRIGHTS.equals(className)) {
+                    if (Stage.XWIKIGLOBALRIGHTS.equals(className)) {
                         String headline = recordEle.elementTextTrim("headline");
                         if (!StringUtils.isEmpty(headline) && Integer.valueOf(headline) == 0) {
                             list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
@@ -358,7 +354,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             List<Integer> list = getGroupsObjectNumber(pageName, username, deleteUsername);
             for (Integer i : list) {
                 //删除角色
-                iWikiClassService.deletePageClass(username, SPACE, pageName, XWIKIGROUPS, i);
+                iWikiClassService.deletePageClass(username, Stage.SPACE, pageName, Stage.XWIKIGROUPS, i);
             }
         }
     }

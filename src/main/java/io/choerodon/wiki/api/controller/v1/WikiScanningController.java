@@ -4,7 +4,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
@@ -55,22 +58,5 @@ public class WikiScanningController {
                                   @PathVariable(value = "organization_id") Long organizationId) {
         wikiScanningService.syncOrg(organizationId);
         return new ResponseEntity(HttpStatus.OK);
-    }
-
-    /**
-     * 删除指定的空间
-     *
-     * @param id 空间id
-     * @return Boolean
-     */
-    @Permission(level = ResourceLevel.ORGANIZATION,
-            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
-    @ApiOperation(value = "删除指定的空间")
-    @DeleteMapping("/spaces/{id}")
-    public ResponseEntity<Boolean> deleteSpace(@ApiParam(value = "空间id", required = true)
-                                               @PathVariable("id") Long id) {
-        return new ResponseEntity<Boolean>(
-                wikiScanningService.deleteSpaceById(id), HttpStatus.NO_CONTENT);
     }
 }

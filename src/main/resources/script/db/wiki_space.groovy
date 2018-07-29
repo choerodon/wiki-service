@@ -20,4 +20,14 @@ databaseChangeLog(logicalFilePath: 'dba/wiki_space.groovy') {
             column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
         }
     }
+
+    changeSet(author: 'Zenger', id: '2018-07-27-add-column') {
+        dropColumn(columnName: "is_synchro", tableName: "wiki_space")
+
+        addColumn(tableName: 'wiki_space') {
+            column(name: 'status', type: 'VARCHAR(64)', remarks: '空间创建状态')
+        }
+
+        addUniqueConstraint(tableName: 'wiki_space', constraintName: 'u_name', columnNames: 'resource_id,resource_type,name')
+    }
 }

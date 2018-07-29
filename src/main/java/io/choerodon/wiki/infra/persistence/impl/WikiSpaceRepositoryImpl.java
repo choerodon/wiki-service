@@ -46,14 +46,6 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
     }
 
     @Override
-    public Boolean deleteSpaceById(Long id) {
-        if (wikiSpaceMapper.deleteByPrimaryKey(id) != 1) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public WikiSpaceE insert(WikiSpaceE wikiSpaceE) {
         WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
         if (wikiSpaceMapper.insert(wikiSpaceDO) != 1) {
@@ -127,7 +119,7 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
     public WikiSpaceE update(WikiSpaceE wikiSpaceE) {
         WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
         if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDO) != 1) {
-            throw new CommonException("error.space.insert");
+            throw new CommonException("error.space.update");
         }
         return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
     }

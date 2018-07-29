@@ -16,6 +16,7 @@ import io.choerodon.wiki.domain.service.IWikiCreatePageService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebPreferencesService;
 import io.choerodon.wiki.infra.common.FileUtil;
+import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
 import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
 
@@ -89,11 +90,18 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
-    void checkCodeSuccess(int webHomeCode, int webPreferencesCode, WikiSpaceE wikiSpaceE) {
+    public void checkCodeSuccess(int webHomeCode, int webPreferencesCode, WikiSpaceE wikiSpaceE) {
+        WikiSpaceDO wikiSpaceDO = wikiSpaceMapper.selectByPrimaryKey(wikiSpaceE.getId());
         if ((webHomeCode == 201 || webHomeCode == 202) && (webPreferencesCode == 201 || webPreferencesCode == 202)) {
-            WikiSpaceDO wikiSpaceDO = wikiSpaceMapper.selectByPrimaryKey(wikiSpaceE.getId());
             if (wikiSpaceDO != null) {
-                wikiSpaceDO.setSynchro(true);
+                wikiSpaceDO.setStatus(SpaceStatus.SUCCESS.getSpaceStatus());
+                if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDO) != 1) {
+                    throw new CommonException("error.wikispace.update");
+                }
+            }
+        } else {
+            if (wikiSpaceDO != null) {
+                wikiSpaceDO.setStatus(SpaceStatus.FAILED.getSpaceStatus());
                 if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDO) != 1) {
                     throw new CommonException("error.wikispace.update");
                 }

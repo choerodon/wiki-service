@@ -18,6 +18,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
+import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.infra.common.GetUserNameUtil;
@@ -87,7 +88,7 @@ public class WikiOrganizationSpaceController {
      * @param organizationId 组织id
      * @param pageRequest    分页参数
      * @param searchParam    查询参数
-     * @return Page of WikiSpaceResponseDTO
+     * @return Page of WikiSpaceListTreeDTO
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
@@ -95,14 +96,14 @@ public class WikiOrganizationSpaceController {
     @ApiOperation(value = "分页查询组织下创建的空间")
     @CustomPageRequest
     @PostMapping(value = "/list_by_options")
-    public ResponseEntity<Page<WikiSpaceResponseDTO>> pageByOptions(
+    public ResponseEntity<Page<WikiSpaceListTreeDTO>> pageByOptions(
             @ApiParam(value = "组织ID", required = true)
             @PathVariable(value = "organization_id") Long organizationId,
             @ApiParam(value = "分页参数")
             @ApiIgnore PageRequest pageRequest,
             @ApiParam(value = "查询参数")
             @RequestBody(required = false) String searchParam) {
-        return Optional.ofNullable(wikiSpaceService.listWikiSpaceByPage(organizationId,
+        return Optional.ofNullable(wikiSpaceService.listTreeWikiSpaceByPage(organizationId,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType(), pageRequest, searchParam))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.query"));
@@ -153,5 +154,23 @@ public class WikiOrganizationSpaceController {
                 WikiSpaceResourceType.ORGANIZATION_S.getResourceType()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.update"));
+    }
+
+    /**
+     * 删除组织下的空间
+     *
+     * @param organizationId 组织id
+     * @param id        空间ID
+     * @return ResponseEntity
+     */
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
+    @ApiOperation(value = "删除组织下的空间")
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity delete(@ApiParam(value = "组织ID", required = true)
+                                     @PathVariable(value = "organization_id") Long organizationId,
+                                 @ApiParam(value = "空间ID", required = true)
+                                 @PathVariable Long id) {
+        wikiSpaceService.delete(organizationId,id,WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
