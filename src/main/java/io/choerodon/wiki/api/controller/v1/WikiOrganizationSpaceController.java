@@ -170,7 +170,7 @@ public class WikiOrganizationSpaceController {
                                      @PathVariable(value = "organization_id") Long organizationId,
                                  @ApiParam(value = "空间ID", required = true)
                                  @PathVariable Long id) {
-        wikiSpaceService.delete(organizationId,id,WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        wikiSpaceService.delete(organizationId,id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

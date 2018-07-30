@@ -169,7 +169,7 @@ public class WikiProjectSpaceController {
                                      @PathVariable(value = "project_id") Long projectId,
                                  @ApiParam(value = "空间ID", required = true)
                                  @PathVariable Long id) {
-        wikiSpaceService.delete(projectId,id,WikiSpaceResourceType.PROJECT.getResourceType());
+        wikiSpaceService.delete(projectId,id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

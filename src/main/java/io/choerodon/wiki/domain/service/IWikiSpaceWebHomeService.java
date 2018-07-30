@@ -11,7 +11,9 @@ public interface IWikiSpaceWebHomeService {
 
     int createSpace3WebHome(String param1, String param2, String param3, String xmlParam, String username);
 
-    int deletePage(String spaces,String page,String username);
+    int deletePage(String param1, String page, String username);
 
-    int deletePage1(String org,String project,String page,String username);
+    int deletePage1(String param1, String param2, String page, String username);
+
+    int deletePage2(String param1, String param2, String param3, String page, String username);
 }
