@@ -105,9 +105,10 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
         }
         Page<WikiSpaceListTreeDTO> page = ConvertPageHelper.convertPage(wikiSpaceES, WikiSpaceListTreeDTO.class);
+        String queryType = type.equals(WikiSpaceResourceType.ORGANIZATION.getResourceType()) ?
+                WikiSpaceResourceType.ORGANIZATION_S.getResourceType() : WikiSpaceResourceType.PROJECT_S.getResourceType();
         page.stream().forEach(p -> {
-            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
-                    WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(), queryType);
             for (WikiSpaceE ws : wikiSpaceEList) {
                 ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
             }
