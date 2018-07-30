@@ -111,7 +111,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             for (WikiSpaceE ws : wikiSpaceEList) {
                 ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
             }
-            p.setWikiSpaceResponseDTOList(ConvertHelper.convertList(wikiSpaceEList, WikiSpaceResponseDTO.class));
+            p.setChildren(ConvertHelper.convertList(wikiSpaceEList, WikiSpaceResponseDTO.class));
         });
 
         return page;

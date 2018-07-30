@@ -15,7 +15,7 @@ public class WikiSpaceListTreeDTO {
     private String path;
     private String status;
     private Long objectVersionNumber;
-    private List<WikiSpaceResponseDTO> wikiSpaceResponseDTOList;
+    private List<WikiSpaceResponseDTO> children;
 
     public Long getId() {
         return id;
@@ -73,12 +73,12 @@ public class WikiSpaceListTreeDTO {
         this.resourceType = resourceType;
     }
 
-    public List<WikiSpaceResponseDTO> getWikiSpaceResponseDTOList() {
-        return wikiSpaceResponseDTOList;
+    public List<WikiSpaceResponseDTO> getChildren() {
+        return children;
     }
 
-    public void setWikiSpaceResponseDTOList(List<WikiSpaceResponseDTO> wikiSpaceResponseDTOList) {
-        this.wikiSpaceResponseDTOList = wikiSpaceResponseDTOList;
+    public void setChildren(List<WikiSpaceResponseDTO> children) {
+        this.children = children;
     }
 
     public Long getResourceId() {
