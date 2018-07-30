@@ -75,11 +75,11 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int deletePage(String spaces, String page, String username) {
+    public int deletePage(String param1, String page, String username) {
         Response<ResponseBody> response = null;
         try {
             response = wikiClient.deletePage(username,
-                    client, spaces, page).execute();
+                    client, param1, page).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -88,11 +88,24 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int deletePage1(String org,String project, String page, String username) {
+    public int deletePage1(String param1, String param2, String page, String username) {
         Response<ResponseBody> response = null;
         try {
             response = wikiClient.deletePage1(username,
-                    client, org,project, page).execute();
+                    client, param1, param2, page).execute();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+        return response == null ? 500 : response.code();
+    }
+
+    @Override
+    public int deletePage2(String param1, String param2, String param3, String page, String username) {
+        Response<ResponseBody> response = null;
+        try {
+            response = wikiClient.deletePage2(username,
+                    client, param1, param2, param3, page).execute();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

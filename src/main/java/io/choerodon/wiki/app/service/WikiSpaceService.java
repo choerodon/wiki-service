@@ -22,5 +22,5 @@ public interface WikiSpaceService {
 
     Boolean checkName(Long projectId,String name,String type);
 
-    void delete(Long resourceId,Long id,String type);
+    void delete(Long resourceId,Long id);
 }

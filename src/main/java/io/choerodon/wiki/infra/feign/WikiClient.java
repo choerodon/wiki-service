@@ -376,4 +376,14 @@ public interface WikiClient {
             @Path("param1") String param1,
             @Path("param2") String param2,
             @Path("name") String name);
+
+    //删除页面
+    @DELETE("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/{param3}/pages/{name}?objects=true")
+    Call<ResponseBody> deletePage2(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("param2") String param2,
+            @Path("param3") String param3,
+            @Path("name") String name);
 }

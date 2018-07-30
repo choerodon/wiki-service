@@ -111,7 +111,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             for (WikiSpaceE ws : wikiSpaceEList) {
                 ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
             }
-            p.setWikiSpaceResponseDTOList(ConvertHelper.convertList(wikiSpaceEList,WikiSpaceResponseDTO.class));
+            p.setWikiSpaceResponseDTOList(ConvertHelper.convertList(wikiSpaceEList, WikiSpaceResponseDTO.class));
         });
 
         return page;
@@ -156,34 +156,107 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public void delete(Long resourceId, Long id,String type) {
+    public void delete(Long resourceId, Long id) {
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
         if (!resourceId.equals(wikiSpaceE.getResourceId())) {
             throw new CommonException("error.resourceId.equal");
         }
         wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
         wikiSpaceRepository.update(wikiSpaceE);
-        if (type.equals(WikiSpaceResourceType.ORGANIZATION.getResourceType())) {
-            deleteOrgPage(resourceId,wikiSpaceE.getId());
+        if (wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.ORGANIZATION.getResourceType())) {
+            //删除组织对应的空间
+            deleteOrgPage(resourceId, wikiSpaceE.getId());
+            //删除组织下的空间
+            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
+                    resourceId,
+                    WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+            for (WikiSpaceE w : wikiSpaceEList) {
+                deleteOrgUnderPage(w);
+            }
+            //删除项目对应的空间
             List<ProjectE> projectEList = new ArrayList<>();
-            Page<ProjectE> projectEPage = iamRepository.pageByProject(resourceId,0,400);
+            Page<ProjectE> projectEPage = iamRepository.pageByProject(resourceId, 0, 400);
             projectEList.addAll(projectEPage);
             if (projectEPage.getTotalPages() > 1) {
-                for (int i = 1;i< projectEPage.getTotalPages();i++) {
+                for (int i = 1; i < projectEPage.getTotalPages(); i++) {
                     Page<ProjectE> page = iamRepository.pageByProject(resourceId, i, 400);
                     projectEList.addAll(page);
                 }
             }
-            for (ProjectE p:projectEList) {
-                deleteProjectPage(p.getId(),wikiSpaceE.getId());
+            for (ProjectE p : projectEList) {
+                deleteProjectPage(p.getId(), wikiSpaceE.getId());
+                //删除项目下对应的空间
+                List<WikiSpaceE> projectUnderSpace = wikiSpaceRepository.getWikiSpaceList(
+                        p.getId(),
+                        WikiSpaceResourceType.PROJECT_S.getResourceType());
+                for (WikiSpaceE w : projectUnderSpace) {
+                    deleteProjectUnderPage(w);
+                }
             }
-        } else if (type.equals(WikiSpaceResourceType.PROJECT.getResourceType())) {
-            deleteProjectPage(resourceId,wikiSpaceE.getId());
+        } else if (wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.PROJECT.getResourceType())) {
+            //删除项目对应的空间
+            deleteProjectPage(resourceId, wikiSpaceE.getId());
+            //删除项目下对应的空间
+            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
+                    resourceId,
+                    WikiSpaceResourceType.PROJECT_S.getResourceType());
+            for (WikiSpaceE w : wikiSpaceEList) {
+                deleteProjectUnderPage(w);
+            }
+        } else if (wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.ORGANIZATION_S.getResourceType())) {
+            deleteOrgUnderPage(wikiSpaceE);
+        } else if (wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.PROJECT_S.getResourceType())) {
+            deleteProjectUnderPage(wikiSpaceE);
         }
     }
 
     @Async
-    public void deleteOrgPage(Long resourceId,Long id) {
+    public void deleteProjectUnderPage(WikiSpaceE wikiSpaceE) {
+        String[] param = wikiSpaceE.getPath().split("/");
+        int webHome = iWikiSpaceWebHomeService.deletePage2(
+                param[0],
+                param[1],
+                param[2],
+                Stage.WEBHOME,
+                GetUserNameUtil.getUsername());
+        iWikiSpaceWebHomeService.deletePage2(
+                param[0],
+                param[1],
+                param[2],
+                Stage.WEBPREFERENCES,
+                GetUserNameUtil.getUsername());
+        iWikiSpaceWebHomeService.deletePage2(
+                param[0],
+                param[1],
+                param[2],
+                Stage.PAGE,
+                GetUserNameUtil.getUsername());
+        checkCodeDelete(webHome, wikiSpaceE.getId());
+    }
+
+    @Async
+    public void deleteOrgUnderPage(WikiSpaceE wikiSpaceE) {
+        String[] param = wikiSpaceE.getPath().split("/");
+        int webHome = iWikiSpaceWebHomeService.deletePage1(
+                param[0],
+                param[1],
+                Stage.WEBHOME,
+                GetUserNameUtil.getUsername());
+        iWikiSpaceWebHomeService.deletePage1(
+                param[0],
+                param[1],
+                Stage.WEBPREFERENCES,
+                GetUserNameUtil.getUsername());
+        iWikiSpaceWebHomeService.deletePage1(
+                param[0],
+                param[1],
+                Stage.PAGE,
+                GetUserNameUtil.getUsername());
+        checkCodeDelete(webHome, wikiSpaceE.getId());
+    }
+
+    @Async
+    public void deleteOrgPage(Long resourceId, Long id) {
         OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
         String adminGroupName = "O-" + organization.getCode() + Stage.ADMIN_GROUP;
         String userGroupName = "O-" + organization.getCode() + Stage.USER_GROUP;
@@ -207,11 +280,11 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                 "O-" + organization.getName(),
                 Stage.PAGE,
                 GetUserNameUtil.getUsername());
-        checkCodeDelete(webHome,id);
+        checkCodeDelete(webHome, id);
     }
 
     @Async
-    public void deleteProjectPage(Long resourceId,Long id) {
+    public void deleteProjectPage(Long resourceId, Long id) {
         ProjectE projectE = iamRepository.queryIamProject(resourceId);
         if (projectE != null) {
             Long orgId = projectE.getOrganization().getId();
@@ -246,7 +319,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     public void checkCodeDelete(int webHomeCode, long id) {
-        if (webHomeCode == 204 ) {
+        if (webHomeCode == 204) {
             WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
             wikiSpaceE.setStatus(SpaceStatus.DELETED.getSpaceStatus());
             wikiSpaceRepository.update(wikiSpaceE);
