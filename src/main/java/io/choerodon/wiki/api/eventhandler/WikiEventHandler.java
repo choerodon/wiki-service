@@ -83,7 +83,7 @@ public class WikiEventHandler {
             sagaCode = "iam-create-project",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 2)
+            seq = 1)
     public void handleProjectCreateEvent(String data) throws IOException {
         ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
 //        ProjectEvent projectEvent = payload.getData();
