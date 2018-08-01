@@ -10,6 +10,7 @@ public class WikiUserE {
     private String userName;
     private String password;
     private String email;
+    private String phone;
 
     public String getFirstName() {
         return firstName;
@@ -49,5 +50,13 @@ public class WikiUserE {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

@@ -149,8 +149,7 @@ public class WikiProjectSpaceController {
                                                        @PathVariable Long id,
                                                        @ApiParam(value = "空间信息", required = true)
                                                        @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, GetUserNameUtil.getUsername(),
-                WikiSpaceResourceType.PROJECT_S.getResourceType()))
+        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, GetUserNameUtil.getUsername()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.update"));
     }
@@ -166,10 +165,10 @@ public class WikiProjectSpaceController {
     @ApiOperation(value = "删除项目下的空间")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity delete(@ApiParam(value = "组织ID", required = true)
-                                     @PathVariable(value = "project_id") Long projectId,
+                                 @PathVariable(value = "project_id") Long projectId,
                                  @ApiParam(value = "空间ID", required = true)
                                  @PathVariable Long id) {
-        wikiSpaceService.delete(projectId,id);
+        wikiSpaceService.delete(projectId, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
