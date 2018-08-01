@@ -124,7 +124,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public WikiSpaceResponseDTO update(Long id, WikiSpaceDTO wikiSpaceDTO, String username, String type) {
+    public WikiSpaceResponseDTO update(Long id, WikiSpaceDTO wikiSpaceDTO, String username) {
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
         if (wikiSpaceE != null && wikiSpaceE.getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
             Map<String, String> params = new HashMap<>();
@@ -137,17 +137,34 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                 params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
                 params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
                 String[] path = wikiSpaceE.getPath().split("/");
-                if (type.equals(WikiSpaceResourceType.ORGANIZATION_S.getResourceType())) {
-                    params.put("{{ SPACE_PARENT }}", path[0]);
-                    InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
-                    String xmlParam = FileUtil.replaceReturnString(inputStream, params);
-                    iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, username);
-                } else if (type.equals(WikiSpaceResourceType.PROJECT_S.getResourceType())) {
-                    params.put("{{ SPACE_ROOT }}", path[0]);
-                    params.put("{{ SPACE_PARENT }}", path[1]);
-                    InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome2.xml");
-                    String xmlParam = FileUtil.replaceReturnString(inputStream, params);
-                    iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xmlParam, username);
+                WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(wikiSpaceE.getResourceType());
+                switch (wikiSpaceResourceType) {
+                    case ORGANIZATION:
+                        InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
+                        String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
+                        iWikiSpaceWebHomeService.createSpace1WebHome(path[0], orgXmlParam, username);
+                        break;
+                    case PROJECT:
+                        params.put("{{ SPACE_PARENT }}", path[0]);
+                        InputStream projectIs = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+                        String projectXmlParam = FileUtil.replaceReturnString(projectIs, params);
+                        iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], projectXmlParam, username);
+                        break;
+                    case ORGANIZATION_S:
+                        params.put("{{ SPACE_PARENT }}", path[0]);
+                        InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+                        String xmlParam = FileUtil.replaceReturnString(inputStream, params);
+                        iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, username);
+                        break;
+                    case PROJECT_S:
+                        params.put("{{ SPACE_ROOT }}", path[0]);
+                        params.put("{{ SPACE_PARENT }}", path[1]);
+                        InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
+                        String xml = FileUtil.replaceReturnString(is, params);
+                        iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xml, username);
+                        break;
+                    default:
+                        break;
                 }
                 return ConvertHelper.convert(wikiSpaceRepository.update(wikiSpaceE), WikiSpaceResponseDTO.class);
             }
