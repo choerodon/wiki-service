@@ -114,9 +114,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         //根据用户名查询用户信息
                         UserE user = iamRepository.queryByLoginName(groupMember.getUsername());
                         WikiUserE wikiUserE = new WikiUserE();
-                        wikiUserE.setLastName(user.getLoginName());
+                        wikiUserE.setLastName(user.getRealName());
                         wikiUserE.setFirstName(user.getLoginName());
                         wikiUserE.setEmail(user.getEmail());
+                        wikiUserE.setPhone(user.getPhone());
                         String xmlParam = getUserXml(wikiUserE);
                         if (!checkDocExsist(username, user.getLoginName())) {
                             iWikiUserService.createUser(wikiUserE, user.getLoginName(), xmlParam, username);
@@ -158,9 +159,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             Boolean flag = checkDocExsist(loginName, loginName);
             if (!flag) {
                 WikiUserE wikiUserE = new WikiUserE();
-                wikiUserE.setLastName(loginName);
-                wikiUserE.setFirstName(loginName);
-                wikiUserE.setEmail(userDTO.getEmail());
+                wikiUserE.setFirstName(user.getLoginName());
+                wikiUserE.setLastName(user.getRealName());
+                wikiUserE.setPhone(user.getPhone());
+                wikiUserE.setEmail(user.getEmail());
 
                 String xmlParam = getUserXml(wikiUserE);
                 iWikiUserService.createUser(wikiUserE, loginName, xmlParam, username);
@@ -235,9 +237,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             Boolean isUserExist = checkDocExsist(loginName, loginName);
             if (!isUserExist) {
                 WikiUserE wikiUserE = new WikiUserE();
-                wikiUserE.setLastName(loginName);
+                wikiUserE.setLastName(userE.getRealName());
                 wikiUserE.setFirstName(loginName);
                 wikiUserE.setEmail(userE.getEmail());
+                wikiUserE.setPhone(userE.getPhone());
 
                 iWikiUserService.createUser(wikiUserE, loginName, getUserXml(wikiUserE), username);
             }
@@ -289,6 +292,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         params.put("{{ LAST_NAME }}", wikiUserE.getLastName());
         params.put("{{ FIRST_NAME }}", wikiUserE.getFirstName());
         params.put("{{ USER_EMAIL }}", wikiUserE.getEmail());
+        params.put("{{ PHONE }}", wikiUserE.getPhone());
         return FileUtil.replaceReturnString(inputStream, params);
     }
 

@@ -6,13 +6,11 @@ public class UserE {
     private String loginName;
     private String email;
     private String realName;
+    private String phone;
     private OrganizationE organization;
 
-    public UserE(Long id, String loginName, String email, String realName) {
-        this.id = id;
-        this.loginName = loginName;
-        this.email = email;
-        this.realName = realName;
+    public UserE() {
+
     }
 
     public Long getId() {
@@ -53,5 +51,13 @@ public class UserE {
 
     public void setOrganization(OrganizationE organization) {
         this.organization = organization;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
