@@ -185,50 +185,59 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         }
         wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
         wikiSpaceRepository.update(wikiSpaceE);
-        if (wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.ORGANIZATION.getResourceType())) {
-            //删除组织对应的空间
-            deleteOrgPage(resourceId, wikiSpaceE.getId());
-            //删除组织下的空间
-            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
-                    resourceId,
-                    WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
-            for (WikiSpaceE w : wikiSpaceEList) {
-                deleteOrgUnderPage(w);
-            }
-            //删除项目对应的空间
-            List<ProjectE> projectEList = new ArrayList<>();
-            Page<ProjectE> projectEPage = iamRepository.pageByProject(resourceId, 0, 400);
-            projectEList.addAll(projectEPage);
-            if (projectEPage.getTotalPages() > 1) {
-                for (int i = 1; i < projectEPage.getTotalPages(); i++) {
-                    Page<ProjectE> page = iamRepository.pageByProject(resourceId, i, 400);
-                    projectEList.addAll(page);
+
+        WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(wikiSpaceE.getResourceType());
+        switch (wikiSpaceResourceType) {
+            case ORGANIZATION:
+                //删除组织对应的空间
+                deleteOrgPage(resourceId, wikiSpaceE.getId());
+                //删除组织下的空间
+                List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
+                        resourceId,
+                        WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+                for (WikiSpaceE w : wikiSpaceEList) {
+                    deleteOrgUnderPage(w);
                 }
-            }
-            for (ProjectE p : projectEList) {
-                deleteProjectPage(p.getId(), wikiSpaceE.getId());
+                //删除项目对应的空间
+                List<ProjectE> projectEList = new ArrayList<>();
+                Page<ProjectE> projectEPage = iamRepository.pageByProject(resourceId, 0, 400);
+                projectEList.addAll(projectEPage);
+                if (projectEPage.getTotalPages() > 1) {
+                    for (int i = 1; i < projectEPage.getTotalPages(); i++) {
+                        Page<ProjectE> page = iamRepository.pageByProject(resourceId, i, 400);
+                        projectEList.addAll(page);
+                    }
+                }
+                for (ProjectE p : projectEList) {
+                    deleteProjectPage(p.getId(), wikiSpaceE.getId());
+                    //删除项目下对应的空间
+                    List<WikiSpaceE> projectUnderSpace = wikiSpaceRepository.getWikiSpaceList(
+                            p.getId(),
+                            WikiSpaceResourceType.PROJECT_S.getResourceType());
+                    for (WikiSpaceE w : projectUnderSpace) {
+                        deleteProjectUnderPage(w);
+                    }
+                }
+                break;
+            case PROJECT:
+                //删除项目对应的空间
+                deleteProjectPage(resourceId, wikiSpaceE.getId());
                 //删除项目下对应的空间
-                List<WikiSpaceE> projectUnderSpace = wikiSpaceRepository.getWikiSpaceList(
-                        p.getId(),
+                List<WikiSpaceE> list = wikiSpaceRepository.getWikiSpaceList(
+                        resourceId,
                         WikiSpaceResourceType.PROJECT_S.getResourceType());
-                for (WikiSpaceE w : projectUnderSpace) {
+                for (WikiSpaceE w : list) {
                     deleteProjectUnderPage(w);
                 }
-            }
-        } else if (wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.PROJECT.getResourceType())) {
-            //删除项目对应的空间
-            deleteProjectPage(resourceId, wikiSpaceE.getId());
-            //删除项目下对应的空间
-            List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
-                    resourceId,
-                    WikiSpaceResourceType.PROJECT_S.getResourceType());
-            for (WikiSpaceE w : wikiSpaceEList) {
-                deleteProjectUnderPage(w);
-            }
-        } else if (wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.ORGANIZATION_S.getResourceType())) {
-            deleteOrgUnderPage(wikiSpaceE);
-        } else if (wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.PROJECT_S.getResourceType())) {
-            deleteProjectUnderPage(wikiSpaceE);
+                break;
+            case ORGANIZATION_S:
+                deleteOrgUnderPage(wikiSpaceE);
+                break;
+            case PROJECT_S:
+                deleteProjectUnderPage(wikiSpaceE);
+                break;
+            default:
+                break;
         }
     }
 
