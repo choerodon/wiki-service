@@ -150,8 +150,7 @@ public class WikiOrganizationSpaceController {
                                                        @PathVariable Long id,
                                                        @ApiParam(value = "空间信息", required = true)
                                                        @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, GetUserNameUtil.getUsername(),
-                WikiSpaceResourceType.ORGANIZATION_S.getResourceType()))
+        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, GetUserNameUtil.getUsername()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.update"));
     }
