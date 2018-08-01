@@ -1,5 +1,6 @@
 package io.choerodon.wiki.domain.application.convertor;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.core.convertor.ConvertorI;
@@ -17,8 +18,8 @@ public class UserConverter implements ConvertorI<UserE, UserDO, WikiUserDTO> {
 
     @Override
     public UserE doToEntity(UserDO dataObject) {
-        UserE userE = new UserE(dataObject.getId(), dataObject.getLoginName(), dataObject.getEmail(),
-                dataObject.getRealName());
+        UserE userE = new UserE();
+        BeanUtils.copyProperties(dataObject, userE);
         userE.setOrganization(new OrganizationE(dataObject.getOrganizationId()));
         return userE;
     }
