@@ -78,8 +78,8 @@ public class WikiEventHandler {
      * 创建项目事件
      */
 //    @EventListener(topic = IAM_SERVICE, businessType = "createProject")
-    @SagaTask(code = "iamCreateProject",
-            description = "iam服务的创建项目",
+    @SagaTask(code = "wikiCreateProject",
+            description = "wiki服务的创建项目监听",
             sagaCode = "iam-create-project",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
