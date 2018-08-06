@@ -109,14 +109,18 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                 WikiSpaceResourceType.ORGANIZATION_S.getResourceType() : WikiSpaceResourceType.PROJECT_S.getResourceType();
         page.stream().forEach(p -> {
             List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(), queryType);
-            List<WikiSpaceE> list = new ArrayList<>();
+            List<WikiSpaceE> list = null;
             for (WikiSpaceE ws : wikiSpaceEList) {
                 if (!ws.getStatus().equals(SpaceStatus.DELETED.getSpaceStatus())) {
                     ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
                     list.add(ws);
                 }
             }
-            p.setChildren(ConvertHelper.convertList(list, WikiSpaceResponseDTO.class));
+            if (list == null) {
+                p.setChildren(null);
+            } else {
+                p.setChildren(ConvertHelper.convertList(list, WikiSpaceResponseDTO.class));
+            }
         });
 
         return page;
