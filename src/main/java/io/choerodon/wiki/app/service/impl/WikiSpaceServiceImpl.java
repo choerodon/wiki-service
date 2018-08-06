@@ -116,7 +116,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                     list.add(ws);
                 }
             }
-            if (list == null) {
+            if (list.isEmpty()) {
                 p.setChildren(null);
             } else {
                 p.setChildren(ConvertHelper.convertList(list, WikiSpaceResponseDTO.class));
