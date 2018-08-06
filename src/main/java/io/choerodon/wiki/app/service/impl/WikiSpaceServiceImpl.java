@@ -109,7 +109,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                 WikiSpaceResourceType.ORGANIZATION_S.getResourceType() : WikiSpaceResourceType.PROJECT_S.getResourceType();
         page.stream().forEach(p -> {
             List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(), queryType);
-            List<WikiSpaceE> list = null;
+            List<WikiSpaceE> list = new ArrayList<>();
             for (WikiSpaceE ws : wikiSpaceEList) {
                 if (!ws.getStatus().equals(SpaceStatus.DELETED.getSpaceStatus())) {
                     ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
