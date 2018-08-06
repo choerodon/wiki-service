@@ -350,7 +350,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     public void checkCodeDelete(int webHomeCode, long id) {
-        if (webHomeCode == 204) {
+        if (webHomeCode == 204 || webHomeCode == 404) {
             WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
             wikiSpaceE.setStatus(SpaceStatus.DELETED.getSpaceStatus());
             wikiSpaceRepository.update(wikiSpaceE);
