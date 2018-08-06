@@ -159,17 +159,17 @@ public class WikiOrganizationSpaceController {
      * 删除组织下的空间
      *
      * @param organizationId 组织id
-     * @param id        空间ID
+     * @param id             空间ID
      * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "删除组织下的空间")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity delete(@ApiParam(value = "组织ID", required = true)
-                                     @PathVariable(value = "organization_id") Long organizationId,
+                                 @PathVariable(value = "organization_id") Long organizationId,
                                  @ApiParam(value = "空间ID", required = true)
                                  @PathVariable Long id) {
-        wikiSpaceService.delete(organizationId,id);
+        wikiSpaceService.delete(organizationId, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
