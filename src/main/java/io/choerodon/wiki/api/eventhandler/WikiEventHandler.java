@@ -8,10 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import io.choerodon.core.event.EventPayload;
-import io.choerodon.core.saga.SagaDefinition;
-import io.choerodon.core.saga.SagaTask;
-import io.choerodon.event.consumer.annotation.EventListener;
+import io.choerodon.asgard.saga.SagaDefinition;
+import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.wiki.api.dto.*;
 import io.choerodon.wiki.app.service.WikiGroupService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
@@ -26,8 +24,6 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 @Component
 public class WikiEventHandler {
 
-    private static final String IAM_SERVICE = "iam-service";
-    private static final String ORG_SERVICE = "organization-service";
     private static final String ORG_ICON = "domain";
     private static final String PROJECT_ICON = "project";
     private static final String USERNAME = "admin";
@@ -49,9 +45,15 @@ public class WikiEventHandler {
     /**
      * 创建组织事件
      */
-    @EventListener(topic = ORG_SERVICE, businessType = "createOrganizationToDevops")
-    public void handleOrganizationCreateEvent(EventPayload<OrganizationEventPayload> payload) {
-        OrganizationEventPayload organizationEventPayload = payload.getData();
+//    @EventListener(topic = ORG_SERVICE, businessType = "createOrganizationToDevops")
+    @SagaTask(code = "wikiCreateOrganization",
+            description = "wiki服务的创建组织监听",
+            sagaCode = "iam-create-organization",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 1)
+    public String handleOrganizationCreateEvent(String data) throws IOException {
+        OrganizationEventPayload organizationEventPayload = objectMapper.readValue(data, OrganizationEventPayload.class);
         loggerInfo(organizationEventPayload);
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationEventPayload.getName());
@@ -72,6 +74,8 @@ public class WikiEventHandler {
 
         wikiGroupDTO.setGroupName(userGroupName);
         wikiGroupService.create(wikiGroupDTO, USERNAME, false, true);
+
+        return data;
     }
 
     /**
@@ -84,7 +88,7 @@ public class WikiEventHandler {
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
-    public void handleProjectCreateEvent(String data) throws IOException {
+    public String handleProjectCreateEvent(String data) throws IOException {
         ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
 //        ProjectEvent projectEvent = payload.getData();
         loggerInfo(projectEvent);
@@ -106,71 +110,123 @@ public class WikiEventHandler {
         wikiGroupService.setUserToGroup(adminGroupName, projectEvent.getUserId(), USERNAME);
         wikiGroupDTO.setGroupName(userGroupName);
         wikiGroupService.create(wikiGroupDTO, USERNAME, false, false);
+
+        return data;
     }
 
 
     /**
-     * 角色同步事件
+     * 角色分配
      */
-    @EventListener(topic = IAM_SERVICE, businessType = "updateMemberRole")
-    public void handleCreateGroupMemberEvent(EventPayload<List<GroupMemberDTO>> payload) {
-        List<GroupMemberDTO> groupMemberDTOList = payload.getData();
+//    @EventListener(topic = IAM_SERVICE, businessType = "updateMemberRole")
+    @SagaTask(code = "wikiUpdateMemberRole",
+            description = "wiki服务的角色分配监听",
+            sagaCode = "iam-update-memberRole",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 2)
+    public String handleCreateGroupMemberEvent(String data) throws IOException {
+        List<GroupMemberDTO> groupMemberDTOList = objectMapper.readValue(data, List.class);
         loggerInfo(groupMemberDTOList);
         wikiGroupService.createWikiGroupUsers(groupMemberDTOList, USERNAME);
+
+        return data;
     }
 
     /**
      * 角色同步事件,去除角色
      */
-    @EventListener(topic = IAM_SERVICE, businessType = "deleteMemberRole")
-    public void handledeleteMemberRoleEvent(EventPayload<List<GroupMemberDTO>> payload) {
-        List<GroupMemberDTO> groupMemberDTOList = payload.getData();
+//    @EventListener(topic = IAM_SERVICE, businessType = "deleteMemberRole")
+    @SagaTask(code = "wikiDeleteMemberRole",
+            description = "wiki服务的去除角色监听",
+            sagaCode = "iam-delete-memberRole",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 2)
+    public String handledeleteMemberRoleEvent(String data) throws IOException {
+        List<GroupMemberDTO> groupMemberDTOList = objectMapper.readValue(data, List.class);
         loggerInfo(groupMemberDTOList);
         wikiGroupService.deleteWikiGroupUsers(groupMemberDTOList, USERNAME);
+        return data;
     }
 
     /**
-     * 用户创建事件
+     * 用户创建
      */
-    @EventListener(topic = IAM_SERVICE, businessType = "createUser")
-    public void handleCreateUserEvent(EventPayload<UserDTO> payload) {
-        UserDTO userDTO = payload.getData();
+//    @EventListener(topic = IAM_SERVICE, businessType = "createUser")
+    @SagaTask(code = "wikiCreateUser",
+            description = "wiki服务的用户创建监听",
+            sagaCode = "iam-create-user",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 3)
+    public String handleCreateUserEvent(String data) throws IOException {
+        UserDTO userDTO = objectMapper.readValue(data, UserDTO.class);
         wikiGroupService.createWikiUserToGroup(userDTO, USERNAME);
+        return data;
     }
 
     /**
-     * 组织禁用事件
+     * 组织禁用
      */
-    @EventListener(topic = IAM_SERVICE, businessType = "disableOrganization")
-    public void handleOrganizationDisableEvent(EventPayload<OrganizationDTO> payload) {
-        OrganizationDTO organizationDTO = payload.getData();
+//    @EventListener(topic = IAM_SERVICE, businessType = "disableOrganization")
+    @SagaTask(code = "wikiDisableOrganization",
+            description = "wiki服务的组织禁用监听",
+            sagaCode = "iam-disable-organization",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 4)
+    public String handleOrganizationDisableEvent(String data) throws IOException {
+        OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
         wikiGroupService.disableOrganizationGroup(organizationDTO.getOrganizationId(), USERNAME);
+        return data;
     }
 
     /**
-     * 项目禁用事件
+     * 项目禁用
      */
-    @EventListener(topic = IAM_SERVICE, businessType = "disableProject")
-    public void handleProjectDisableEvent(EventPayload<ProjectDTO> payload) {
-        ProjectDTO projectDTO = payload.getData();
+//    @EventListener(topic = IAM_SERVICE, businessType = "disableProject")
+    @SagaTask(code = "wikiDisableProject",
+            description = "wiki服务的项目禁用监听",
+            sagaCode = "iam-disable-project",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 4)
+    public String handleProjectDisableEvent(String data) throws IOException {
+        ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
         wikiGroupService.disableProjectGroup(projectDTO.getProjectId(), USERNAME);
+        return data;
     }
 
     /**
-     * 组织启用事件
+     * 组织启用
      */
-    @EventListener(topic = IAM_SERVICE, businessType = "enableOrganization")
-    public void handleOrganizationEnableEvent(EventPayload<OrganizationDTO> payload) {
-        OrganizationDTO organizationDTO = payload.getData();
+//    @EventListener(topic = IAM_SERVICE, businessType = "enableOrganization")
+    @SagaTask(code = "wikiEnableOrganization",
+            description = "wiki服务的组织启用监听",
+            sagaCode = "iam-enable-organization",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 4)
+    public String handleOrganizationEnableEvent(String data) throws IOException {
+        OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
         wikiGroupService.enableOrganizationGroup(organizationDTO.getOrganizationId(), USERNAME);
+        return data;
     }
 
     /**
-     * 项目启用事件
+     * 项目启用
      */
-    @EventListener(topic = IAM_SERVICE, businessType = "enableProject")
-    public void handleProjectEnableEvent(EventPayload<ProjectDTO> payload) {
-        ProjectDTO projectDTO = payload.getData();
+//    @EventListener(topic = IAM_SERVICE, businessType = "enableProject")
+    @SagaTask(code = "wikiEnableOrganization",
+            description = "wiki服务的项目启用监听",
+            sagaCode = "iam-enable-project",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 4)
+    public String handleProjectEnableEvent(String data) throws IOException {
+        ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
         wikiGroupService.enableProjectGroup(projectDTO.getProjectId(), USERNAME);
+        return data;
     }
 }
