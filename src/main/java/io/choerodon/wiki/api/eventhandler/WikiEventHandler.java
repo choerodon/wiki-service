@@ -48,7 +48,7 @@ public class WikiEventHandler {
 //    @EventListener(topic = ORG_SERVICE, businessType = "createOrganizationToDevops")
     @SagaTask(code = "wikiCreateOrganization",
             description = "wiki服务的创建组织监听",
-            sagaCode = "iam-create-organization",
+            sagaCode = "org-create-organization",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
