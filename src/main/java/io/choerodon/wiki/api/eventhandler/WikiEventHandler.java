@@ -3,9 +3,11 @@ package io.choerodon.wiki.api.eventhandler;
 import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.SagaDefinition;
@@ -33,7 +35,8 @@ public class WikiEventHandler {
     private WikiSpaceService wikiSpaceService;
     private WikiGroupService wikiGroupService;
 
-    public WikiEventHandler(WikiSpaceService wikiSpaceService, WikiGroupService wikiGroupService) {
+    public WikiEventHandler(WikiSpaceService wikiSpaceService,
+                            WikiGroupService wikiGroupService) {
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
     }
@@ -51,7 +54,7 @@ public class WikiEventHandler {
             sagaCode = "org-create-organization",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 10)
+            seq = 1)
     public String handleOrganizationCreateEvent(String data) throws IOException {
         OrganizationEventPayload organizationEventPayload = objectMapper.readValue(data, OrganizationEventPayload.class);
         loggerInfo(organizationEventPayload);
@@ -126,7 +129,7 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleCreateGroupMemberEvent(String data) throws IOException {
-        List<GroupMemberDTO> groupMemberDTOList = objectMapper.readValue(data, List.class);
+        List<GroupMemberDTO> groupMemberDTOList = objectMapper.readValue(data, new TypeReference<List<GroupMemberDTO>>(){});
         loggerInfo(groupMemberDTOList);
         wikiGroupService.createWikiGroupUsers(groupMemberDTOList, USERNAME);
 
@@ -144,7 +147,7 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handledeleteMemberRoleEvent(String data) throws IOException {
-        List<GroupMemberDTO> groupMemberDTOList = objectMapper.readValue(data, List.class);
+        List<GroupMemberDTO> groupMemberDTOList = objectMapper.readValue(data, new TypeReference<List<GroupMemberDTO>>(){});
         loggerInfo(groupMemberDTOList);
         wikiGroupService.deleteWikiGroupUsers(groupMemberDTOList, USERNAME);
         return data;
