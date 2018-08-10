@@ -156,7 +156,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             String groupName = "O-" + orgCode + Stage.USER_GROUP;
 
             //如果用户不存在则新建
-            Boolean flag = checkDocExsist(loginName, loginName);
+            Boolean flag = checkDocExsist(username, loginName);
             if (!flag) {
                 WikiUserE wikiUserE = new WikiUserE();
                 wikiUserE.setFirstName(user.getLoginName());
