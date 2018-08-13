@@ -402,7 +402,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setPath(param1 + "/" + param2);
         wikiSpaceE.setName(param2);
         WikiSpaceE projectSpace = wikiSpaceRepository.insertIfNotExist(wikiSpaceE);
-        wikiSpaceAsynService.createProjectSpace(param1, param2, projectSpace, username, TYPE);
+        wikiSpaceAsynService.createProjectSpace(param1, param2, projectSpace, username);
     }
 
     private void createOrgUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path, String username) {
@@ -413,7 +413,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setPath(path + "/" + orgUnderName);
         wikiSpaceE.setName(orgUnderName);
         WikiSpaceE orgUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createOrgUnderSpace(path, orgUnderName, orgUnderSpace, username, null);
+        wikiSpaceAsynService.createOrgUnderSpace(path, orgUnderName, orgUnderSpace, username);
     }
 
     private void createProjectUnderSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String path, String username) {

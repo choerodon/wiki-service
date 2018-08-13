@@ -48,7 +48,6 @@ public class WikiEventHandler {
     /**
      * 创建组织事件
      */
-//    @EventListener(topic = ORG_SERVICE, businessType = "createOrganizationToDevops")
     @SagaTask(code = "wikiCreateOrganization",
             description = "wiki服务的创建组织监听",
             sagaCode = "org-create-organization",
@@ -84,7 +83,6 @@ public class WikiEventHandler {
     /**
      * 创建项目事件
      */
-//    @EventListener(topic = IAM_SERVICE, businessType = "createProject")
     @SagaTask(code = "wikiCreateProject",
             description = "wiki服务的创建项目监听",
             sagaCode = "iam-create-project",
@@ -93,7 +91,6 @@ public class WikiEventHandler {
             seq = 10)
     public String handleProjectCreateEvent(String data) throws IOException {
         ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
-//        ProjectEvent projectEvent = payload.getData();
         loggerInfo(projectEvent);
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
@@ -121,7 +118,6 @@ public class WikiEventHandler {
     /**
      * 角色分配
      */
-//    @EventListener(topic = IAM_SERVICE, businessType = "updateMemberRole")
     @SagaTask(code = "wikiUpdateMemberRole",
             description = "wiki服务的角色分配监听",
             sagaCode = "iam-update-memberRole",
@@ -139,7 +135,6 @@ public class WikiEventHandler {
     /**
      * 角色同步事件,去除角色
      */
-//    @EventListener(topic = IAM_SERVICE, businessType = "deleteMemberRole")
     @SagaTask(code = "wikiDeleteMemberRole",
             description = "wiki服务的去除角色监听",
             sagaCode = "iam-delete-memberRole",
@@ -156,7 +151,6 @@ public class WikiEventHandler {
     /**
      * 用户创建
      */
-//    @EventListener(topic = IAM_SERVICE, businessType = "createUser")
     @SagaTask(code = "wikiCreateUser",
             description = "wiki服务的用户创建监听",
             sagaCode = "iam-create-user",
@@ -172,7 +166,6 @@ public class WikiEventHandler {
     /**
      * 组织禁用
      */
-//    @EventListener(topic = IAM_SERVICE, businessType = "disableOrganization")
     @SagaTask(code = "wikiDisableOrganization",
             description = "wiki服务的组织禁用监听",
             sagaCode = "iam-disable-organization",
@@ -188,7 +181,6 @@ public class WikiEventHandler {
     /**
      * 项目禁用
      */
-//    @EventListener(topic = IAM_SERVICE, businessType = "disableProject")
     @SagaTask(code = "wikiDisableProject",
             description = "wiki服务的项目禁用监听",
             sagaCode = "iam-disable-project",
@@ -204,7 +196,6 @@ public class WikiEventHandler {
     /**
      * 组织启用
      */
-//    @EventListener(topic = IAM_SERVICE, businessType = "enableOrganization")
     @SagaTask(code = "wikiEnableOrganization",
             description = "wiki服务的组织启用监听",
             sagaCode = "iam-enable-organization",
@@ -220,7 +211,6 @@ public class WikiEventHandler {
     /**
      * 项目启用
      */
-//    @EventListener(topic = IAM_SERVICE, businessType = "enableProject")
     @SagaTask(code = "wikiEnableOrganization",
             description = "wiki服务的项目启用监听",
             sagaCode = "iam-enable-project",
