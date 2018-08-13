@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.app.service.WikiSpaceAsynService;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
-import io.choerodon.wiki.domain.service.IWikiCreatePageService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebPreferencesService;
 import io.choerodon.wiki.infra.common.FileUtil;
@@ -34,16 +33,13 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
 
     private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
     private IWikiSpaceWebPreferencesService iWikiSpaceWebPreferencesService;
-    private IWikiCreatePageService iWikiCreatePageService;
     private WikiSpaceMapper wikiSpaceMapper;
 
     public WikiSpaceAsynServiceImpl(IWikiSpaceWebHomeService iWikiSpaceWebHomeService,
                                     IWikiSpaceWebPreferencesService iWikiSpaceWebPreferencesService,
-                                    IWikiCreatePageService iWikiCreatePageService,
                                     WikiSpaceMapper wikiSpaceMapper) {
         this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
         this.iWikiSpaceWebPreferencesService = iWikiSpaceWebPreferencesService;
-        this.iWikiCreatePageService = iWikiCreatePageService;
         this.wikiSpaceMapper = wikiSpaceMapper;
     }
 
@@ -51,32 +47,23 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     public void createOrgSpace(String orgName, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace1WebHome(orgName, getWebHome1XmlStr(wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace1WebPreferences(orgName, getWebPreferencesXmlStr(wikiSpaceE), USERNAME);
-        int pageCode = iWikiCreatePageService.createPage1Code(orgName, PAGE, getPageXmlStr(), username);
-        LOGGER.info("path: " + orgName + " webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode + "  pageCode: " + pageCode);
+        LOGGER.info("path: " + orgName + " webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
     @Override
-    public void createProjectSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username, String type) {
+    public void createProjectSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
-        if (TYPE.equals(type)) {
-            int pageCode = iWikiCreatePageService.createPage2Code(param1, param2, PAGE, getPageXmlStr(), username);
-            LOGGER.info("pageCode:" + pageCode);
-        }
         LOGGER.info("path: " + param1 + "/" + param2 + " webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
     @Override
     @Async
-    public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username, String type) {
+    public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
-        if (TYPE.equals(type)) {
-            int pageCode = iWikiCreatePageService.createPage2Code(param1, param2, PAGE, getPageXmlStr(), username);
-            LOGGER.info("pageCode:" + pageCode);
-        }
         LOGGER.info("path: " + param1 + "/" + param2 + "webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
@@ -114,7 +101,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         Map<String, String> params = new HashMap<>();
         params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
         params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
-        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".","\\."));
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
         return FileUtil.replaceReturnString(inputStream, params);
     }
@@ -124,8 +111,8 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         Map<String, String> params = new HashMap<>();
         params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
         params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
-        params.put("{{ SPACE_PARENT }}", parent);
-        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_PARENT }}", parent.replace(".","\\."));
+        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".","\\."));
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
         return FileUtil.replaceReturnString(inputStream, params);
     }
@@ -135,9 +122,9 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         Map<String, String> params = new HashMap<>();
         params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
         params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
-        params.put("{{ SPACE_ROOT }}", root);
-        params.put("{{ SPACE_PARENT }}", parent);
-        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
+        params.put("{{ SPACE_ROOT }}", root.replace(".","\\."));
+        params.put("{{ SPACE_PARENT }}", parent.replace(".","\\."));
+        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".","\\."));
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
         return FileUtil.replaceReturnString(inputStream, params);
     }
@@ -146,12 +133,6 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/webPreferences.xml");
         Map<String, String> params = new HashMap<>();
         params.put("{{ SPACE_NAME }}", wikiSpaceE.getName());
-        return FileUtil.replaceReturnString(inputStream, params);
-    }
-
-    private String getPageXmlStr() {
-        InputStream inputStream = this.getClass().getResourceAsStream("/xml/page.xml");
-        Map<String, String> params = new HashMap<>();
         return FileUtil.replaceReturnString(inputStream, params);
     }
 }

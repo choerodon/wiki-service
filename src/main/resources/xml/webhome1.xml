@@ -1,48 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <page xmlns="http://www.xwiki.org">
     <title>{{ SPACE_TITLE }}</title>
-    <content>{{velocity}}&#13;
-        {{html}}&#13;
-        #set($objects = $doc.getObjects("AppWithinMinutes.LiveTableClass"))&#13;
-        &lt;div id="home-page-welcome"&gt;&#13;
-        &lt;div style="margin-top: 10px;margin-left: 31px;"&gt;&#13;
-        &lt;span class="material-icons" style="color:#14892C;width:20px;height:20px"&gt;check_circle&lt;/span&gt;&#13;
-        &lt;span class="home-page-font"&gt;欢迎来到您的新空间！&lt;/span&gt;&#13;
-        &lt;/div&gt;&#13;
-        &lt;div class="home-page-left"&gt;
-        &lt;span class = "home-page-font1"&gt;这是空间的主页。现在这里显示最近的空间活动，但是管理员可以自定义这个页面。&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;div style="margin-bottom: 12px;"&gt;&#13;
-        &lt;div class="home-page-left"&gt;&#13;
-        &lt;span class="home-page-font"&gt;编辑这个主页&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击屏幕右上方的编辑来自定义空间主页。&lt;/span&gt;&#13;
-        &lt;/div&gt;&#13;
-        &lt;div class="home-page-left"&gt;&#13;
-        &lt;span class="home-page-font"&gt;创建您的首个页面&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击顶部导航栏的创建按钮开始创建页面。
-        &lt;/span&gt;&#13;
-        &lt;/div&gt;&#13;
-        &lt;div class="home-page-left"&gt;&#13;
-        &lt;span class="home-page-font"&gt;设置权限&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击屏幕右上方的更多按钮，选择"Administer Page"开始配置空间的权限，允许其他人访问。
-        &lt;/span&gt;&#13;
-        &lt;/div&gt;&#13;
-        &lt;/div&gt;&#13;
-        &lt;/div&gt;&#13;
-        &lt;div id="home-page-space"&gt;&#13;
-        &lt;div id = "home-page-recent-space"&gt;&#13;
-        &lt;div id="home-page-recent-font"&gt;&#13;
-        最近的空间活动&#13;
-        &lt;/div&gt;&#13;
-        &lt;/div&gt;&#13;
-        &lt;div&gt;&#13;
-        {{/html}}&#13;
-        &#13;
-        #set ($space = $doc.getSpace())&#13;
-        &#13;
-        {{activity subentries="3" entries="2" spaces=$space/}}&#13;
-        {{/velocity}}&#13;</content>
     <objects>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>AppWithinMinutes.LiveTableClass</className>
             <number>0</number>
+            <headline></headline>
             <property name="class" type="String">
                 <attribute name="name" value="class"/>
                 <attribute name="prettyName" value="Class"/>
@@ -54,6 +17,7 @@
                 <attribute name="picker" value="0"/>
                 <attribute name="validationMessage" value=""/>
                 <attribute name="validationRegExp" value=""/>
+                <value></value>
             </property>
             <property name="columns" type="String">
                 <attribute name="name" value="columns"/>
@@ -94,13 +58,50 @@
                 <attribute name="picker" value="0"/>
                 <attribute name="validationMessage" value=""/>
                 <attribute name="validationRegExp" value=""/>
-                <value></value>
+                <value>{{html}}
+                    &lt;div id="home-page-welcome"&gt;
+                    &lt;div style="margin-top: 10px;margin-left: 21px;"&gt;
+                    &lt;span class="icon icon-check_circle" style="color:#5266D4;width:20px;height:20px"&gt;&lt;/span&gt;
+                    &lt;span class="home-page-font" style="margin-left: 6px;"&gt;欢迎来到您的新空间！&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="home-page-left" style="padding: 4px 0;"&gt;
+                    &lt;span class = "home-page-font1" &gt;这是空间的主页。现在这里显示最近的空间活动，但是管理员可以自定义这个页面。&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div style="margin-bottom:8px;"&gt;
+                    &lt;div class="home-page-left"&gt;
+                    &lt;span class="home-page-font"&gt;编辑这个主页&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击屏幕右上方的编辑来自定义您的空间主页。&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="home-page-left"&gt;
+                    &lt;span class="home-page-font"&gt;创建您的首个页面&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击页头上的创建按钮开始。&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="home-page-left"&gt;
+                    &lt;span class="home-page-font"&gt;给您的空间打上印记&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击左侧面板上的配置侧栏来更新空间细节和标识。&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="home-page-left"&gt;
+                    &lt;span class="home-page-font"&gt;设置权限&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击左边侧栏上的空间工具来更新权限允许其他人访问。&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div id="home-page-space"&gt;
+                    &lt;div id = "home-page-recent-space"&gt;
+                    &lt;div id="home-page-recent-font"&gt;
+                    最近的空间活动
+                    &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div&gt;
+                    {{/html}}
+
+                    {{velocity}}
+                    #set ($space = $doc.getSpace())
+
+                    {{activity subentries="4" entries="5" spaces=$space/}}
+                    {{/velocity}}</value>
             </property>
         </objectSummary>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.JavaScriptExtension</className>
             <number>0</number>
-            <headline>long</headline>
+            <headline>default</headline>
             <property name="cache" type="StaticList">
                 <attribute name="name" value="cache"/>
                 <attribute name="prettyName" value="Caching policy"/>
@@ -116,7 +117,7 @@
                 <attribute name="number" value="5"/>
                 <attribute name="values" value="long|short|default|forbid"/>
                 <attribute name="allowedValues" value="long,short,default,forbid"/>
-                <value>long</value>
+                <value>default</value>
             </property>
             <property name="code" type="TextArea">
                 <attribute name="name" value="code"/>
@@ -137,7 +138,7 @@
                     &#13;
                     &#13;
                     //增加元素&#13;
-                    var strTitle = `&#13;
+                    /*var strTitle = `&#13;
                     &lt;span style="font-size: 18px;&#13;
                     color: #000;&#13;
                     line-height: 59px;&#13;
@@ -148,7 +149,55 @@
                     &#13;
                     if(document.getElementsByClassName("xwiki-main-refesh")[0] != null){&#13;
                     document.getElementsByClassName("xwiki-main-refesh")[0].insertAdjacentHTML('beforeBegin', strTitle);&#13;
+                    }*/&#13;
+                    &#13;
+                    //最近空间活动&#13;
+                    var descIcon = `&lt;span class="icon icon-description" style="&#13;
+                    color: #5266D4;&#13;
+                    padding-bottom: 4px;&#13;
+                    "&gt;&lt;/span&gt;`;&#13;
+                    var typePage = document.getElementsByClassName("typePage");&#13;
+                    for(var i=0; i&lt;typePage.length; i++){&#13;
+                    typePage[i].insertAdjacentHTML('afterBegin', descIcon);&#13;
                     }&#13;
+                    &#13;
+                    var edit_doc_icon = `&lt;div class="activity-opera-div  activity-icon-edit"&gt;&lt;span class="icon icon-mode_edit activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+                    var create_doc_icon = `&lt;div class="activity-opera-div  activity-icon-add"&gt;&lt;span class="icon icon-playlist_add activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+                    var delete_doc_icon = `&lt;div class="activity-opera-div  activity-icon-delete"&gt;&lt;span class="icon icon-delete activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var edit_comment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-textsms activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+                    var add_comment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_comment activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+                    var delete_comment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_commet activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var add_attachment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+                    var delete_attachment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var litleIcon = document.getElementsByClassName("activityActionAvatar");&#13;
+                    for(var i=0; i&lt;litleIcon.length; i++){&#13;
+                    if(litleIcon[i].alt == "edited the page"){&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', edit_doc_icon);&#13;
+                    }else if (litleIcon[i].alt == "created the page") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', create_doc_icon);&#13;
+                    } else if(litleIcon[i].alt == "deleted the page") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', delete_doc_icon);&#13;
+                    } else if (litleIcon[i].alt == "added a comment") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', add_comment_icon);&#13;
+                    } else if (litleIcon[i].alt == "edited a comment") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', edit_comment_icon);&#13;
+                    } else if (litleIcon[i].alt == "deleted a comment") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', delete_comment_icon);&#13;
+                    } else if (litleIcon[i].alt == "added an attachment") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', add_attachment_icon);&#13;
+                    } else if (litleIcon[i].alt == "deleted an attachment") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', delete_attachment_icon);&#13;
+                    }&#13;
+                    }&#13;
+                    &#13;
                 </value>
             </property>
             <property name="name" type="String">
@@ -223,12 +272,16 @@
                     display: none;&#13;
                     }&#13;
                     &#13;
+                    .xdocLastModification,#xdocFooter,#xwikidata{&#13;
+                    display: none;&#13;
+                    }&#13;
+                    &#13;
                     .xcontent&gt;hr{&#13;
                     display: none;&#13;
                     }&#13;
                     &#13;
                     #body.hideright.panel-left-width-Medium .main {&#13;
-                    padding-left: 250px !important;&#13;
+                    padding-left: 250px;&#13;
                     left: 0 !important;&#13;
                     width: 100% !important;&#13;
                     padding-right:0px !important;&#13;
@@ -278,8 +331,7 @@
                     &#13;
                     #actionBox,#xwikicontent&gt;p,#HEntries{&#13;
                     display:none;&#13;
-                    }
-                </value>
+                    }</value>
             </property>
             <property name="contentType" type="StaticList">
                 <attribute name="name" value="contentType"/>
@@ -315,7 +367,7 @@
                 <attribute name="displayFormType" value="select"/>
                 <attribute name="displayType" value="yesno"/>
                 <attribute name="number" value="4"/>
-                <value>0</value>
+                <value></value>
             </property>
             <property name="use" type="StaticList">
                 <attribute name="name" value="use"/>
@@ -340,6 +392,7 @@
             <number>1</number>
             <headline>long</headline>
             <property name="cache" type="StaticList">
+                <link href="http://xwiki.alpha.saas.hand-china.com/rest/wikis/xwiki/spaces/ChoerodonConfig/pages/WebHome/objects/XWiki.StyleSheetExtension/1/properties/cache" rel="self"/>
                 <attribute name="name" value="cache"/>
                 <attribute name="prettyName" value="Caching policy"/>
                 <attribute name="unmodifiable" value="0"/>
@@ -370,11 +423,11 @@
                     background: #F3F9F4;&#13;
                     border: 1px solid #91C89C;&#13;
                     border-radius: 2px;&#13;
-                    margin-top: 14px;&#13;
+                    margin-top: 13px;&#13;
                     }&#13;
                     &#13;
                     .home-page-left{&#13;
-                    margin-left:54px;&#13;
+                    margin-left:51px;&#13;
                     }&#13;
                     &#13;
                     .home-page-font{&#13;
@@ -395,10 +448,10 @@
                     }&#13;
                     &#13;
                     #home-page-recent-space{&#13;
-                    width: 80%;&#13;
-                    height:354px;&#13;
-                    background: #FAFAFA;&#13;
+                    width: 710px;&#13;
+                    height: 503px;&#13;
                     float: left;&#13;
+                    border: 1px solid #E3E3E3;&#13;
                     }&#13;
                     &#13;
                     #home-page-space-contributor{&#13;
@@ -449,10 +502,10 @@
                     &#13;
                     .activity{&#13;
                     clear: both;&#13;
-                    width: 72%;&#13;
+                    width: 674px;&#13;
                     margin-top: 54px;&#13;
                     position: absolute;&#13;
-                    margin-left: 38px;&#13;
+                    margin-left: 18px;&#13;
                     }&#13;
                     &#13;
                     .activity&gt;h2{&#13;
@@ -495,8 +548,61 @@
                     &#13;
                     .activityAction a {&#13;
                     text-decoration: none;&#13;
-                    }
-                </value>
+                    }&#13;
+                    &#13;
+                    .typePage {&#13;
+                    background-image: none;&#13;
+                    }&#13;
+                    &#13;
+                    #xwikicontent {&#13;
+                    overflow: hidden;&#13;
+                    }&#13;
+                    &#13;
+                    //&#13;
+                    .activity-icon-add {&#13;
+                    background: #1AB16F;&#13;
+                    }&#13;
+                    &#13;
+                    .activity-icon-edit {&#13;
+                    background: #4D90FE;&#13;
+                    }&#13;
+                    &#13;
+                    .activity-icon-delete {&#13;
+                    background: #F44336;&#13;
+                    }&#13;
+                    &#13;
+                    .activity-opera-div {&#13;
+                    position: absolute;&#13;
+                    right: -16px;&#13;
+                    bottom: -5px;&#13;
+                    width: 13px;&#13;
+                    height: 13px;&#13;
+                    border-radius: 50%;&#13;
+                    }&#13;
+                    &#13;
+                    .activity-opera-icon {&#13;
+                    -webkit-transform: scale(0.8);&#13;
+                    transform: scale(0.8);&#13;
+                    position: absolute;&#13;
+                    left: 0.5px;&#13;
+                    font-size: 12px;&#13;
+                    border-radius: 50%;&#13;
+                    color: #fff;&#13;
+                    }&#13;
+                    &#13;
+                    .icon-add_comment, .icon-textsms, .icon-delete_commet {&#13;
+                    transform: scale(0.7);&#13;
+                    top: 1px;&#13;
+                    left: 0;&#13;
+                    }&#13;
+                    &#13;
+                    .icon-delete {&#13;
+                    left: 0.3px;&#13;
+                    }&#13;
+                    &#13;
+                    .activityItem {&#13;
+                    margin: 0;&#13;
+                    }</value>
             </property>
             <property name="contentType" type="StaticList">
                 <attribute name="name" value="contentType"/>
@@ -583,7 +689,7 @@
                 <attribute name="disabled" value="0"/>
                 <attribute name="size" value="30"/>
                 <attribute name="number" value="2"/>
-                <value>platform.panels.ConfluenceTestApplication</value>
+                <value></value>
             </property>
             <property name="parameters" type="TextArea">
                 <attribute name="name" value="parameters"/>
