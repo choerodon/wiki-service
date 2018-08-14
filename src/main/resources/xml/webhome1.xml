@@ -291,21 +291,8 @@
                     margin-top:0px !important;&#13;
                     }&#13;
                     &#13;
-                    .document-header{&#13;
-                    margin-bottom:0px !important;&#13;
-                    margin-right:0px !important;&#13;
-                    height: 59px;&#13;
-                    line-height: 59px;&#13;
-                    border-bottom: 1px solid #D3D3D3;&#13;
-                    }&#13;
-                    &#13;
                     .document-header .document-menu, .document-header .document-info {&#13;
                     margin-top: 0px;&#13;
-                    }&#13;
-                    &#13;
-                    .row {&#13;
-                    margin-left: 0px !important; &#13;
-                    margin-right: 0px !important; &#13;
                     }&#13;
                     &#13;
                     #contentcolumn .main {&#13;
@@ -421,7 +408,7 @@
                 <attribute name="number" value="2"/>
                 <value>#home-page-welcome{&#13;
                     background: #F3F9F4;&#13;
-                    border: 1px solid #91C89C;&#13;
+                    border: 1px solid #5266D4;&#13;
                     border-radius: 2px;&#13;
                     margin-top: 13px;&#13;
                     }&#13;
