@@ -58,44 +58,45 @@
                 <attribute name="picker" value="0"/>
                 <attribute name="validationMessage" value=""/>
                 <attribute name="validationRegExp" value=""/>
-                <value>{{html}}
-                    &lt;div id="home-page-welcome"&gt;
-                    &lt;div style="margin-top: 10px;margin-left: 21px;"&gt;
-                    &lt;span class="icon icon-check_circle" style="color:#5266D4;width:20px;height:20px"&gt;&lt;/span&gt;
-                    &lt;span class="home-page-font" style="margin-left: 6px;"&gt;欢迎来到您的新空间！&lt;/span&gt;
-                    &lt;/div&gt;
-                    &lt;div class="home-page-left" style="padding: 4px 0;"&gt;
-                    &lt;span class = "home-page-font1" &gt;这是空间的主页。现在这里显示最近的空间活动，但是管理员可以自定义这个页面。&lt;/span&gt;
-                    &lt;/div&gt;
-                    &lt;div style="margin-bottom:8px;"&gt;
-                    &lt;div class="home-page-left"&gt;
-                    &lt;span class="home-page-font"&gt;编辑这个主页&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击屏幕右上方的编辑来自定义您的空间主页。&lt;/span&gt;
-                    &lt;/div&gt;
-                    &lt;div class="home-page-left"&gt;
-                    &lt;span class="home-page-font"&gt;创建您的首个页面&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击页头上的创建按钮开始。&lt;/span&gt;
-                    &lt;/div&gt;
-                    &lt;div class="home-page-left"&gt;
-                    &lt;span class="home-page-font"&gt;给您的空间打上印记&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击左侧面板上的配置侧栏来更新空间细节和标识。&lt;/span&gt;
-                    &lt;/div&gt;
-                    &lt;div class="home-page-left"&gt;
-                    &lt;span class="home-page-font"&gt;设置权限&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击左边侧栏上的空间工具来更新权限允许其他人访问。&lt;/span&gt;
-                    &lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div id="home-page-space"&gt;
-                    &lt;div id = "home-page-recent-space"&gt;
-                    &lt;div id="home-page-recent-font"&gt;
-                    最近的空间活动
-                    &lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div&gt;
-                    {{/html}}
-
-                    {{velocity}}
-                    #set ($space = $doc.getSpace())
-
-                    {{activity subentries="4" entries="5" spaces=$space/}}
-                    {{/velocity}}</value>
+                <value>{{html}}&#13;
+                    &lt;div id="home-page-welcome"&gt;&#13;
+                    &lt;div style="margin-top: 10px;margin-left: 21px;"&gt;&#13;
+                    &lt;span class="icon icon-check_circle" style="color:#5266D4;width:20px;height:20px"&gt;&lt;/span&gt;&#13;
+                    &lt;span class="home-page-font" style="margin-left: 6px;"&gt;欢迎来到您的新空间！&lt;/span&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;div class="home-page-left" style="padding: 4px 0;"&gt;&#13;
+                    &lt;span class = "home-page-font1" &gt;这是空间的主页。现在这里显示最近的空间活动，但是管理员可以自定义这个页面。&lt;/span&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;div style="margin-bottom:8px;"&gt;&#13;
+                    &lt;div class="home-page-left"&gt;&#13;
+                    &lt;span class="home-page-font"&gt;编辑这个主页&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击屏幕右上方的编辑来自定义您的空间主页。&lt;/span&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;div class="home-page-left"&gt;&#13;
+                    &lt;span class="home-page-font"&gt;创建您的首个页面&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击页头上的创建按钮开始。&lt;/span&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;div class="home-page-left"&gt;&#13;
+                    &lt;span class="home-page-font"&gt;给您的空间打上印记&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击左侧面板上的配置侧栏来更新空间细节和标识。&lt;/span&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;div class="home-page-left"&gt;&#13;
+                    &lt;span class="home-page-font"&gt;设置权限&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击左边侧栏上的空间工具来更新权限允许其他人访问。&lt;/span&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;div id="home-page-space"&gt;&#13;
+                    &lt;div id = "home-page-recent-space"&gt;&#13;
+                    &lt;div id="home-page-recent-font"&gt;&#13;
+                    最近的空间活动&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    &lt;/div&gt;&#13;
+                    {{/html}}&#13;
+                    &#13;
+                    {{velocity}}&#13;
+                    #set ($space = $doc.getSpace())&#13;
+                    &#13;
+                    {{activity subentries="4" entries="5" spaces=$space/}}&#13;
+                    {{/velocity}}&#13;
+                </value>
             </property>
         </objectSummary>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -407,7 +408,7 @@
                 <attribute name="editor" value="PureText"/>
                 <attribute name="number" value="2"/>
                 <value>#home-page-welcome{&#13;
-                    background: #F3F9F4;&#13;
+                    background: rgba(140,158,255,0.08);&#13;
                     border: 1px solid #5266D4;&#13;
                     border-radius: 2px;&#13;
                     margin-top: 13px;&#13;
