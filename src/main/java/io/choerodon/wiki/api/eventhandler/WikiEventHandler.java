@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ public class WikiEventHandler {
     private static final String USERNAME = "admin";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiEventHandler.class);
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private static Gson gson = new Gson();
 
     private WikiSpaceService wikiSpaceService;
     private WikiGroupService wikiGroupService;
@@ -125,7 +128,9 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleCreateGroupMemberEvent(String data) throws IOException {
-        List<GroupMemberDTO> groupMemberDTOList = objectMapper.readValue(data, new TypeReference<List<GroupMemberDTO>>(){});
+        List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
+                new TypeToken<List<GroupMemberDTO>>() {
+                }.getType());
         loggerInfo(groupMemberDTOList);
         wikiGroupService.createWikiGroupUsers(groupMemberDTOList, USERNAME);
 
@@ -142,7 +147,9 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handledeleteMemberRoleEvent(String data) throws IOException {
-        List<GroupMemberDTO> groupMemberDTOList = objectMapper.readValue(data, new TypeReference<List<GroupMemberDTO>>(){});
+        List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
+                new TypeToken<List<GroupMemberDTO>>() {
+                }.getType());
         loggerInfo(groupMemberDTOList);
         wikiGroupService.deleteWikiGroupUsers(groupMemberDTOList, USERNAME);
         return data;
