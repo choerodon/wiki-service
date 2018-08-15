@@ -58,8 +58,8 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
     public String handleOrganizationCreateEvent(String data) throws IOException {
+        loggerInfo(data);
         OrganizationEventPayload organizationEventPayload = objectMapper.readValue(data, OrganizationEventPayload.class);
-        loggerInfo(organizationEventPayload);
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationEventPayload.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
@@ -93,8 +93,8 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleProjectCreateEvent(String data) throws IOException {
+        loggerInfo(data);
         ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
-        loggerInfo(projectEvent);
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
         wikiSpaceDTO.setIcon(PROJECT_ICON);
@@ -128,10 +128,10 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleCreateGroupMemberEvent(String data) throws IOException {
+        loggerInfo(data);
         List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
                 new TypeToken<List<GroupMemberDTO>>() {
                 }.getType());
-        loggerInfo(groupMemberDTOList);
         wikiGroupService.createWikiGroupUsers(groupMemberDTOList, USERNAME);
 
         return data;
@@ -147,10 +147,10 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handledeleteMemberRoleEvent(String data) throws IOException {
+        loggerInfo(data);
         List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
                 new TypeToken<List<GroupMemberDTO>>() {
                 }.getType());
-        loggerInfo(groupMemberDTOList);
         wikiGroupService.deleteWikiGroupUsers(groupMemberDTOList, USERNAME);
         return data;
     }
@@ -165,6 +165,7 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleCreateUserEvent(String data) throws IOException {
+        loggerInfo(data);
         UserDTO userDTO = objectMapper.readValue(data, UserDTO.class);
         wikiGroupService.createWikiUserToGroup(userDTO, USERNAME);
         return data;
@@ -180,6 +181,7 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleOrganizationDisableEvent(String data) throws IOException {
+        loggerInfo(data);
         OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
         wikiGroupService.disableOrganizationGroup(organizationDTO.getOrganizationId(), USERNAME);
         return data;
@@ -195,6 +197,7 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleProjectDisableEvent(String data) throws IOException {
+        loggerInfo(data);
         ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
         wikiGroupService.disableProjectGroup(projectDTO.getProjectId(), USERNAME);
         return data;
@@ -210,6 +213,7 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleOrganizationEnableEvent(String data) throws IOException {
+        loggerInfo(data);
         OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
         wikiGroupService.enableOrganizationGroup(organizationDTO.getOrganizationId(), USERNAME);
         return data;
@@ -225,6 +229,7 @@ public class WikiEventHandler {
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleProjectEnableEvent(String data) throws IOException {
+        loggerInfo(data);
         ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
         wikiGroupService.enableProjectGroup(projectDTO.getProjectId(), USERNAME);
         return data;

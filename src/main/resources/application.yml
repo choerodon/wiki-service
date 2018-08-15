@@ -42,7 +42,7 @@ mybatis:
     mapUnderscoreToCamelCase: true
 wiki:
   client: xwiki
-  url: http://xwiki-staging.saas.hand-china.com
+  url: http://xwiki.staging.saas.hand-china.com
   token: Choerodon
   default-group: XWikiAllGroup
 eureka:
