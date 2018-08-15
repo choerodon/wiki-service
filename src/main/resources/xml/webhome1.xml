@@ -216,7 +216,7 @@
                 <attribute name="unmodifiable" value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="displayFormType" value="select"/>
-                <attribute name="displayType" value="yesno"/>
+                <attribute name="displayType"        value="yesno" />
                 <attribute name="number" value="4"/>
                 <value></value>
             </property>
@@ -353,7 +353,7 @@
                 <attribute name="unmodifiable" value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="displayFormType" value="select"/>
-                <attribute name="displayType" value="yesno"/>
+                <attribute name="displayType"            value="yesno"/>
                 <attribute name="number" value="4"/>
                 <value></value>
             </property>
@@ -624,7 +624,7 @@
                 <attribute name="unmodifiable" value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="displayFormType" value="select"/>
-                <attribute name="displayType" value="yesno"/>
+                <attribute name="displayType"            value="yesno"/>
                 <attribute name="number" value="4"/>
                 <value></value>
             </property>
