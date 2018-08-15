@@ -17,7 +17,7 @@ public interface WikiGroupService {
 
     void deleteWikiGroupUsers(List<GroupMemberDTO> groupMemberDTOList, String username);
 
-    void createWikiUserToGroup(UserDTO userDTO, String username);
+    void createWikiUserToGroup(List<UserDTO> userDTOList, String username);
 
     void disableOrganizationGroup(Long orgId, String username);
 
