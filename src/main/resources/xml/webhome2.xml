@@ -637,7 +637,6 @@
                 <attribute name="displayType" value="select"/>
                 <attribute name="multiSelect" value="0"/>
                 <attribute name="size" value="1"/>
-                <attribute name="separator" value=" "/>
                 <attribute name="cache" value="0"/>
                 <attribute name="separators" value="|, "/>
                 <attribute name="number" value="3"/>
