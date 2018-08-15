@@ -55,7 +55,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     public void createProjectSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
-        LOGGER.info("path: " + param1 + "/" + param2 + " webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
+        LOGGER.info("path: " + param1 + "/" + param2 + "  webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
@@ -64,7 +64,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
-        LOGGER.info("path: " + param1 + "/" + param2 + "webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
+        LOGGER.info("path: " + param1 + "/" + param2 + "  webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
@@ -73,7 +73,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     public void createProjectUnderSpace(String param1, String param2, String projectUnderName, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace3WebHome(param1, param2, projectUnderName, getWebHome3XmlStr(param1, param2, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace3WebPreferences(param1, param2, projectUnderName, getWebPreferencesXmlStr(wikiSpaceE), username);
-        LOGGER.info("path: " + param1 + "/" + param2 + "/" + projectUnderName + "webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
+        LOGGER.info("path: " + param1 + "/" + param2 + "/" + projectUnderName + "  webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
