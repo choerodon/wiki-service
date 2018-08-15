@@ -146,31 +146,34 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     }
 
     @Override
-    public void createWikiUserToGroup(UserDTO userDTO, String username) {
-        String loginName = userDTO.getUsername();
-        UserE user = iamRepository.queryByLoginName(loginName);
-        if (user != null) {
-            Long orgId = user.getOrganization().getId();
-            OrganizationE organization = iamRepository.queryOrganizationById(orgId);
-            String orgCode = organization.getCode();
-            String groupName = "O-" + orgCode + Stage.USER_GROUP;
+    public void createWikiUserToGroup(List<UserDTO> userDTOList, String username) {
+        userDTOList.stream()
+                .forEach(userDTO -> {
+                    String loginName = userDTO.getUsername();
+                    UserE user = iamRepository.queryByLoginName(loginName);
+                    if (user != null) {
+                        Long orgId = user.getOrganization().getId();
+                        OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+                        String orgCode = organization.getCode();
+                        String groupName = "O-" + orgCode + Stage.USER_GROUP;
 
-            //如果用户不存在则新建
-            Boolean flag = checkDocExsist(username, loginName);
-            if (!flag) {
-                WikiUserE wikiUserE = new WikiUserE();
-                wikiUserE.setFirstName(user.getLoginName());
-                wikiUserE.setLastName(user.getRealName());
-                wikiUserE.setPhone(user.getPhone());
-                wikiUserE.setEmail(user.getEmail());
+                        //如果用户不存在则新建
+                        Boolean flag = checkDocExsist(username, loginName);
+                        if (!flag) {
+                            WikiUserE wikiUserE = new WikiUserE();
+                            wikiUserE.setFirstName(user.getLoginName());
+                            wikiUserE.setLastName(user.getRealName());
+                            wikiUserE.setPhone(user.getPhone());
+                            wikiUserE.setEmail(user.getEmail());
 
-                String xmlParam = getUserXml(wikiUserE);
-                iWikiUserService.createUser(wikiUserE, loginName, xmlParam, username);
-            }
+                            String xmlParam = getUserXml(wikiUserE);
+                            iWikiUserService.createUser(wikiUserE, loginName, xmlParam, username);
+                        }
 
-            //通过groupName给组添加成员
-            iWikiGroupService.createGroupUsers(groupName, loginName, username);
-        }
+                        //通过groupName给组添加成员
+                        iWikiGroupService.createGroupUsers(groupName, loginName, username);
+                    }
+                });
     }
 
     @Override

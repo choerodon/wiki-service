@@ -3,13 +3,11 @@ package io.choerodon.wiki.api.eventhandler;
 import java.io.IOException;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.SagaDefinition;
@@ -166,8 +164,10 @@ public class WikiEventHandler {
             seq = 10)
     public String handleCreateUserEvent(String data) throws IOException {
         loggerInfo(data);
-        UserDTO userDTO = objectMapper.readValue(data, UserDTO.class);
-        wikiGroupService.createWikiUserToGroup(userDTO, USERNAME);
+        List<UserDTO> userDTOList = gson.fromJson(data,
+                new TypeToken<List<UserDTO>>() {
+                }.getType());
+        wikiGroupService.createWikiUserToGroup(userDTOList, USERNAME);
         return data;
     }
 
