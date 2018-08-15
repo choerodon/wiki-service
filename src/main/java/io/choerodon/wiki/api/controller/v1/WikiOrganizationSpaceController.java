@@ -162,7 +162,9 @@ public class WikiOrganizationSpaceController {
      * @param id             空间ID
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
+            Stage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "删除组织下的空间")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity delete(@ApiParam(value = "组织ID", required = true)

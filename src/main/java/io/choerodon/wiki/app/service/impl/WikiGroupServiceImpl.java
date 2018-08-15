@@ -234,7 +234,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         LOGGER.info("setUserToGroup: " + "groupName: " + groupName + ",user: " + userE.getLoginName());
         if (userE.getLoginName() != null) {
             String loginName = userE.getLoginName();
-            Boolean isUserExist = checkDocExsist(loginName, loginName);
+            Boolean isUserExist = checkDocExsist(username, loginName);
             if (!isUserExist) {
                 WikiUserE wikiUserE = new WikiUserE();
                 wikiUserE.setLastName(userE.getRealName());
