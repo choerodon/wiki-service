@@ -642,7 +642,7 @@
                 <value>currentPage</value>
             </property>
         </objectSummary>
-        <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.UIExtensionClass</className>
             <number>0</number>
             <headline></headline>
