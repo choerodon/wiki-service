@@ -640,8 +640,8 @@
                 <attribute name="values" value="currentPage|onDemand|always"/>
                 <attribute name="allowedValues" value="currentPage,onDemand,always"/>
                 <value>currentPage</value>
-            </property>
-</objectSummary><objectSummary
+</property></objectSummary>
+<objectSummary
         xsi:type="Object"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.UIExtensionClass</className>
