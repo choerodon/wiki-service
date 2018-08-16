@@ -34,6 +34,7 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
 
     @Override
     public int createSpace1WebHome(String param1, String xmlParam, String username) {
+        logger.info(xmlParam);
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
