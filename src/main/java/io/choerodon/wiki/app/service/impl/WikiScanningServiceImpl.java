@@ -36,7 +36,6 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
     private static final String ORG_ICON = "domain";
     private static final String PROJECT_ICON = "project";
-    private static final String USERNAME = "admin";
 
     private IamRepository iamRepository;
     private WikiSpaceRepository wikiSpaceRepository;
@@ -109,7 +108,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationE.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, organizationE.getId(), USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, organizationE.getId(), Stage.USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
         String adminGroupName = "O-" + organizationE.getCode() + Stage.ADMIN_GROUP;
@@ -119,18 +118,18 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setOrganizationCode(organizationE.getCode());
         wikiGroupDTO.setOrganizationName(organizationE.getName());
-        wikiGroupService.create(wikiGroupDTO, USERNAME, true, true);
+        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, true);
         setWikiOrgGroupUser(organizationE, adminGroupName);
 
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, USERNAME, false, true);
+        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, true);
 
         if (organizationE.getProjectCount() > 0) {
             setProject(organizationE);
         }
 
         if (!organizationE.getEnabled()) {
-            wikiGroupService.disableOrganizationGroup(organizationE.getId(), USERNAME);
+            wikiGroupService.disableOrganizationGroup(organizationE.getId(), Stage.USERNAME);
         }
     }
 
@@ -154,7 +153,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
                 wikiSpaceDTO.setName(organizationE.getName() + "/" + projectE.getName());
                 wikiSpaceDTO.setIcon(PROJECT_ICON);
-                wikiSpaceService.create(wikiSpaceDTO, projectE.getId(), USERNAME,
+                wikiSpaceService.create(wikiSpaceDTO, projectE.getId(), Stage.USERNAME,
                         WikiSpaceResourceType.PROJECT.getResourceType());
 
                 WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
@@ -167,19 +166,19 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 wikiGroupDTO.setOrganizationCode(organizationE.getCode());
 
                 //创建组并分配权限
-                wikiGroupService.create(wikiGroupDTO, USERNAME, true, false);
+                wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, false);
                 //管理员给组分配成员
                 setWikiProjectGroupUser(projectE, adminGroupName, Stage.ADMIN_GROUP);
 
 
                 wikiGroupDTO.setGroupName(userGroupName);
                 //创建组并分配权限
-                wikiGroupService.create(wikiGroupDTO, USERNAME, false, false);
+                wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, false);
                 //普通用户给组分配成员
                 setWikiProjectGroupUser(projectE, userGroupName, Stage.USER_GROUP);
 
                 if (!projectE.getEnabled()) {
-                    wikiGroupService.disableProjectGroup(projectE.getId(), USERNAME);
+                    wikiGroupService.disableProjectGroup(projectE.getId(), Stage.USERNAME);
                 }
             }
         });
@@ -215,7 +214,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 }
 
                 for (UserE user : userEList) {
-                    wikiGroupService.setUserToGroup(groupName, user.getId(), USERNAME);
+                    wikiGroupService.setUserToGroup(groupName, user.getId(), Stage.USERNAME);
                 }
             }
         }
@@ -246,7 +245,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 }
 
                 for (UserE user : userEList) {
-                    wikiGroupService.setUserToGroup(groupName, user.getId(), USERNAME);
+                    wikiGroupService.setUserToGroup(groupName, user.getId(), Stage.USERNAME);
                 }
             }
         }

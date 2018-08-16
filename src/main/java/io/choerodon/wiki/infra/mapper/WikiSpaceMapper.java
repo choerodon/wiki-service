@@ -18,4 +18,9 @@ public interface WikiSpaceMapper extends BaseMapper<WikiSpaceDO> {
             @Param("type") String type,
             @Param("searchParam") Map<String, Object> searchParam,
             @Param("param") String param);
+
+    int checkName(
+            @Param("resourceId") Long resourceId,
+            @Param("type") String type,
+            @Param("name") String name);
 }
