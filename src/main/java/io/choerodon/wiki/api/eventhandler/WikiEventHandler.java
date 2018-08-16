@@ -54,7 +54,7 @@ public class WikiEventHandler {
             sagaCode = "org-create-organization",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 1)
+            seq = 10)
     public String handleOrganizationCreateEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationEventPayload organizationEventPayload = objectMapper.readValue(data, OrganizationEventPayload.class);
@@ -124,7 +124,7 @@ public class WikiEventHandler {
             sagaCode = "iam-update-memberRole",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 10)
+            seq = 1)
     public String handleCreateGroupMemberEvent(String data) throws IOException {
         loggerInfo(data);
         List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
@@ -143,7 +143,7 @@ public class WikiEventHandler {
             sagaCode = "iam-delete-memberRole",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 10)
+            seq = 1)
     public String handledeleteMemberRoleEvent(String data) throws IOException {
         loggerInfo(data);
         List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
@@ -161,7 +161,7 @@ public class WikiEventHandler {
             sagaCode = "iam-create-user",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 10)
+            seq = 1)
     public String handleCreateUserEvent(String data) throws IOException {
         loggerInfo(data);
         List<UserDTO> userDTOList = gson.fromJson(data,
