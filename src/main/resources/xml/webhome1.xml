@@ -380,7 +380,6 @@
             <number>1</number>
             <headline>long</headline>
             <property name="cache" type="StaticList">
-                <link href="http://xwiki.alpha.saas.hand-china.com/rest/wikis/xwiki/spaces/ChoerodonConfig/pages/WebHome/objects/XWiki.StyleSheetExtension/1/properties/cache" rel="self"/>
                 <attribute name="name" value="cache"/>
                 <attribute name="prettyName" value="Caching policy"/>
                 <attribute name="unmodifiable" value="0"/>
