@@ -30,4 +30,10 @@ databaseChangeLog(logicalFilePath: 'dba/wiki_space.groovy') {
 
         addUniqueConstraint(tableName: 'wiki_space', constraintName: 'u_name', columnNames: 'resource_id,resource_type,name')
     }
+
+    changeSet(author: 'Zenger',id: '2018-08-16-sql') {
+        sql(stripComments: true, splitStatements: false, endDelimiter: ';') {
+            "UPDATE wiki_space ws SET ws.`status` = 'success';"
+        }
+    }
 }

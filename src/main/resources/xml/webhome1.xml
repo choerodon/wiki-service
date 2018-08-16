@@ -315,7 +315,7 @@
                     padding-top: 12px;&#13;
                     }&#13;
                     &#13;
-                    #actionBox,#xwikicontent&gt;p,#HEntries{&#13;
+                    #actionBox,#xwikicontent&gt;p,#HEntries,#tmEdit{&#13;
                     display:none;&#13;
                     }</value>
             </property>
