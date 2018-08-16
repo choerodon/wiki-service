@@ -639,11 +639,11 @@
                 <attribute name="number" value="3"/>
                 <attribute name="values" value="currentPage|onDemand|always"/>
                 <attribute name="allowedValues" value="currentPage,onDemand,always"/>
-                <value>currentPage</value>
+<value>currentPage</value>
 </property></objectSummary>
+        
 <objectSummary
-        xsi:type="Object"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+xsi:type="Object"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.UIExtensionClass</className>
             <number>0</number>
             <headline></headline>
