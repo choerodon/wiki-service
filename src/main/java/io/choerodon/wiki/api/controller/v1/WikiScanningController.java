@@ -4,10 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
@@ -58,5 +55,18 @@ public class WikiScanningController {
                                   @PathVariable(value = "organization_id") Long organizationId) {
         wikiScanningService.syncOrg(organizationId);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /**
+     * 更新wiki系统主页
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION,
+            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
+                    Stage.ORGANIZATION_MEMBER})
+    @ApiOperation(value = "更新wiki系统主页")
+    @PostMapping(value = "/wiki/page")
+    public ResponseEntity update() {
+        wikiScanningService.updateWikiPage();
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 }

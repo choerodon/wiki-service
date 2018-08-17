@@ -8,4 +8,6 @@ public interface WikiScanningService {
     void syncOrg(Long orgId);
 
     void scanning();
+
+    void updateWikiPage();
 }

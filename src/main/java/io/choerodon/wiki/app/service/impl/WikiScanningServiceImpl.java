@@ -1,7 +1,10 @@
 package io.choerodon.wiki.app.service.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,8 @@ import io.choerodon.wiki.domain.application.entity.iam.RoleE;
 import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
+import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
+import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
@@ -41,15 +46,18 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     private WikiSpaceRepository wikiSpaceRepository;
     private WikiSpaceService wikiSpaceService;
     private WikiGroupService wikiGroupService;
+    private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
 
     public WikiScanningServiceImpl(IamRepository iamRepository,
                                    WikiSpaceRepository wikiSpaceRepository,
                                    WikiSpaceService wikiSpaceService,
-                                   WikiGroupService wikiGroupService) {
+                                   WikiGroupService wikiGroupService,
+                                   IWikiSpaceWebHomeService iWikiSpaceWebHomeService) {
         this.iamRepository = iamRepository;
         this.wikiSpaceRepository = wikiSpaceRepository;
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
+        this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
     }
 
     @Override
@@ -99,6 +107,80 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                     setOrganization(organizationE);
                 }
             }
+        });
+    }
+
+    @Override
+    @Async("org-pro-sync")
+    public void updateWikiPage() {
+        updateWikiOrgHomePage();
+        updateWikiProjectHomePage();
+    }
+
+    public void updateWikiOrgHomePage() {
+        List<WikiSpaceE> orgWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
+                WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        orgWikiSpaceEList.forEach(p -> {
+            Map<String, String> params = new HashMap<>();
+            params.put("{{ SPACE_ICON }}", p.getIcon());
+            params.put("{{ SPACE_TITLE }}", p.getName());
+            params.put("{{ SPACE_LABEL }}", p.getName());
+            params.put("{{ SPACE_TARGET }}", p.getName());
+
+            InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
+            String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
+            iWikiSpaceWebHomeService.createSpace1WebHome(p.getPath(), orgXmlParam, Stage.USERNAME);
+
+            List<WikiSpaceE> orgUnderList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
+                    WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+            orgUnderList.forEach(space -> {
+                String[] path = space.getPath().split("/");
+                Map<String, String> orgUnderParams = new HashMap<>();
+                orgUnderParams.put("{{ SPACE_TITLE }}", space.getName());
+                orgUnderParams.put("{{ SPACE_LABEL }}", space.getName());
+                orgUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
+                orgUnderParams.put("{{ SPACE_PARENT }}", path[0]);
+                orgUnderParams.put("{{ SPACE_TARGET }}", path[1]);
+
+                InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+                String xmlParam = FileUtil.replaceReturnString(inputStream, orgUnderParams);
+                iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, Stage.USERNAME);
+            });
+        });
+    }
+
+    public void updateWikiProjectHomePage() {
+        List<WikiSpaceE> projectWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
+                WikiSpaceResourceType.PROJECT.getResourceType());
+        projectWikiSpaceEList.forEach(p -> {
+            String[] path = p.getPath().split("/");
+            Map<String, String> projectParams = new HashMap<>();
+            projectParams.put("{{ SPACE_TITLE }}", p.getName());
+            projectParams.put("{{ SPACE_LABEL }}", p.getName());
+            projectParams.put("{{ SPACE_ICON }}", p.getIcon());
+            projectParams.put("{{ SPACE_PARENT }}", path[0]);
+            projectParams.put("{{ SPACE_TARGET }}", path[1]);
+
+            InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+            String xmlParam = FileUtil.replaceReturnString(inputStream, projectParams);
+            iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, Stage.USERNAME);
+
+            List<WikiSpaceE> projectUnderlist = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
+                    WikiSpaceResourceType.PROJECT_S.getResourceType());
+            projectUnderlist.forEach(space -> {
+                String[] projectPath = space.getPath().split("/");
+                Map<String, String> projectUnderParams = new HashMap<>();
+                projectUnderParams.put("{{ SPACE_TITLE }}", space.getName());
+                projectUnderParams.put("{{ SPACE_LABEL }}", space.getName());
+                projectUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
+                projectUnderParams.put("{{ SPACE_ROOT }}", projectPath[0]);
+                projectUnderParams.put("{{ SPACE_PARENT }}", projectPath[1]);
+                projectUnderParams.put("{{ SPACE_TARGET }}", projectPath[2]);
+
+                InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
+                String xml = FileUtil.replaceReturnString(is, projectUnderParams);
+                iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xml, Stage.USERNAME);
+            });
         });
     }
 

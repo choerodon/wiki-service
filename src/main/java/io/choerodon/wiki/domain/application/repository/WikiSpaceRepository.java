@@ -25,4 +25,6 @@ public interface WikiSpaceRepository {
     Boolean checkName(Long resourceId, String name, String type);
 
     WikiSpaceE update(WikiSpaceE wikiSpaceE);
+
+    List<WikiSpaceE> getWikiSpaceByType(String resourceType);
 }
