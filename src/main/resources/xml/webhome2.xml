@@ -69,9 +69,6 @@
      &lt;/div&gt;&#13;
      &lt;div style="margin-bottom:8px;"&gt;&#13;
          &lt;div class="home-page-left"&gt;&#13;
-             &lt;span class="home-page-font"&gt;编辑这个主页&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击屏幕右上方的编辑来自定义您的空间主页。&lt;/span&gt;&#13;
-         &lt;/div&gt;&#13;
-         &lt;div class="home-page-left"&gt;&#13;
             &lt;span class="home-page-font"&gt;创建您的首个页面&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击页头上的创建按钮开始。&lt;/span&gt;&#13;
          &lt;/div&gt;&#13;
          &lt;div class="home-page-left"&gt;&#13;
@@ -317,7 +314,7 @@
                     padding-top: 12px;&#13;
                     }&#13;
                     &#13;
-                    #actionBox,#xwikicontent&gt;p,#HEntries{&#13;
+                    #actionBox,#xwikicontent&gt;p,#HEntries,#tmEdit{&#13;
                     display:none;&#13;
                     }</value>
             </property>

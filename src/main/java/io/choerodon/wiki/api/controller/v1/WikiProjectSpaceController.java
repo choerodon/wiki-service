@@ -21,7 +21,7 @@ import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
 import io.choerodon.wiki.app.service.WikiSpaceService;
-import io.choerodon.wiki.infra.common.GetUserNameUtil;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
@@ -76,7 +76,7 @@ public class WikiProjectSpaceController {
             @PathVariable(value = "project_id") Long projectId,
             @ApiParam(value = "空间信息", required = true)
             @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        wikiSpaceService.create(wikiSpaceDTO, projectId, GetUserNameUtil.getUsername(),
+        wikiSpaceService.create(wikiSpaceDTO, projectId, Stage.USERNAME,
                 WikiSpaceResourceType.PROJECT_S.getResourceType());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -149,7 +149,7 @@ public class WikiProjectSpaceController {
                                                        @PathVariable Long id,
                                                        @ApiParam(value = "空间信息", required = true)
                                                        @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, GetUserNameUtil.getUsername()))
+        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, Stage.USERNAME))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.update"));
     }

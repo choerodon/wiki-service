@@ -20,7 +20,7 @@ public interface WikiSpaceService {
 
     WikiSpaceResponseDTO update(Long id,WikiSpaceDTO wikiSpaceDTO,String username);
 
-    Boolean checkName(Long projectId,String name,String type);
+    Boolean checkName(Long resourceId,String name,String type);
 
     void delete(Long resourceId,Long id);
 }

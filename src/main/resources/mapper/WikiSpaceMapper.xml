@@ -29,4 +29,16 @@
         </if>
     </select>
 
+    <select id="checkName" resultType="java.lang.Integer">
+        SELECT
+            COUNT(1)
+        FROM
+            wiki_space ws
+        WHERE
+            ws.resource_id = #{resourceId}
+        AND ws.resource_type = #{type}
+        AND ws.`name` = #{name}
+        AND ws.`status` != 'deleted'
+    </select>
+
 </mapper>

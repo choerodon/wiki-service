@@ -1,7 +1,10 @@
 package io.choerodon.wiki.app.service.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,8 @@ import io.choerodon.wiki.domain.application.entity.iam.RoleE;
 import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
+import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
+import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
@@ -36,21 +41,23 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
     private static final String ORG_ICON = "domain";
     private static final String PROJECT_ICON = "project";
-    private static final String USERNAME = "admin";
 
     private IamRepository iamRepository;
     private WikiSpaceRepository wikiSpaceRepository;
     private WikiSpaceService wikiSpaceService;
     private WikiGroupService wikiGroupService;
+    private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
 
     public WikiScanningServiceImpl(IamRepository iamRepository,
                                    WikiSpaceRepository wikiSpaceRepository,
                                    WikiSpaceService wikiSpaceService,
-                                   WikiGroupService wikiGroupService) {
+                                   WikiGroupService wikiGroupService,
+                                   IWikiSpaceWebHomeService iWikiSpaceWebHomeService) {
         this.iamRepository = iamRepository;
         this.wikiSpaceRepository = wikiSpaceRepository;
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
+        this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
     }
 
     @Override
@@ -103,13 +110,87 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         });
     }
 
+    @Override
+    @Async("org-pro-sync")
+    public void updateWikiPage() {
+        updateWikiOrgHomePage();
+        updateWikiProjectHomePage();
+    }
+
+    public void updateWikiOrgHomePage() {
+        List<WikiSpaceE> orgWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
+                WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        orgWikiSpaceEList.forEach(p -> {
+            Map<String, String> params = new HashMap<>();
+            params.put("{{ SPACE_ICON }}", p.getIcon());
+            params.put("{{ SPACE_TITLE }}", p.getName());
+            params.put("{{ SPACE_LABEL }}", p.getName());
+            params.put("{{ SPACE_TARGET }}", p.getName());
+
+            InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
+            String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
+            iWikiSpaceWebHomeService.createSpace1WebHome(p.getPath(), orgXmlParam, Stage.USERNAME);
+
+            List<WikiSpaceE> orgUnderList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
+                    WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+            orgUnderList.forEach(space -> {
+                String[] path = space.getPath().split("/");
+                Map<String, String> orgUnderParams = new HashMap<>();
+                orgUnderParams.put("{{ SPACE_TITLE }}", space.getName());
+                orgUnderParams.put("{{ SPACE_LABEL }}", space.getName());
+                orgUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
+                orgUnderParams.put("{{ SPACE_PARENT }}", path[0]);
+                orgUnderParams.put("{{ SPACE_TARGET }}", path[1]);
+
+                InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+                String xmlParam = FileUtil.replaceReturnString(inputStream, orgUnderParams);
+                iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, Stage.USERNAME);
+            });
+        });
+    }
+
+    public void updateWikiProjectHomePage() {
+        List<WikiSpaceE> projectWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
+                WikiSpaceResourceType.PROJECT.getResourceType());
+        projectWikiSpaceEList.forEach(p -> {
+            String[] projectPath = p.getPath().split("/");
+            Map<String, String> projectParams = new HashMap<>();
+            projectParams.put("{{ SPACE_TITLE }}", p.getName());
+            projectParams.put("{{ SPACE_LABEL }}", p.getName());
+            projectParams.put("{{ SPACE_ICON }}", p.getIcon());
+            projectParams.put("{{ SPACE_PARENT }}", projectPath[0]);
+            projectParams.put("{{ SPACE_TARGET }}", projectPath[1]);
+
+            InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+            String xmlParam = FileUtil.replaceReturnString(inputStream, projectParams);
+            iWikiSpaceWebHomeService.createSpace2WebHome(projectPath[0], projectPath[1], xmlParam, Stage.USERNAME);
+
+            List<WikiSpaceE> projectUnderlist = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
+                    WikiSpaceResourceType.PROJECT_S.getResourceType());
+            projectUnderlist.forEach(space -> {
+                String[] projectUnderPath = space.getPath().split("/");
+                Map<String, String> projectUnderParams = new HashMap<>();
+                projectUnderParams.put("{{ SPACE_TITLE }}", space.getName());
+                projectUnderParams.put("{{ SPACE_LABEL }}", space.getName());
+                projectUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
+                projectUnderParams.put("{{ SPACE_ROOT }}", projectUnderPath[0]);
+                projectUnderParams.put("{{ SPACE_PARENT }}", projectUnderPath[1]);
+                projectUnderParams.put("{{ SPACE_TARGET }}", projectUnderPath[2]);
+
+                InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
+                String xml = FileUtil.replaceReturnString(is, projectUnderParams);
+                iWikiSpaceWebHomeService.createSpace3WebHome(projectUnderPath[0], projectUnderPath[1], projectUnderPath[2], xml, Stage.USERNAME);
+            });
+        });
+    }
+
     public void setOrganization(OrganizationE organizationE) {
         logger.info("sync organization : " + organizationE.getName());
         //创建组织
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationE.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, organizationE.getId(), USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, organizationE.getId(), Stage.USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
         String adminGroupName = "O-" + organizationE.getCode() + Stage.ADMIN_GROUP;
@@ -119,18 +200,18 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setOrganizationCode(organizationE.getCode());
         wikiGroupDTO.setOrganizationName(organizationE.getName());
-        wikiGroupService.create(wikiGroupDTO, USERNAME, true, true);
+        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, true);
         setWikiOrgGroupUser(organizationE, adminGroupName);
 
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, USERNAME, false, true);
+        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, true);
 
         if (organizationE.getProjectCount() > 0) {
             setProject(organizationE);
         }
 
         if (!organizationE.getEnabled()) {
-            wikiGroupService.disableOrganizationGroup(organizationE.getId(), USERNAME);
+            wikiGroupService.disableOrganizationGroup(organizationE.getId(), Stage.USERNAME);
         }
     }
 
@@ -154,7 +235,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
                 wikiSpaceDTO.setName(organizationE.getName() + "/" + projectE.getName());
                 wikiSpaceDTO.setIcon(PROJECT_ICON);
-                wikiSpaceService.create(wikiSpaceDTO, projectE.getId(), USERNAME,
+                wikiSpaceService.create(wikiSpaceDTO, projectE.getId(), Stage.USERNAME,
                         WikiSpaceResourceType.PROJECT.getResourceType());
 
                 WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
@@ -167,19 +248,19 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 wikiGroupDTO.setOrganizationCode(organizationE.getCode());
 
                 //创建组并分配权限
-                wikiGroupService.create(wikiGroupDTO, USERNAME, true, false);
+                wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, false);
                 //管理员给组分配成员
                 setWikiProjectGroupUser(projectE, adminGroupName, Stage.ADMIN_GROUP);
 
 
                 wikiGroupDTO.setGroupName(userGroupName);
                 //创建组并分配权限
-                wikiGroupService.create(wikiGroupDTO, USERNAME, false, false);
+                wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, false);
                 //普通用户给组分配成员
                 setWikiProjectGroupUser(projectE, userGroupName, Stage.USER_GROUP);
 
                 if (!projectE.getEnabled()) {
-                    wikiGroupService.disableProjectGroup(projectE.getId(), USERNAME);
+                    wikiGroupService.disableProjectGroup(projectE.getId(), Stage.USERNAME);
                 }
             }
         });
@@ -215,7 +296,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 }
 
                 for (UserE user : userEList) {
-                    wikiGroupService.setUserToGroup(groupName, user.getId(), USERNAME);
+                    wikiGroupService.setUserToGroup(groupName, user.getId(), Stage.USERNAME);
                 }
             }
         }
@@ -246,7 +327,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 }
 
                 for (UserE user : userEList) {
-                    wikiGroupService.setUserToGroup(groupName, user.getId(), USERNAME);
+                    wikiGroupService.setUserToGroup(groupName, user.getId(), Stage.USERNAME);
                 }
             }
         }

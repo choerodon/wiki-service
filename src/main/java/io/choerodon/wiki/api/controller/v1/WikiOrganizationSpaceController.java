@@ -77,7 +77,7 @@ public class WikiOrganizationSpaceController {
             @PathVariable(value = "organization_id") Long organizationId,
             @ApiParam(value = "空间信息", required = true)
             @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        wikiSpaceService.create(wikiSpaceDTO, organizationId, GetUserNameUtil.getUsername(),
+        wikiSpaceService.create(wikiSpaceDTO, organizationId,Stage.USERNAME,
                 WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -150,7 +150,7 @@ public class WikiOrganizationSpaceController {
                                                        @PathVariable Long id,
                                                        @ApiParam(value = "空间信息", required = true)
                                                        @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, GetUserNameUtil.getUsername()))
+        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, Stage.USERNAME))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.update"));
     }

@@ -28,7 +28,6 @@ public class WikiEventHandler {
 
     private static final String ORG_ICON = "domain";
     private static final String PROJECT_ICON = "project";
-    private static final String USERNAME = "admin";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiEventHandler.class);
     private static ObjectMapper objectMapper = new ObjectMapper();
     private static Gson gson = new Gson();
@@ -54,14 +53,14 @@ public class WikiEventHandler {
             sagaCode = "org-create-organization",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 1)
+            seq = 10)
     public String handleOrganizationCreateEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationEventPayload organizationEventPayload = objectMapper.readValue(data, OrganizationEventPayload.class);
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationEventPayload.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), Stage.USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
         String adminGroupName = "O-" + organizationEventPayload.getCode() + Stage.ADMIN_GROUP;
@@ -71,12 +70,12 @@ public class WikiEventHandler {
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setOrganizationCode(organizationEventPayload.getCode());
         wikiGroupDTO.setOrganizationName(organizationEventPayload.getName());
-        wikiGroupService.create(wikiGroupDTO, USERNAME, true, true);
+        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, true);
 
-        wikiGroupService.setUserToGroup(adminGroupName, organizationEventPayload.getUserId(), USERNAME);
+        wikiGroupService.setUserToGroup(adminGroupName, organizationEventPayload.getUserId(), Stage.USERNAME);
 
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, USERNAME, false, true);
+        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, true);
 
         return data;
     }
@@ -96,7 +95,7 @@ public class WikiEventHandler {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
         wikiSpaceDTO.setIcon(PROJECT_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(), USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(), Stage.USERNAME,
                 WikiSpaceResourceType.PROJECT.getResourceType());
         //创建组
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
@@ -107,10 +106,10 @@ public class WikiEventHandler {
         wikiGroupDTO.setProjectName(projectEvent.getProjectName());
         wikiGroupDTO.setOrganizationName(projectEvent.getOrganizationName());
         wikiGroupDTO.setOrganizationCode(projectEvent.getOrganizationCode());
-        wikiGroupService.create(wikiGroupDTO, USERNAME, true, false);
-        wikiGroupService.setUserToGroup(adminGroupName, projectEvent.getUserId(), USERNAME);
+        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, false);
+        wikiGroupService.setUserToGroup(adminGroupName, projectEvent.getUserId(), Stage.USERNAME);
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, USERNAME, false, false);
+        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, false);
 
         return data;
     }
@@ -124,13 +123,13 @@ public class WikiEventHandler {
             sagaCode = "iam-update-memberRole",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 10)
+            seq = 1)
     public String handleCreateGroupMemberEvent(String data) throws IOException {
         loggerInfo(data);
         List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
                 new TypeToken<List<GroupMemberDTO>>() {
                 }.getType());
-        wikiGroupService.createWikiGroupUsers(groupMemberDTOList, USERNAME);
+        wikiGroupService.createWikiGroupUsers(groupMemberDTOList, Stage.USERNAME);
 
         return data;
     }
@@ -143,13 +142,13 @@ public class WikiEventHandler {
             sagaCode = "iam-delete-memberRole",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 10)
+            seq = 1)
     public String handledeleteMemberRoleEvent(String data) throws IOException {
         loggerInfo(data);
         List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
                 new TypeToken<List<GroupMemberDTO>>() {
                 }.getType());
-        wikiGroupService.deleteWikiGroupUsers(groupMemberDTOList, USERNAME);
+        wikiGroupService.deleteWikiGroupUsers(groupMemberDTOList, Stage.USERNAME);
         return data;
     }
 
@@ -161,13 +160,13 @@ public class WikiEventHandler {
             sagaCode = "iam-create-user",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 10)
+            seq = 1)
     public String handleCreateUserEvent(String data) throws IOException {
         loggerInfo(data);
         List<UserDTO> userDTOList = gson.fromJson(data,
                 new TypeToken<List<UserDTO>>() {
                 }.getType());
-        wikiGroupService.createWikiUserToGroup(userDTOList, USERNAME);
+        wikiGroupService.createWikiUserToGroup(userDTOList, Stage.USERNAME);
         return data;
     }
 
@@ -183,7 +182,7 @@ public class WikiEventHandler {
     public String handleOrganizationDisableEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
-        wikiGroupService.disableOrganizationGroup(organizationDTO.getOrganizationId(), USERNAME);
+        wikiGroupService.disableOrganizationGroup(organizationDTO.getOrganizationId(), Stage.USERNAME);
         return data;
     }
 
@@ -199,7 +198,7 @@ public class WikiEventHandler {
     public String handleProjectDisableEvent(String data) throws IOException {
         loggerInfo(data);
         ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
-        wikiGroupService.disableProjectGroup(projectDTO.getProjectId(), USERNAME);
+        wikiGroupService.disableProjectGroup(projectDTO.getProjectId(), Stage.USERNAME);
         return data;
     }
 
@@ -215,7 +214,7 @@ public class WikiEventHandler {
     public String handleOrganizationEnableEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
-        wikiGroupService.enableOrganizationGroup(organizationDTO.getOrganizationId(), USERNAME);
+        wikiGroupService.enableOrganizationGroup(organizationDTO.getOrganizationId(), Stage.USERNAME);
         return data;
     }
 
@@ -231,7 +230,7 @@ public class WikiEventHandler {
     public String handleProjectEnableEvent(String data) throws IOException {
         loggerInfo(data);
         ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
-        wikiGroupService.enableProjectGroup(projectDTO.getProjectId(), USERNAME);
+        wikiGroupService.enableProjectGroup(projectDTO.getProjectId(), Stage.USERNAME);
         return data;
     }
 }
