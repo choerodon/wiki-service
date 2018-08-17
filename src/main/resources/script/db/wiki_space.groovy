@@ -25,7 +25,7 @@ databaseChangeLog(logicalFilePath: 'dba/wiki_space.groovy') {
         dropColumn(columnName: "is_synchro", tableName: "wiki_space")
 
         addColumn(tableName: 'wiki_space') {
-            column(name: 'status', type: 'VARCHAR(64)', remarks: '空间创建状态')
+            column(name: 'status', type: 'VARCHAR(64)', remarks: '空间创建状态',afterColumn: 'path')
         }
 
         addUniqueConstraint(tableName: 'wiki_space', constraintName: 'u_name', columnNames: 'resource_id,resource_type,name')

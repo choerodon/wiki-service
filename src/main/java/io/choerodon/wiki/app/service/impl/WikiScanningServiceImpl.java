@@ -153,33 +153,33 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         List<WikiSpaceE> projectWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
                 WikiSpaceResourceType.PROJECT.getResourceType());
         projectWikiSpaceEList.forEach(p -> {
-            String[] path = p.getPath().split("/");
+            String[] projectPath = p.getPath().split("/");
             Map<String, String> projectParams = new HashMap<>();
             projectParams.put("{{ SPACE_TITLE }}", p.getName());
             projectParams.put("{{ SPACE_LABEL }}", p.getName());
             projectParams.put("{{ SPACE_ICON }}", p.getIcon());
-            projectParams.put("{{ SPACE_PARENT }}", path[0]);
-            projectParams.put("{{ SPACE_TARGET }}", path[1]);
+            projectParams.put("{{ SPACE_PARENT }}", projectPath[0]);
+            projectParams.put("{{ SPACE_TARGET }}", projectPath[1]);
 
             InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
             String xmlParam = FileUtil.replaceReturnString(inputStream, projectParams);
-            iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, Stage.USERNAME);
+            iWikiSpaceWebHomeService.createSpace2WebHome(projectPath[0], projectPath[1], xmlParam, Stage.USERNAME);
 
             List<WikiSpaceE> projectUnderlist = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
                     WikiSpaceResourceType.PROJECT_S.getResourceType());
             projectUnderlist.forEach(space -> {
-                String[] projectPath = space.getPath().split("/");
+                String[] projectUnderPath = space.getPath().split("/");
                 Map<String, String> projectUnderParams = new HashMap<>();
                 projectUnderParams.put("{{ SPACE_TITLE }}", space.getName());
                 projectUnderParams.put("{{ SPACE_LABEL }}", space.getName());
                 projectUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
-                projectUnderParams.put("{{ SPACE_ROOT }}", projectPath[0]);
-                projectUnderParams.put("{{ SPACE_PARENT }}", projectPath[1]);
-                projectUnderParams.put("{{ SPACE_TARGET }}", projectPath[2]);
+                projectUnderParams.put("{{ SPACE_ROOT }}", projectUnderPath[0]);
+                projectUnderParams.put("{{ SPACE_PARENT }}", projectUnderPath[1]);
+                projectUnderParams.put("{{ SPACE_TARGET }}", projectUnderPath[2]);
 
                 InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
                 String xml = FileUtil.replaceReturnString(is, projectUnderParams);
-                iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xml, Stage.USERNAME);
+                iWikiSpaceWebHomeService.createSpace3WebHome(projectUnderPath[0], projectUnderPath[1], projectUnderPath[2], xml, Stage.USERNAME);
             });
         });
     }
