@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <page xmlns="http://www.xwiki.org">
     <title>{{ SPACE_TITLE }}</title>
+    <content></content>
     <objects>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>AppWithinMinutes.LiveTableClass</className>
@@ -641,7 +642,7 @@
                 <attribute name="allowedValues" value="currentPage,onDemand,always"/>
 <value>currentPage</value>
 </property></objectSummary>
-        
+
 <objectSummary
 xsi:type="Object"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.UIExtensionClass</className>
