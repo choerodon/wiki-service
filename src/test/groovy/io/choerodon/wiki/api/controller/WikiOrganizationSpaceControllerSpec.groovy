@@ -118,13 +118,12 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "\"userId\":2\n" +
                 "}";
 
-        when: '模拟发送kafka消息'
+        when: '模拟发送消息'
         wikiEventHandler.handleOrganizationCreateEvent(data)
 
         then: ''
         1 * iWikiSpaceWebHomeService.createSpace1WebHome(_, _, _) >> 201
         1 * iWikiSpaceWebPreferencesService.createSpace1WebPreferences(_, _, _) >> 201
-        1 * iWikiCreatePageService.createPage1Code(_, _, _, _) >> 201
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
         2 * iWikiGroupService.createGroup(_, _)
         2 * iWikiGroupService.addRightsToOrg(_, _, _, _)
@@ -150,8 +149,8 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         def entity = restTemplate.postForEntity('/v1/organizations/{organization_id}/space', wikiSpaceDTO, null, organizationId)
 
         then: '状态码为201'
-        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_,_,_,_) >> 201
-        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(_,_,_,_) >> 201
+        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_, _, _, _) >> 201
+        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(_, _, _, _) >> 201
         Assert.assertEquals(201, entity.statusCodeValue)
     }
 
@@ -199,12 +198,11 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
     def '组织禁用'() {
         given: '定义请求数据格式'
-        EventPayload<OrganizationDTO> payload = new EventPayload<>();
-        OrganizationDTO organizationDTO = new OrganizationDTO()
-        organizationDTO.setOrganizationId(1L)
-        payload.setData(organizationDTO)
+        def payload = "{\n" +
+                "  \"organizationId\":1 \n" +
+                "}"
 
-        when: '模拟发送kafka消息'
+        when: '模拟发送消息'
         wikiEventHandler.handleOrganizationDisableEvent(payload)
 
         then: ''
@@ -214,10 +212,9 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
     def '组织启用'() {
         given: '定义请求数据格式'
-        EventPayload<OrganizationDTO> payload = new EventPayload<>();
-        OrganizationDTO organizationDTO = new OrganizationDTO()
-        organizationDTO.setOrganizationId(1L)
-        payload.setData(organizationDTO)
+        def payload = "{\n" +
+                "  \"organizationId\":1 \n" +
+                "}"
         def page = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
                 '<objects xmlns="http://www.xwiki.org">\n' +
                 '    <objectSummary>\n' +
@@ -227,7 +224,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '    </objectSummary>\n' +
                 '</objects>'
 
-        when: '模拟发送kafka消息'
+        when: '模拟发送消息'
         wikiEventHandler.handleOrganizationEnableEvent(payload)
 
         then: ''
@@ -238,16 +235,20 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
     def '角色同步'() {
         given: '定义请求数据格式'
-        EventPayload<List<GroupMemberDTO>> payload = new EventPayload<>();
-        GroupMemberDTO groupMemberDTO = new GroupMemberDTO()
-        groupMemberDTO.setUserId(1)
-        groupMemberDTO.setResourceId(1)
-        groupMemberDTO.setResourceType(WikiSpaceResourceType.ORGANIZATION.getResourceType())
-        groupMemberDTO.setUsername("test")
-        groupMemberDTO.setRoleLabels(Arrays.asList("organization.wiki.admin"))
-        payload.setData(Arrays.asList(groupMemberDTO))
+        def payload = "[\n" +
+                "  {\n" +
+                "    \"userId\": 1,\n" +
+                "    \"username\": \"test\",\n" +
+                "    \"resourceId\": 1,\n" +
+                "    \"resourceType\": \"organization\",\n" +
+                "    \"roleLabels\": [\n" +
+                "      \"organization.wiki.admin\"\n" +
+                "    ],\n" +
+                "    \"uuid\": null\n" +
+                "  }\n" +
+                "]";
 
-        when: '模拟发送kafka消息'
+        when: '模拟发送消息'
         wikiEventHandler.handleCreateGroupMemberEvent(payload)
 
         then: ''
@@ -260,13 +261,17 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
     def '去除角色'() {
         given: '定义请求数据格式'
-        EventPayload<List<GroupMemberDTO>> payload = new EventPayload<>();
-        GroupMemberDTO groupMemberDTO = new GroupMemberDTO()
-        groupMemberDTO.setUserId(1)
-        groupMemberDTO.setResourceId(1)
-        groupMemberDTO.setResourceType(WikiSpaceResourceType.ORGANIZATION.getResourceType())
-        groupMemberDTO.setUsername("test")
-        payload.setData(Arrays.asList(groupMemberDTO))
+        def payload = "[\n" +
+                "  {\n" +
+                "    \"username\": \"test\",\n" +
+                "    \"resourceId\": 1,\n" +
+                "    \"resourceType\": \"organization\",\n" +
+                "    \"roleLabels\": null,\n" +
+                "    \"userId\": 1,\n" +
+                "    \"uuid\": null\n" +
+                "  }\n" +
+                "]";
+
         def admin = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
                 '<objects xmlns="http://www.xwiki.org">\n' +
                 '    <objectSummary>\n' +
@@ -284,7 +289,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '    </objectSummary>\n' +
                 '</objects>'
 
-        when: '模拟发送kafka消息'
+        when: '模拟发送消息'
         wikiEventHandler.handledeleteMemberRoleEvent(payload)
 
         then: ''
