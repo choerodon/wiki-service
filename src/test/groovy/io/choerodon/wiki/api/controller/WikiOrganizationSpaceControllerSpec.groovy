@@ -381,16 +381,18 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         page.setTotalPages(2)
         ProjectDO projectDO = new ProjectDO()
         projectDO.setId(1)
+        projectDO.setOrganizationId(1L)
         page.setContent(Arrays.asList(projectDO))
 
         ResponseEntity<Page<ProjectDO>> pageResponseEntity = new ResponseEntity<>(page,HttpStatus.OK)
+        ResponseEntity<ProjectDO> projectDOResponseEntity = new ResponseEntity<>(projectDO,HttpStatus.OK)
 
         and: 'Mock'
-        1 * iamServiceClient.queryOrganizationById(_) >> organization
-        4 * iWikiSpaceWebHomeService.deletePage(*_) >> 204
-        2 * iWikiSpaceWebHomeService.deletePage1(*_) >> 204
+        3 * iamServiceClient.queryOrganizationById(_) >> organization
+        8 * iWikiSpaceWebHomeService.deletePage(*_) >> 204
+        6 * iWikiSpaceWebHomeService.deletePage1(*_) >> 204
+        2 * iamServiceClient.queryIamProject(_) >> projectDOResponseEntity
         2 * iamServiceClient.pageByProject(*_) >> pageResponseEntity
-//        2 * iWikiSpaceWebHomeService.deletePage2(*_) >> 204
 
         when: '向接口发请求'
         restTemplate.delete(path + '/{id}', organizationId, id)
