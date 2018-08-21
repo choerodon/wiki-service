@@ -110,7 +110,6 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
     def '创建组织对应wiki空间'() {
         given: '定义请求数据格式'
-//        IamServiceClient iamServiceClient = Mock()
         def data = "{\n" +
                 "\"id\":1 ,\n" +
                 "\"name\": \"客户演示\",\n" +
@@ -118,10 +117,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "\"userId\":2\n" +
                 "}";
 
-        when: '模拟发送消息'
-        wikiEventHandler.handleOrganizationCreateEvent(data)
-
-        then: ''
+        and:'Mock'
         1 * iWikiSpaceWebHomeService.createSpace1WebHome(_, _, _) >> 201
         1 * iWikiSpaceWebPreferencesService.createSpace1WebPreferences(_, _, _) >> 201
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
@@ -132,11 +128,13 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         1 * iWikiUserService.checkDocExsist(_, _) >> false
         1 * iWikiUserService.createUser(_, _, _, _)
         1 * iWikiGroupService.createGroupUsers(_, _, _)
-
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
-//        1 * iamServiceClient.queryUsersByIds(_) >> responseEntity
-//        IamServiceClient iamServiceClient = Mock()
-//        Mockito.when(iamServiceClient.queryUsersByIds(Mockito.anyList())).thenReturn(responseEntity)
+
+        when: '模拟发送消息'
+        def entity = wikiEventHandler.handleOrganizationCreateEvent(data)
+
+        then: '校验返回数据'
+        Assert.assertEquals(data,entity);
     }
 
     def '组织下创建wiki空间'() {
@@ -144,6 +142,8 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO()
         wikiSpaceDTO.setIcon("flag")
         wikiSpaceDTO.setName(spaceName)
+
+        and:'Mock'
         1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_) >> 201
         1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(*_) >> 201
 
@@ -183,7 +183,8 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO()
         wikiSpaceDTO.setIcon("dns")
         wikiSpaceDTO.setName("O-"+spaceName)
-        
+
+        and:'Mock'
         1 * iWikiSpaceWebHomeService.createSpace2WebHome(_,_,_,_)
 
         when: '向接口发请求'
@@ -202,12 +203,15 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "  \"organizationId\":1 \n" +
                 "}"
 
-        when: '模拟发送消息'
-        wikiEventHandler.handleOrganizationDisableEvent(payload)
-
-        then: ''
+        and:'Mock'
         1 * iamRepository.queryOrganizationById(_) >> new OrganizationE()
         1 * iWikiGroupService.disableOrgGroupView(_,_,_)
+
+        when: '模拟发送消息'
+        def entity =  wikiEventHandler.handleOrganizationDisableEvent(payload)
+
+        then: '校验返回数据'
+        Assert.assertEquals(payload,entity);
     }
 
     def '组织启用'() {
@@ -224,13 +228,16 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '    </objectSummary>\n' +
                 '</objects>'
 
-        when: '模拟发送消息'
-        wikiEventHandler.handleOrganizationEnableEvent(payload)
-
-        then: ''
+        and:'Mock'
         1 * iamRepository.queryOrganizationById(_) >> new OrganizationE()
         1 * iWikiClassService.getPageClassResource(_,_,_,_) >> page
         1 * iWikiClassService.deletePageClass(_,_,_,_,_)
+
+        when: '模拟发送消息'
+        def entity = wikiEventHandler.handleOrganizationEnableEvent(payload)
+
+        then: '校验返回数据'
+        Assert.assertEquals(payload,entity);
     }
 
     def '角色同步'() {
@@ -248,15 +255,18 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "  }\n" +
                 "]";
 
-        when: '模拟发送消息'
-        wikiEventHandler.handleCreateGroupMemberEvent(payload)
-
-        then: ''
+        and:'Mock'
         1 * iamRepository.queryOrganizationById(_) >> organizationE
         1 * iamRepository.queryByLoginName(_) >> userE
         1 * iWikiUserService.checkDocExsist(_, _) >> false
         1 * iWikiUserService.createUser(_,_, _, _)
         1 * iWikiGroupService.createGroupUsers(_, _, _)
+
+        when: '模拟发送消息'
+        def entity = wikiEventHandler.handleCreateGroupMemberEvent(payload)
+
+        then: '校验返回数据'
+        Assert.assertEquals(payload,entity);
     }
 
     def '去除角色'() {
@@ -289,13 +299,16 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '    </objectSummary>\n' +
                 '</objects>'
 
-        when: '模拟发送消息'
-        wikiEventHandler.handledeleteMemberRoleEvent(payload)
-
-        then: ''
+        and:'Mock'
         2 * iamRepository.queryOrganizationById(_) >> organizationE
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> admin
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> user
         2 * iWikiClassService.deletePageClass(_, _, _, _, _);
+
+        when: '模拟发送消息'
+        def entity = wikiEventHandler.handledeleteMemberRoleEvent(payload)
+
+        then: '校验返回数据'
+        Assert.assertEquals(payload,entity);
     }
 }
