@@ -144,13 +144,13 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO()
         wikiSpaceDTO.setIcon("flag")
         wikiSpaceDTO.setName(spaceName)
+        1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_) >> 201
+        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(*_) >> 201
 
         when: '向接口发请求'
         def entity = restTemplate.postForEntity('/v1/organizations/{organization_id}/space', wikiSpaceDTO, null, organizationId)
 
         then: '状态码为201'
-        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_, _, _, _) >> 201
-        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(_, _, _, _) >> 201
         Assert.assertEquals(201, entity.statusCodeValue)
     }
 
@@ -183,14 +183,14 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO()
         wikiSpaceDTO.setIcon("dns")
         wikiSpaceDTO.setName("O-"+spaceName)
+        
+        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_,_,_,_)
 
         when: '向接口发请求'
         def entity = restTemplate.exchange('/v1/organizations/{organization_id}/space/{id}', HttpMethod.PUT,
                 new HttpEntity<>(wikiSpaceDTO), WikiSpaceResponseDTO.class, organizationId, id)
 
         then: '状态码为201,返回数据与请求数据相同'
-        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_,_,_,_)
-
         Assert.assertEquals(201, entity.statusCodeValue)
         Assert.assertEquals(2, entity.body.getId())
         Assert.assertEquals("dns", entity.body.getIcon())
