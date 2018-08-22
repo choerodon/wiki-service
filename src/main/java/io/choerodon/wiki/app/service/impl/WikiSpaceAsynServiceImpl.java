@@ -15,6 +15,7 @@ import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebPreferencesService;
 import io.choerodon.wiki.infra.common.FileUtil;
+import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
 import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
@@ -26,10 +27,6 @@ import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
 public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiSpaceAsynServiceImpl.class);
-
-    private static final String PAGE = "页面";
-    private static final String TYPE = "project";
-    private static final String USERNAME = "admin";
 
     private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
     private IWikiSpaceWebPreferencesService iWikiSpaceWebPreferencesService;
@@ -46,8 +43,8 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     @Override
     public void createOrgSpace(String orgName, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace1WebHome(orgName, getWebHome1XmlStr(wikiSpaceE), username);
-        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace1WebPreferences(orgName, getWebPreferencesXmlStr(wikiSpaceE), USERNAME);
-        LOGGER.info("path: " + orgName + " webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
+        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace1WebPreferences(orgName, getWebPreferencesXmlStr(wikiSpaceE), Stage.USERNAME);
+        LOGGER.info("create organization space,path: {}, webHomeCode:{}, webPreferencesCode:{}", orgName, webHomeCode, webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
@@ -55,7 +52,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     public void createProjectSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
-        LOGGER.info("path: " + param1 + "/" + param2 + "  webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
+        LOGGER.info("create project space,path: {}/{}, webHomeCode:{}, webPreferencesCode:{}", param1, param2, webHomeCode, webPreferencesCode);
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
@@ -64,7 +61,8 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     public void createOrgUnderSpace(String param1, String param2, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(param1, param2, getWebHome2XmlStr(param1, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(param1, param2, getWebPreferencesXmlStr(wikiSpaceE), username);
-        LOGGER.info("path: " + param1 + "/" + param2 + "  webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
+        LOGGER.info("create space under the organization,path: {}/{}, webHomeCode:{}, webPreferencesCode:{}", param1, param2, webHomeCode, webPreferencesCode);
+
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
@@ -73,7 +71,8 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     public void createProjectUnderSpace(String param1, String param2, String projectUnderName, WikiSpaceE wikiSpaceE, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace3WebHome(param1, param2, projectUnderName, getWebHome3XmlStr(param1, param2, wikiSpaceE), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace3WebPreferences(param1, param2, projectUnderName, getWebPreferencesXmlStr(wikiSpaceE), username);
-        LOGGER.info("path: " + param1 + "/" + param2 + "/" + projectUnderName + "  webHomeCode:" + webHomeCode + "  webPreferencesCode:" + webPreferencesCode);
+        LOGGER.info("create space under the project,path: {}/{}/{}, webHomeCode:{}, webPreferencesCode:{}", param1, param2, projectUnderName, webHomeCode, webPreferencesCode);
+
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
@@ -101,7 +100,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         Map<String, String> params = new HashMap<>();
         params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
         params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
-        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".","\\."));
+        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".", "\\."));
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
         return FileUtil.replaceReturnString(inputStream, params);
     }
@@ -111,8 +110,8 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         Map<String, String> params = new HashMap<>();
         params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
         params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
-        params.put("{{ SPACE_PARENT }}", parent.replace(".","\\."));
-        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".","\\."));
+        params.put("{{ SPACE_PARENT }}", parent.replace(".", "\\."));
+        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".", "\\."));
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
         return FileUtil.replaceReturnString(inputStream, params);
     }
@@ -122,9 +121,9 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         Map<String, String> params = new HashMap<>();
         params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
         params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
-        params.put("{{ SPACE_ROOT }}", root.replace(".","\\."));
-        params.put("{{ SPACE_PARENT }}", parent.replace(".","\\."));
-        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".","\\."));
+        params.put("{{ SPACE_ROOT }}", root.replace(".", "\\."));
+        params.put("{{ SPACE_PARENT }}", parent.replace(".", "\\."));
+        params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".", "\\."));
         params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
         return FileUtil.replaceReturnString(inputStream, params);
     }

@@ -42,7 +42,7 @@ public class WikiEventHandler {
     }
 
     private void loggerInfo(Object o) {
-        LOGGER.info("data: {}", o);
+        LOGGER.info("request data: {}", o);
     }
 
     /**

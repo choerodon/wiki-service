@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -39,8 +41,8 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 @Service
 public class WikiSpaceServiceImpl implements WikiSpaceService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WikiSpaceAsynServiceImpl.class);
     private static final String LOCATION = "bin/view/";
-    private static final String TYPE = "project";
 
     private WikiSpaceRepository wikiSpaceRepository;
     private WikiSpaceAsynService wikiSpaceAsynService;
@@ -75,7 +77,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setResourceId(resourceId);
         wikiSpaceE.setResourceType(type);
         wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
-
+        LOGGER.info("path:{} and wikiSpaceE: {} ", path, wikiSpaceE.toString());
         WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(type);
         switch (wikiSpaceResourceType) {
             case ORGANIZATION:
@@ -247,6 +249,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
 
     @Async
     public void deleteProjectUnderPage(WikiSpaceE wikiSpaceE) {
+        LOGGER.info("delete the page under the project,wikiSpaceE:{}", wikiSpaceE.toString());
         String[] param = wikiSpaceE.getPath().split("/");
         int webHome = iWikiSpaceWebHomeService.deletePage2(
                 param[0],
@@ -271,6 +274,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
 
     @Async
     public void deleteOrgUnderPage(WikiSpaceE wikiSpaceE) {
+        LOGGER.info("delete the page under the organization,wikiSpaceE:{}", wikiSpaceE.toString());
         String[] param = wikiSpaceE.getPath().split("/");
         int webHome = iWikiSpaceWebHomeService.deletePage1(
                 param[0],
@@ -354,6 +358,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     public void checkCodeDelete(int webHomeCode, long id) {
+        LOGGER.info("delete page webHomeCode: {}", webHomeCode);
         if (webHomeCode == 204 || webHomeCode == 404) {
             WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
             wikiSpaceE.setStatus(SpaceStatus.DELETED.getSpaceStatus());

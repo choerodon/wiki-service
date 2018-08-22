@@ -55,7 +55,7 @@ public class ProjectE {
         this.organization = organization;
     }
 
-    public void initOrganizationE(Long id){
+    public void initOrganizationE(Long id) {
         organization = new OrganizationE(id);
     }
 
@@ -65,5 +65,16 @@ public class ProjectE {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectE{" +
+                "id=" + id +
+                ", name=" + name +
+                ", code=" + code +
+                ", enabled=" + enabled +
+                ", organization=" + organization.toString() +
+                '}';
     }
 }

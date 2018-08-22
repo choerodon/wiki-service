@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import retrofit2.Response;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebPreferencesService;
 import io.choerodon.wiki.infra.common.Stage;
 import io.choerodon.wiki.infra.feign.WikiClient;
@@ -21,7 +22,7 @@ import io.choerodon.wiki.infra.feign.WikiClient;
 @Service
 public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPreferencesService {
 
-    private static final Logger logger = LoggerFactory.getLogger(IWikiSpaceWebPreferencesServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IWikiSpaceWebPreferencesServiceImpl.class);
 
     @Value("${wiki.client}")
     private String client;
@@ -34,13 +35,15 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
 
     @Override
     public int createSpace1WebPreferences(String param1, String xmlParam, String username) {
+        LOGGER.info("create webPreferences,path: {}", param1);
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace1WebPreferences(username,
                     client, param1, requestBody).execute();
+            LOGGER.info("create webPreferences code:{} ", response.code());
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            throw new CommonException("error.webPreferences.create", e);
         }
 
         return response == null ? 500 : response.code();
@@ -48,13 +51,15 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
 
     @Override
     public int createSpace2WebPreferences(String param1, String param2, String xmlParam, String username) {
+        LOGGER.info("create webPreferences,path: {}/{}", param1, param2);
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace2WebPreferences(username,
                     client, param1, param2, requestBody).execute();
+            LOGGER.info("create webPreferences code:{} ", response.code());
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            throw new CommonException("error.webPreferences.create", e);
         }
 
         return response == null ? 500 : response.code();
@@ -62,13 +67,15 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
 
     @Override
     public int createSpace3WebPreferences(String param1, String param2, String param3, String xmlParam, String username) {
+        LOGGER.info("create webPreferences,path: {}/{}/{}", param1, param2, param3);
         Response<ResponseBody> response = null;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace3WebPreferences(username,
                     client, param1, param2, param3, requestBody).execute();
+            LOGGER.info("create webPreferences code:{} ", response.code());
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            throw new CommonException("error.webPreferences.create", e);
         }
 
         return response == null ? 500 : response.code();

@@ -45,6 +45,18 @@ wiki:
   url: http://xwiki.staging.saas.hand-china.com
   token: Choerodon
   default-group: XWikiAllGroup
+feign:
+  hystrix:
+    shareSecurityContext: true
+    command:
+      default:
+        execution:
+          isolation:
+            thread:
+              timeoutInMilliseconds: 10000
+ribbon:
+  ConnectTimeout: 5000
+  ReadTimeout: 5000
 eureka:
   instance:
     preferIpAddress: true

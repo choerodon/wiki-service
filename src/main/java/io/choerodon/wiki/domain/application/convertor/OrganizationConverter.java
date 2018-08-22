@@ -19,4 +19,5 @@ public class OrganizationConverter implements ConvertorI<OrganizationE, Organiza
         BeanUtils.copyProperties(dataObject,organizationE);
         return organizationE;
     }
+
 }

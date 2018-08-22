@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.FeignException;
 import io.choerodon.wiki.domain.application.valueobject.RoleAssignmentSearch;
 import io.choerodon.wiki.infra.dataobject.iam.*;
 import io.choerodon.wiki.infra.feign.IamServiceClient;
@@ -20,42 +21,42 @@ public class IamServiceClientFallback implements IamServiceClient {
 
     @Override
     public ResponseEntity<UserDO> queryByLoginName(String loginName) {
-        return new ResponseEntity("error.user.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.user.get");
     }
 
     @Override
     public ResponseEntity<OrganizationDO> queryOrganizationById(Long organizationId) {
-        return new ResponseEntity("error.organization.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.organization.get");
     }
 
     @Override
     public ResponseEntity<ProjectDO> queryIamProject(Long projectId) {
-        return new ResponseEntity("error.project.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.project.get");
     }
 
     @Override
     public ResponseEntity<List<UserDO>> queryUsersByIds(List<Long> ids) {
-        return new ResponseEntity("error.user.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.user.get");
     }
 
     @Override
     public ResponseEntity<Page<OrganizationDO>> pageByOrganization(int page, int size) {
-        return new ResponseEntity("error.organization.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.organization.get");
     }
 
     @Override
     public ResponseEntity<OrganizationDO> queryOrgById(Long organizationId) {
-        return new ResponseEntity("error.organization.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.organization.get");
     }
 
     @Override
     public ResponseEntity<Page<ProjectDO>> pageByProject(Long organizationId, int page, int size) {
-        return new ResponseEntity("error.project.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.project.get");
     }
 
     @Override
     public ResponseEntity<Page<RoleDO>> roleList(RoleSearchDO role) {
-        return new ResponseEntity("error.role.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.role.get");
     }
 
     @Override
@@ -64,7 +65,7 @@ public class IamServiceClientFallback implements IamServiceClient {
                                                                                int page,
                                                                                int size,
                                                                                @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO) {
-        return new ResponseEntity("error.user.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.user.get");
     }
 
     @Override
@@ -73,6 +74,6 @@ public class IamServiceClientFallback implements IamServiceClient {
                                                                                     int page,
                                                                                     int size,
                                                                                     @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO) {
-        return new ResponseEntity("error.user.get", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new FeignException("error.user.get");
     }
 }
