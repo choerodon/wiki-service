@@ -57,4 +57,15 @@ public class OrganizationE {
     public void setProjectCount(Long projectCount) {
         this.projectCount = projectCount;
     }
+
+    @Override
+    public String toString() {
+        return "OrganizationE{" +
+                "id=" + id +
+                ", name=" + name +
+                ", code=" + code +
+                ", enabled=" + enabled +
+                ", projectCount=" + projectCount +
+                '}';
+    }
 }

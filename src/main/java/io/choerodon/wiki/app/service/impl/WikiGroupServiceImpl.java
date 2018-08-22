@@ -56,13 +56,13 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     @Override
     public Boolean create(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg) {
-        if (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
-            iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
+        try {
+            if (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
+                iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
 
-            Calendar ca = Calendar.getInstance();
-            long old = ca.getTimeInMillis();
+                Calendar ca = Calendar.getInstance();
+                long old = ca.getTimeInMillis();
 
-            try {
                 Thread.sleep(1500);
                 while (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
                     Thread.sleep(1500);
@@ -70,32 +70,31 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         return false;
                     }
                 }
-            } catch (InterruptedException e) {
-                LOGGER.error(e.getMessage());
-            }
 
-            String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
-            List<String> adminRightsList = Arrays.asList(adminRights);
-            String[] userRights = {"login", "view", "edit", "creator", "comment"};
-            List<String> userRightsList = Arrays.asList(userRights);
-            if (isAdmin) {
-                if (isOrg) {
-                    //给组织组分配admin权限
-                    iWikiGroupService.addRightsToOrg(wikiGroupDTO, adminRightsList, isAdmin, username);
+                String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
+                List<String> adminRightsList = Arrays.asList(adminRights);
+                String[] userRights = {"login", "view", "edit", "creator", "comment"};
+                List<String> userRightsList = Arrays.asList(userRights);
+                if (isAdmin) {
+                    if (isOrg) {
+                        //给组织组分配admin权限
+                        iWikiGroupService.addRightsToOrg(wikiGroupDTO, adminRightsList, isAdmin, username);
+                    } else {
+                        //给项目组分配admin权限
+                        iWikiGroupService.addRightsToProject(wikiGroupDTO, adminRightsList, isAdmin, username);
+                    }
                 } else {
-                    //给项目组分配admin权限
-                    iWikiGroupService.addRightsToProject(wikiGroupDTO, adminRightsList, isAdmin, username);
+                    if (isOrg) {
+                        //给组织组分配user权限
+                        iWikiGroupService.addRightsToOrg(wikiGroupDTO, userRightsList, isAdmin, username);
+                    } else {
+                        //给项目组分配user权限
+                        iWikiGroupService.addRightsToProject(wikiGroupDTO, userRightsList, isAdmin, username);
+                    }
                 }
-            } else {
-                if (isOrg) {
-                    //给组织组分配user权限
-                    iWikiGroupService.addRightsToOrg(wikiGroupDTO, userRightsList, isAdmin, username);
-                } else {
-                    //给项目组分配user权限
-                    iWikiGroupService.addRightsToProject(wikiGroupDTO, userRightsList, isAdmin, username);
-                }
-
             }
+        } catch (InterruptedException e) {
+            throw new CommonException("error.interrupt", e);
         }
 
         return true;
@@ -179,6 +178,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void disableOrganizationGroup(Long orgId, String username) {
         OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+        LOGGER.info("disable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
         if (organization != null) {
             iWikiGroupService.disableOrgGroupView(organization.getCode(), organization.getName(), username);
         } else {
@@ -189,6 +189,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void enableOrganizationGroup(Long orgId, String username) {
         OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+        LOGGER.info("enable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
         if (organization != null) {
             List<Integer> list = getGlobalRightsObjectNumber("O-" + organization.getName(), null, username);
             for (Integer i : list) {
@@ -203,6 +204,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void disableProjectGroup(Long projectId, String username) {
         ProjectE projectE = iamRepository.queryIamProject(projectId);
+        LOGGER.info("disable project group,projectId: {} and project: {} ", projectId, projectE.toString());
         if (projectE != null) {
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
@@ -215,6 +217,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void enableProjectGroup(Long projectId, String username) {
         ProjectE projectE = iamRepository.queryIamProject(projectId);
+        LOGGER.info("enable project group,projectId: {} and project: {} ", projectId, projectE.toString());
         if (projectE != null) {
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
@@ -234,7 +237,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void setUserToGroup(String groupName, Long userId, String username) {
         UserE userE = iamRepository.queryUserById(userId);
-        LOGGER.info("setUserToGroup: " + "groupName: " + groupName + ",user: " + userE.getLoginName());
+        LOGGER.info("set user to group,groupName:{} and user: {} ", groupName, userE.getLoginName());
         if (userE.getLoginName() != null) {
             String loginName = userE.getLoginName();
             Boolean isUserExist = checkDocExsist(username, loginName);
@@ -319,7 +322,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 }
             }
         } catch (DocumentException e) {
-            LOGGER.error(e.getMessage());
+            throw new CommonException("error.document.get", e);
         }
 
         return list;
@@ -350,7 +353,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 }
             }
         } catch (DocumentException e) {
-            LOGGER.error(e.getMessage());
+            throw new CommonException("error.document.get", e);
         }
 
         return list;

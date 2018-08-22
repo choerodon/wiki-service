@@ -37,7 +37,7 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 @Service
 public class WikiScanningServiceImpl implements WikiScanningService {
 
-    private static final Logger logger = LoggerFactory.getLogger(WikiScanningServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WikiScanningServiceImpl.class);
 
     private static final String ORG_ICON = "domain";
     private static final String PROJECT_ICON = "project";
@@ -64,11 +64,11 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     @Async("org-pro-sync")
     public void syncOrg(Long orgId) {
         OrganizationE organizationE = iamRepository.queryOrganizationById(orgId);
+        LOGGER.info("sync organization,orgId: {} and organization: {} ", orgId, organizationE.toString());
         if (organizationE != null) {
-            logger.info("entry organization is : " + organizationE.getName());
             List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
                     organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
-            logger.info("wikiSpaceList size : " + wikiSpaceEList.size());
+            LOGGER.info("wikiSpaceEList size :{}", wikiSpaceEList.size());
             if (!wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
                 if (organizationE.getProjectCount() > 0) {
                     setProject(organizationE);
@@ -76,8 +76,6 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             } else {
                 setOrganization(organizationE);
             }
-        } else {
-            logger.info("failed to get organization, id is " + orgId);
         }
     }
 
@@ -120,7 +118,9 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     public void updateWikiOrgHomePage() {
         List<WikiSpaceE> orgWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
+
         orgWikiSpaceEList.forEach(p -> {
+            LOGGER.info("modify the home page of the organization space, {}", p);
             Map<String, String> params = new HashMap<>();
             params.put("{{ SPACE_ICON }}", p.getIcon());
             params.put("{{ SPACE_TITLE }}", p.getName());
@@ -134,6 +134,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             List<WikiSpaceE> orgUnderList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
                     WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
             orgUnderList.forEach(space -> {
+                LOGGER.info("modify the home page of the space under the organization, {}", space);
                 String[] path = space.getPath().split("/");
                 Map<String, String> orgUnderParams = new HashMap<>();
                 orgUnderParams.put("{{ SPACE_TITLE }}", space.getName());
@@ -153,6 +154,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         List<WikiSpaceE> projectWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
                 WikiSpaceResourceType.PROJECT.getResourceType());
         projectWikiSpaceEList.forEach(p -> {
+            LOGGER.info("modify the home page of the project space, {}", p);
             String[] projectPath = p.getPath().split("/");
             Map<String, String> projectParams = new HashMap<>();
             projectParams.put("{{ SPACE_TITLE }}", p.getName());
@@ -168,6 +170,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             List<WikiSpaceE> projectUnderlist = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
                     WikiSpaceResourceType.PROJECT_S.getResourceType());
             projectUnderlist.forEach(space -> {
+                LOGGER.info("modify the home page of the space under the project, {}", space);
                 String[] projectUnderPath = space.getPath().split("/");
                 Map<String, String> projectUnderParams = new HashMap<>();
                 projectUnderParams.put("{{ SPACE_TITLE }}", space.getName());
@@ -185,7 +188,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     public void setOrganization(OrganizationE organizationE) {
-        logger.info("sync organization : " + organizationE.getName());
+        LOGGER.info("sync organization: {} ", organizationE.getName());
         //创建组织
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationE.getName());
@@ -231,7 +234,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             List<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.getWikiSpaceList(
                     projectE.getId(), WikiSpaceResourceType.PROJECT.getResourceType());
             if (wikiSpaceES == null || wikiSpaceES.isEmpty()) {
-                logger.info("sync project : " + projectE.getName());
+                LOGGER.info("sync project: {}", projectE.getName());
                 WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
                 wikiSpaceDTO.setName(organizationE.getName() + "/" + projectE.getName());
                 wikiSpaceDTO.setIcon(PROJECT_ICON);

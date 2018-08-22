@@ -25,7 +25,7 @@ import io.choerodon.wiki.infra.feign.WikiClient;
 @Service
 public class IWikiUserServiceImpl implements IWikiUserService {
 
-    private static final Logger logger = LoggerFactory.getLogger(IWikiUserServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IWikiUserServiceImpl.class);
 
     @Value("${wiki.client}")
     private String client;
@@ -41,19 +41,20 @@ public class IWikiUserServiceImpl implements IWikiUserService {
 
     @Override
     public Boolean createUser(WikiUserE wikiUserE, String param1, String xmlParam, String username) {
+        LOGGER.info("create wiki user: {}", param1);
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             Call<ResponseBody> call = wikiClient.createUser(username,
                     client, param1, requestBody);
             Response response = call.execute();
+            LOGGER.info("create wiki user code:{} ", response.code());
             if (response.code() == 201 || response.code() == 202) {
                 return addUserToDefaultGroup(param1, username);
             } else {
                 return false;
             }
         } catch (IOException e) {
-            logger.error(e.getMessage());
-            return false;
+            throw new CommonException("error.user.create", e);
         }
     }
 
@@ -66,29 +67,32 @@ public class IWikiUserServiceImpl implements IWikiUserService {
 
     @Override
     public Boolean checkDocExsist(String username, String param1) {
+        LOGGER.info("check that the document: {}", param1);
         Call<ResponseBody> call = wikiClient.checkDocExsist(username,
                 client, param1);
         try {
             Response response = call.execute();
+            LOGGER.info("check that the document exists return code: {}", response.code());
             if (response.code() == 200) {
                 return true;
             } else if (response.code() == 404) {
                 return false;
             } else {
-                throw new CommonException("error.get.user");
+                throw new CommonException("error.get.user", response.code());
             }
         } catch (IOException e) {
-            logger.error(e.getMessage());
-            throw new CommonException("error.get.user");
+            throw new CommonException("error.get.user", e);
         }
     }
 
     @Override
     public Boolean deletePage(String pageName, String username) {
+        LOGGER.info("delete page: {}", pageName);
         Call<ResponseBody> call = wikiClient.deletePage(username,
                 client, Stage.SPACE, pageName);
         try {
             Response response = call.execute();
+            LOGGER.info("delete page code: {}", response.code());
             if (response.code() == 204) {
                 return true;
             } else if (response.code() == 404) {
@@ -97,9 +101,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
                 throw new CommonException("error.delete.page");
             }
         } catch (IOException e) {
-            logger.error(e.getMessage());
-            throw new CommonException("error.delete.page");
+            throw new CommonException("error.delete.page", e);
         }
     }
-
 }

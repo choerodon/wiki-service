@@ -77,4 +77,17 @@ public class WikiSpaceE {
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
     }
+
+    @Override
+    public String toString() {
+        return "WikiSpaceE{" +
+                "id=" + id +
+                ", resourceId=" + resourceId +
+                ", resourceType=" + resourceType +
+                ", name=" + name +
+                ", icon=" + icon +
+                ", path=" + path +
+                ", status=" + status +
+                '}';
+    }
 }
