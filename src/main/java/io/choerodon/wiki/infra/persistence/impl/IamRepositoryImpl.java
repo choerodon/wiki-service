@@ -34,11 +34,11 @@ public class IamRepositoryImpl implements IamRepository {
 
     @Override
     public UserE queryByLoginName(String userName) {
-        try {
-            ResponseEntity<UserDO> responseEntity = iamServiceClient.queryByLoginName(userName);
+        ResponseEntity<UserDO> responseEntity = iamServiceClient.queryByLoginName(userName);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return ConvertHelper.convert(responseEntity.getBody(), UserE.class);
-        } catch (Exception e) {
-            return null;
+        } else {
+            throw new CommonException("error.user.get");
         }
     }
 
