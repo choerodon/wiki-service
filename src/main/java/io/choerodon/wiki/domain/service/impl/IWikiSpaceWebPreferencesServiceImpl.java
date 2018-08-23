@@ -36,6 +36,9 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
     @Override
     public int createSpace1WebPreferences(String param1, String xmlParam, String username) {
         LOGGER.info("create webPreferences,path: {}", param1);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("create webPreferences request xml: {}", xmlParam);
+        }
         Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
@@ -52,6 +55,9 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
     @Override
     public int createSpace2WebPreferences(String param1, String param2, String xmlParam, String username) {
         LOGGER.info("create webPreferences,path: {}/{}", param1, param2);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("create webPreferences request xml: {}", xmlParam);
+        }
         Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
@@ -68,6 +74,9 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
     @Override
     public int createSpace3WebPreferences(String param1, String param2, String param3, String xmlParam, String username) {
         LOGGER.info("create webPreferences,path: {}/{}/{}", param1, param2, param3);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("create webPreferences request xml: {}", xmlParam);
+        }
         Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
