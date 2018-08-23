@@ -1,19 +1,15 @@
 package io.choerodon.wiki.api.controller
 
 import io.choerodon.core.domain.Page
-import io.choerodon.core.event.EventPayload
 import io.choerodon.wiki.IntegrationTestConfiguration
-import io.choerodon.wiki.api.dto.GroupMemberDTO
-import io.choerodon.wiki.api.dto.OrganizationDTO
 import io.choerodon.wiki.api.dto.WikiSpaceDTO
+import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO
 import io.choerodon.wiki.api.eventhandler.WikiEventHandler
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
-import io.choerodon.wiki.domain.application.event.OrganizationEventPayload
 import io.choerodon.wiki.domain.application.repository.IamRepository
 import io.choerodon.wiki.domain.service.*
-import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +19,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import spock.lang.Shared
 import spock.lang.Specification
@@ -69,7 +64,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
     def spaceName = '敏捷回顾会议记录'
 
     @Shared
-    def ResponseEntity<List<UserDO>> responseEntity
+    def orgSpaceName = '客户演示'
 
     @Shared
     def OrganizationE organizationE
@@ -77,12 +72,17 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
     @Shared
     def UserE userE
 
+    @Shared
+    def wikiId
+
+    @Shared
+    def orgUnderWikiId
+
     void setup() {
         UserDO userDO = new UserDO()
         userDO.setId(1L)
         userDO.setEmail("test@org.com")
         userDO.setLoginName("test")
-        responseEntity = new ResponseEntity<>(Arrays.asList(userDO), HttpStatus.OK);
 
         organizationE = new OrganizationE()
         organizationE.setId(1)
@@ -117,13 +117,12 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "\"userId\":2\n" +
                 "}";
 
-        and:'Mock'
+        and: 'Mock'
         1 * iWikiSpaceWebHomeService.createSpace1WebHome(_, _, _) >> 201
         1 * iWikiSpaceWebPreferencesService.createSpace1WebPreferences(_, _, _) >> 201
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
         2 * iWikiGroupService.createGroup(_, _)
         2 * iWikiGroupService.addRightsToOrg(_, _, _, _)
-        0 * iWikiGroupService.addRightsToProject(_, _, _, _)
         1 * iamRepository.queryUserById(_) >> userE
         1 * iWikiUserService.checkDocExsist(_, _) >> false
         1 * iWikiUserService.createUser(_, _, _, _)
@@ -134,7 +133,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         def entity = wikiEventHandler.handleOrganizationCreateEvent(data)
 
         then: '校验返回数据'
-        Assert.assertEquals(data,entity);
+        Assert.assertEquals(data, entity);
     }
 
     def '组织下创建wiki空间'() {
@@ -143,9 +142,9 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         wikiSpaceDTO.setIcon("flag")
         wikiSpaceDTO.setName(spaceName)
 
-        and:'Mock'
-        1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_) >> 201
-        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(*_) >> 201
+        and: 'Mock'
+        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_,_,_,_) >> 201
+        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(_,_,_,_) >> 201
 
         when: '向接口发请求'
         def entity = restTemplate.postForEntity('/v1/organizations/{organization_id}/space', wikiSpaceDTO, null, organizationId)
@@ -160,6 +159,9 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
         when: '向接口发请求'
         def entity = restTemplate.postForEntity('/v1/organizations/{organization_id}/space/list_by_options?page=0&size=10', searchParam, Page.class, organizationId)
+        List<WikiSpaceListTreeDTO> list = entity.body.content
+        wikiId = list.get(0).id
+        orgUnderWikiId =list.get(0).children.get(0).id
 
         then: '状态码为201'
         Assert.assertEquals(201, entity.statusCodeValue)
@@ -167,25 +169,25 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
     def '查询组织下单个wiki空间'() {
         given: '定义请求数据格式'
-        def id = 2
+        def id = wikiId
 
         when: '向接口发请求'
         def entity = restTemplate.getForEntity('/v1/organizations/{organization_id}/space/{id}', WikiSpaceResponseDTO.class, organizationId, id)
 
         then: '状态码为200,返回数据与请求数据相同'
         Assert.assertEquals(200, entity.statusCodeValue)
-        Assert.assertEquals(2, entity.body.getId())
+        Assert.assertEquals(id, entity.body.getId())
     }
 
-    def '更新组织下单个空间'() {
+    def '更新组织对应的空间'() {
         given: '定义请求数据格式'
-        def id = 2
+        def id = wikiId
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO()
         wikiSpaceDTO.setIcon("dns")
-        wikiSpaceDTO.setName("O-"+spaceName)
+        wikiSpaceDTO.setName("O-" + orgSpaceName)
 
-        and:'Mock'
-        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_,_,_,_)
+        and: 'Mock'
+        1 * iWikiSpaceWebHomeService.createSpace1WebHome(*_)
 
         when: '向接口发请求'
         def entity = restTemplate.exchange('/v1/organizations/{organization_id}/space/{id}', HttpMethod.PUT,
@@ -193,7 +195,27 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
         then: '状态码为201,返回数据与请求数据相同'
         Assert.assertEquals(201, entity.statusCodeValue)
-        Assert.assertEquals(2, entity.body.getId())
+        Assert.assertEquals(id, entity.body.getId())
+        Assert.assertEquals("dns", entity.body.getIcon())
+    }
+
+    def '更新组织下的空间'() {
+        given: '定义请求数据格式'
+        def id = orgUnderWikiId
+        WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO()
+        wikiSpaceDTO.setIcon("dns")
+        wikiSpaceDTO.setName(spaceName)
+
+        and: 'Mock'
+        1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_)
+
+        when: '向接口发请求'
+        def entity = restTemplate.exchange('/v1/organizations/{organization_id}/space/{id}', HttpMethod.PUT,
+                new HttpEntity<>(wikiSpaceDTO), WikiSpaceResponseDTO.class, organizationId, id)
+
+        then: '状态码为201,返回数据与请求数据相同'
+        Assert.assertEquals(201, entity.statusCodeValue)
+        Assert.assertEquals(id, entity.body.getId())
         Assert.assertEquals("dns", entity.body.getIcon())
     }
 
@@ -203,15 +225,15 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "  \"organizationId\":1 \n" +
                 "}"
 
-        and:'Mock'
+        and: 'Mock'
         1 * iamRepository.queryOrganizationById(_) >> new OrganizationE()
-        1 * iWikiGroupService.disableOrgGroupView(_,_,_)
+        1 * iWikiGroupService.disableOrgGroupView(_, _, _)
 
         when: '模拟发送消息'
-        def entity =  wikiEventHandler.handleOrganizationDisableEvent(payload)
+        def entity = wikiEventHandler.handleOrganizationDisableEvent(payload)
 
         then: '校验返回数据'
-        Assert.assertEquals(payload,entity);
+        Assert.assertEquals(payload, entity);
     }
 
     def '组织启用'() {
@@ -228,16 +250,16 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '    </objectSummary>\n' +
                 '</objects>'
 
-        and:'Mock'
+        and: 'Mock'
         1 * iamRepository.queryOrganizationById(_) >> new OrganizationE()
-        1 * iWikiClassService.getPageClassResource(_,_,_,_) >> page
-        1 * iWikiClassService.deletePageClass(_,_,_,_,_)
+        1 * iWikiClassService.getPageClassResource(_, _, _, _) >> page
+        1 * iWikiClassService.deletePageClass(_, _, _, _, _)
 
         when: '模拟发送消息'
         def entity = wikiEventHandler.handleOrganizationEnableEvent(payload)
 
         then: '校验返回数据'
-        Assert.assertEquals(payload,entity);
+        Assert.assertEquals(payload, entity);
     }
 
     def '角色同步'() {
@@ -255,18 +277,18 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "  }\n" +
                 "]";
 
-        and:'Mock'
+        and: 'Mock'
         1 * iamRepository.queryOrganizationById(_) >> organizationE
         1 * iamRepository.queryByLoginName(_) >> userE
         1 * iWikiUserService.checkDocExsist(_, _) >> false
-        1 * iWikiUserService.createUser(_,_, _, _)
+        1 * iWikiUserService.createUser(_, _, _, _)
         1 * iWikiGroupService.createGroupUsers(_, _, _)
 
         when: '模拟发送消息'
         def entity = wikiEventHandler.handleCreateGroupMemberEvent(payload)
 
         then: '校验返回数据'
-        Assert.assertEquals(payload,entity);
+        Assert.assertEquals(payload, entity);
     }
 
     def '去除角色'() {
@@ -299,7 +321,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '    </objectSummary>\n' +
                 '</objects>'
 
-        and:'Mock'
+        and: 'Mock'
         2 * iamRepository.queryOrganizationById(_) >> organizationE
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> admin
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> user
@@ -309,6 +331,21 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         def entity = wikiEventHandler.handledeleteMemberRoleEvent(payload)
 
         then: '校验返回数据'
-        Assert.assertEquals(payload,entity);
+        Assert.assertEquals(payload, entity);
     }
+
+//    def '删除组织下的空间'() {
+//        given: '定义请求数据格式'
+//        def id = orgUnderWikiId
+//
+//        and: 'Mock'
+//        1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_)
+//
+//        when: '向接口发请求'
+//        def entity = restTemplate.exchange('/v1/organizations/{organization_id}/space/{id}', HttpMethod.DELETE,
+//                null, null, organizationId, id)
+//
+//        then: '校验返回数据'
+//        Assert.assertEquals(204, entity.statusCodeValue)
+//    }
 }
