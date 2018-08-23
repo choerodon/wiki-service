@@ -62,7 +62,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
         FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + param1).build();
         Call<ResponseBody> addGroupCall = wikiClient.createGroupUsers(username, client, defaultGroup, body);
         Response addGroupResponse = addGroupCall.execute();
-        return addGroupResponse.code() == 201 ? true : false;
+        return addGroupResponse.code() == 201;
     }
 
     @Override
