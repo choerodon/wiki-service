@@ -36,7 +36,10 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     @Override
     public int createSpace1WebHome(String param1, String xmlParam, String username) {
         LOGGER.info("create webhome,path: {}", param1);
-        Response<ResponseBody> response = null;
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("create webhome request xml: {}", xmlParam);
+        }
+        Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace1WebHome(username,
@@ -46,13 +49,16 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
             throw new CommonException("error.webhome.create", e);
         }
 
-        return response == null ? 500 : response.code();
+        return response.code();
     }
 
     @Override
     public int createSpace2WebHome(String param1, String param2, String xmlParam, String username) {
         LOGGER.info("create webhome,path: {}/{}", param1, param2);
-        Response<ResponseBody> response = null;
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("create webhome request xml: {}", xmlParam);
+        }
+        Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace2WebHome(username,
@@ -62,13 +68,16 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
             throw new CommonException("error.webhome.create", e);
         }
 
-        return response == null ? 500 : response.code();
+        return response.code();
     }
 
     @Override
     public int createSpace3WebHome(String param1, String param2, String param3, String xmlParam, String username) {
         LOGGER.info("create webhome,path: {}/{}/{}", param1, param2, param3);
-        Response<ResponseBody> response = null;
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("create webhome request xml: {}", xmlParam);
+        }
+        Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace3WebHome(username,
@@ -78,13 +87,13 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
             throw new CommonException("error.webhome.create", e);
         }
 
-        return response == null ? 500 : response.code();
+        return response.code();
     }
 
     @Override
     public int deletePage(String param1, String page, String username) {
         LOGGER.info("delete page,path: {} and page: {}", param1, page);
-        Response<ResponseBody> response = null;
+        Response<ResponseBody> response;
         try {
             response = wikiClient.deletePage(username,
                     client, param1, page).execute();
@@ -93,13 +102,13 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
             throw new CommonException("error.webhome.delete", e);
         }
 
-        return response == null ? 500 : response.code();
+        return response.code();
     }
 
     @Override
     public int deletePage1(String param1, String param2, String page, String username) {
         LOGGER.info("delete page,path: {}/{} and page: {}", param1, param2, page);
-        Response<ResponseBody> response = null;
+        Response<ResponseBody> response;
         try {
             response = wikiClient.deletePage1(username,
                     client, param1, param2, page).execute();
@@ -108,13 +117,13 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
             throw new CommonException("error.webhome.delete", e);
         }
 
-        return response == null ? 500 : response.code();
+        return response.code();
     }
 
     @Override
     public int deletePage2(String param1, String param2, String param3, String page, String username) {
         LOGGER.info("delete page,path: {}/{}/{} and page: {}", param1, param2, param3, page);
-        Response<ResponseBody> response = null;
+        Response<ResponseBody> response;
         try {
             response = wikiClient.deletePage2(username,
                     client, param1, param2, param3, page).execute();
@@ -123,6 +132,6 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
             throw new CommonException("error.webhome.delete", e);
         }
 
-        return response == null ? 500 : response.code();
+        return response.code();
     }
 }
