@@ -10,7 +10,7 @@ import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.app.service.WikiScanningService;
-import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.BaseStage;
 
 /**
  * Created by Zenger on 2018/7/18.
@@ -32,7 +32,7 @@ public class WikiScanningController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "扫描组织和项目")
     @GetMapping(value = "/scan")
     public ResponseEntity query() {
@@ -48,7 +48,7 @@ public class WikiScanningController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "同步指定组织和项目组织和项目")
     @GetMapping("/organizations/{organization_id}/spaces/sync_org")
     public ResponseEntity syncOrg(@ApiParam(value = "组织ID", required = true)
@@ -62,7 +62,7 @@ public class WikiScanningController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "更新wiki系统主页")
     @PostMapping(value = "/wiki/page")
     public ResponseEntity update() {

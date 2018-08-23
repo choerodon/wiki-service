@@ -27,7 +27,7 @@ import io.choerodon.wiki.domain.service.IWikiClassService;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.common.FileUtil;
-import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.enums.OrganizationSpaceType;
 
 /**
@@ -134,8 +134,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 .forEach(groupMember -> {
                     List<String> roleLabels = groupMember.getRoleLabels();
                     if (roleLabels == null || roleLabels.isEmpty()) {
-                        String adminGroupName = getGroupNameBuffer(groupMember, username, Stage.ADMIN_GROUP).append(Stage.ADMIN_GROUP).toString();
-                        String userGroupName = getGroupNameBuffer(groupMember, username, Stage.USER_GROUP).append(Stage.USER_GROUP).toString();
+                        String adminGroupName = getGroupNameBuffer(groupMember, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
+                        String userGroupName = getGroupNameBuffer(groupMember, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
                         deletePageClass(adminGroupName, username, groupMember.getUsername());
                         deletePageClass(userGroupName, username, groupMember.getUsername());
                     } else {
@@ -154,7 +154,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         Long orgId = user.getOrganization().getId();
                         OrganizationE organization = iamRepository.queryOrganizationById(orgId);
                         String orgCode = organization.getCode();
-                        String groupName = "O-" + orgCode + Stage.USER_GROUP;
+                        String groupName = BaseStage.O + orgCode + BaseStage.USER_GROUP;
 
                         //如果用户不存在则新建
                         Boolean flag = checkDocExsist(username, loginName);
@@ -191,10 +191,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         OrganizationE organization = iamRepository.queryOrganizationById(orgId);
         LOGGER.info("enable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
         if (organization != null) {
-            List<Integer> list = getGlobalRightsObjectNumber("O-" + organization.getName(), null, username);
+            List<Integer> list = getGlobalRightsObjectNumber(BaseStage.O + organization.getName(), null, username);
             for (Integer i : list) {
                 //删除角色
-                iWikiClassService.deletePageClass(username, "O-" + organization.getName(), Stage.WEBPREFERENCES, Stage.XWIKIGLOBALRIGHTS, i);
+                iWikiClassService.deletePageClass(username, BaseStage.O + organization.getName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, i);
             }
         } else {
             throw new CommonException("error.query.organization");
@@ -222,11 +222,11 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
             if (organization != null) {
-                List<Integer> list = getGlobalRightsObjectNumber("O-" + organization.getName(),
-                        "P-" + projectE.getName(), username);
+                List<Integer> list = getGlobalRightsObjectNumber(BaseStage.O + organization.getName(),
+                        BaseStage.P + projectE.getName(), username);
                 for (Integer i : list) {
                     //删除角色
-                    iWikiClassService.deleteProjectPageClass(username, "O-" + organization.getName(), "P-" + projectE.getName(), Stage.WEBPREFERENCES, Stage.XWIKIGLOBALRIGHTS, i);
+                    iWikiClassService.deleteProjectPageClass(username, BaseStage.O + organization.getName(), BaseStage.P + projectE.getName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, i);
                 }
             }
         } else {
@@ -259,9 +259,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     private String getGroupName(GroupMemberDTO groupMemberDTO, String username) {
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
         if (roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) || roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType())) {
-            return getGroupNameBuffer(groupMemberDTO, username, Stage.ADMIN_GROUP).append(Stage.ADMIN_GROUP).toString();
+            return getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
         } else if (roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) || roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType())) {
-            return getGroupNameBuffer(groupMemberDTO, username, Stage.USER_GROUP).append(Stage.USER_GROUP).toString();
+            return getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
         } else {
             return "";
         }
@@ -272,19 +272,19 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         String resourceType = groupMemberDTO.getResourceType();
         StringBuilder groupName = new StringBuilder();
         if (ResourceLevel.ORGANIZATION.value().equals(resourceType)) {
-            groupName.append("O-");
+            groupName.append(BaseStage.O);
             //通过组织id获取组织code
             OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
             groupName.append(organization.getCode());
 
         } else if (ResourceLevel.PROJECT.value().equals(resourceType)) {
-            groupName.append("P-");
+            groupName.append(BaseStage.P);
             //通过项目id找到项目code
             ProjectE projectE = iamRepository.queryIamProject(resourceId);
             OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
-            if (iWikiUserService.checkDocExsist(username, "P-" + organizationE.getCode() + "-" + projectE.getCode() + type)) {
-                groupName.append(organizationE.getCode() + "-" + projectE.getCode());
-            } else if (iWikiUserService.checkDocExsist(username, "P-" + projectE.getCode() + type)) {
+            if (iWikiUserService.checkDocExsist(username, BaseStage.P + organizationE.getCode() + BaseStage.LINE + projectE.getCode() + type)) {
+                groupName.append(organizationE.getCode() +  BaseStage.LINE + projectE.getCode());
+            } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectE.getCode() + type)) {
                 groupName.append(projectE.getCode());
             }
         }
@@ -294,7 +294,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     private String getUserXml(WikiUserE wikiUserE) {
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/user.xml");
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(16);
         params.put("{{ LAST_NAME }}", wikiUserE.getLastName());
         params.put("{{ FIRST_NAME }}", wikiUserE.getFirstName());
         params.put("{{ USER_EMAIL }}", wikiUserE.getEmail());
@@ -305,7 +305,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     private List<Integer> getGroupsObjectNumber(String groupName, String username, String loginName) {
         List<Integer> list = new ArrayList<>();
         try {
-            String page = iWikiClassService.getPageClassResource(Stage.SPACE, groupName, Stage.XWIKIGROUPS, username);
+            String page = iWikiClassService.getPageClassResource(BaseStage.SPACE, groupName, BaseStage.XWIKIGROUPS, username);
             if (!StringUtils.isEmpty(page)) {
                 Document doc = DocumentHelper.parseText(page);
                 Element rootElt = doc.getRootElement();
@@ -333,9 +333,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         try {
             String page;
             if (project == null) {
-                page = iWikiClassService.getPageClassResource(org, Stage.WEBPREFERENCES, Stage.XWIKIGLOBALRIGHTS, username);
+                page = iWikiClassService.getPageClassResource(org, BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, username);
             } else {
-                page = iWikiClassService.getProjectPageClassResource(org, project, Stage.WEBPREFERENCES, Stage.XWIKIGLOBALRIGHTS, username);
+                page = iWikiClassService.getProjectPageClassResource(org, project, BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, username);
             }
             if (!StringUtils.isEmpty(page)) {
                 Document doc = DocumentHelper.parseText(page);
@@ -344,7 +344,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 while (iter.hasNext()) {
                     Element recordEle = (Element) iter.next();
                     String className = recordEle.elementTextTrim("className");
-                    if (Stage.XWIKIGLOBALRIGHTS.equals(className)) {
+                    if (BaseStage.XWIKIGLOBALRIGHTS.equals(className)) {
                         String headline = recordEle.elementTextTrim("headline");
                         if (!StringUtils.isEmpty(headline) && Integer.valueOf(headline) == 0) {
                             list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
@@ -364,26 +364,26 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             List<Integer> list = getGroupsObjectNumber(pageName, username, deleteUsername);
             for (Integer i : list) {
                 //删除角色
-                iWikiClassService.deletePageClass(username, Stage.SPACE, pageName, Stage.XWIKIGROUPS, i);
+                iWikiClassService.deletePageClass(username, BaseStage.SPACE, pageName, BaseStage.XWIKIGROUPS, i);
             }
         }
     }
 
     public void deleteGroupMember(List<String> roleLabels, GroupMemberDTO groupMember, String username) {
         if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
-            String adminGroupName = getGroupNameBuffer(groupMember, username, Stage.ADMIN_GROUP).append(Stage.ADMIN_GROUP).toString();
+            String adminGroupName = getGroupNameBuffer(groupMember, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
             deletePageClass(adminGroupName, username, groupMember.getUsername());
         }
         if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
-            String adminGroupName = getGroupNameBuffer(groupMember, username, Stage.ADMIN_GROUP).append(Stage.ADMIN_GROUP).toString();
+            String adminGroupName = getGroupNameBuffer(groupMember, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
             deletePageClass(adminGroupName, username, groupMember.getUsername());
         }
         if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
-            String userGroupName = getGroupNameBuffer(groupMember, username, Stage.USER_GROUP).append(Stage.USER_GROUP).toString();
+            String userGroupName = getGroupNameBuffer(groupMember, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
             deletePageClass(userGroupName, username, groupMember.getUsername());
         }
         if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
-            String userGroupName = getGroupNameBuffer(groupMember, username, Stage.USER_GROUP).append(Stage.USER_GROUP).toString();
+            String userGroupName = getGroupNameBuffer(groupMember, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
             deletePageClass(userGroupName, username, groupMember.getUsername());
         }
     }

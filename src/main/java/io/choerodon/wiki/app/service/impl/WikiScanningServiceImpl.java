@@ -27,7 +27,7 @@ import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.infra.common.FileUtil;
-import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
@@ -121,7 +121,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
         orgWikiSpaceEList.forEach(p -> {
             LOGGER.info("modify the home page of the organization space, {}", p);
-            Map<String, String> params = new HashMap<>();
+            Map<String, String> params = new HashMap<>(16);
             params.put("{{ SPACE_ICON }}", p.getIcon());
             params.put("{{ SPACE_TITLE }}", p.getName());
             params.put("{{ SPACE_LABEL }}", p.getName());
@@ -129,14 +129,14 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
             InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
             String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
-            iWikiSpaceWebHomeService.createSpace1WebHome(p.getPath(), orgXmlParam, Stage.USERNAME);
+            iWikiSpaceWebHomeService.createSpace1WebHome(p.getPath(), orgXmlParam, BaseStage.USERNAME);
 
             List<WikiSpaceE> orgUnderList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
                     WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
             orgUnderList.forEach(space -> {
                 LOGGER.info("modify the home page of the space under the organization, {}", space);
                 String[] path = space.getPath().split("/");
-                Map<String, String> orgUnderParams = new HashMap<>();
+                Map<String, String> orgUnderParams = new HashMap<>(16);
                 orgUnderParams.put("{{ SPACE_TITLE }}", space.getName());
                 orgUnderParams.put("{{ SPACE_LABEL }}", space.getName());
                 orgUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
@@ -145,7 +145,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
                 InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                 String xmlParam = FileUtil.replaceReturnString(inputStream, orgUnderParams);
-                iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, Stage.USERNAME);
+                iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, BaseStage.USERNAME);
             });
         });
     }
@@ -156,7 +156,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         projectWikiSpaceEList.forEach(p -> {
             LOGGER.info("modify the home page of the project space, {}", p);
             String[] projectPath = p.getPath().split("/");
-            Map<String, String> projectParams = new HashMap<>();
+            Map<String, String> projectParams = new HashMap<>(16);
             projectParams.put("{{ SPACE_TITLE }}", p.getName());
             projectParams.put("{{ SPACE_LABEL }}", p.getName());
             projectParams.put("{{ SPACE_ICON }}", p.getIcon());
@@ -165,14 +165,14 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
             InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
             String xmlParam = FileUtil.replaceReturnString(inputStream, projectParams);
-            iWikiSpaceWebHomeService.createSpace2WebHome(projectPath[0], projectPath[1], xmlParam, Stage.USERNAME);
+            iWikiSpaceWebHomeService.createSpace2WebHome(projectPath[0], projectPath[1], xmlParam, BaseStage.USERNAME);
 
             List<WikiSpaceE> projectUnderlist = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
                     WikiSpaceResourceType.PROJECT_S.getResourceType());
             projectUnderlist.forEach(space -> {
                 LOGGER.info("modify the home page of the space under the project, {}", space);
                 String[] projectUnderPath = space.getPath().split("/");
-                Map<String, String> projectUnderParams = new HashMap<>();
+                Map<String, String> projectUnderParams = new HashMap<>(16);
                 projectUnderParams.put("{{ SPACE_TITLE }}", space.getName());
                 projectUnderParams.put("{{ SPACE_LABEL }}", space.getName());
                 projectUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
@@ -182,7 +182,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
                 InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
                 String xml = FileUtil.replaceReturnString(is, projectUnderParams);
-                iWikiSpaceWebHomeService.createSpace3WebHome(projectUnderPath[0], projectUnderPath[1], projectUnderPath[2], xml, Stage.USERNAME);
+                iWikiSpaceWebHomeService.createSpace3WebHome(projectUnderPath[0], projectUnderPath[1], projectUnderPath[2], xml, BaseStage.USERNAME);
             });
         });
     }
@@ -193,28 +193,28 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationE.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, organizationE.getId(), Stage.USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, organizationE.getId(), BaseStage.USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
-        String adminGroupName = "O-" + organizationE.getCode() + Stage.ADMIN_GROUP;
-        String userGroupName = "O-" + organizationE.getCode() + Stage.USER_GROUP;
+        String adminGroupName = BaseStage.O + organizationE.getCode() + BaseStage.ADMIN_GROUP;
+        String userGroupName = BaseStage.O + organizationE.getCode() + BaseStage.USER_GROUP;
 
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setOrganizationCode(organizationE.getCode());
         wikiGroupDTO.setOrganizationName(organizationE.getName());
-        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, true);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, true);
         setWikiOrgGroupUser(organizationE, adminGroupName);
 
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, true);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, true);
 
         if (organizationE.getProjectCount() > 0) {
             setProject(organizationE);
         }
 
         if (!organizationE.getEnabled()) {
-            wikiGroupService.disableOrganizationGroup(organizationE.getId(), Stage.USERNAME);
+            wikiGroupService.disableOrganizationGroup(organizationE.getId(), BaseStage.USERNAME);
         }
     }
 
@@ -238,12 +238,12 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
                 wikiSpaceDTO.setName(organizationE.getName() + "/" + projectE.getName());
                 wikiSpaceDTO.setIcon(PROJECT_ICON);
-                wikiSpaceService.create(wikiSpaceDTO, projectE.getId(), Stage.USERNAME,
+                wikiSpaceService.create(wikiSpaceDTO, projectE.getId(), BaseStage.USERNAME,
                         WikiSpaceResourceType.PROJECT.getResourceType());
 
                 WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
-                String adminGroupName = "P-" + organizationE.getCode() + "-" + projectE.getCode() + Stage.ADMIN_GROUP;
-                String userGroupName = "P-" + organizationE.getCode() + "-" + projectE.getCode() + Stage.USER_GROUP;
+                String adminGroupName = BaseStage.P + organizationE.getCode() +  BaseStage.LINE + projectE.getCode() + BaseStage.ADMIN_GROUP;
+                String userGroupName = BaseStage.P + organizationE.getCode() +  BaseStage.LINE + projectE.getCode() + BaseStage.USER_GROUP;
                 wikiGroupDTO.setGroupName(adminGroupName);
                 wikiGroupDTO.setProjectCode(projectE.getCode());
                 wikiGroupDTO.setProjectName(projectE.getName());
@@ -251,19 +251,19 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 wikiGroupDTO.setOrganizationCode(organizationE.getCode());
 
                 //创建组并分配权限
-                wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, false);
+                wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, false);
                 //管理员给组分配成员
-                setWikiProjectGroupUser(projectE, adminGroupName, Stage.ADMIN_GROUP);
+                setWikiProjectGroupUser(projectE, adminGroupName, BaseStage.ADMIN_GROUP);
 
 
                 wikiGroupDTO.setGroupName(userGroupName);
                 //创建组并分配权限
-                wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, false);
+                wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, false);
                 //普通用户给组分配成员
-                setWikiProjectGroupUser(projectE, userGroupName, Stage.USER_GROUP);
+                setWikiProjectGroupUser(projectE, userGroupName, BaseStage.USER_GROUP);
 
                 if (!projectE.getEnabled()) {
-                    wikiGroupService.disableProjectGroup(projectE.getId(), Stage.USERNAME);
+                    wikiGroupService.disableProjectGroup(projectE.getId(), BaseStage.USERNAME);
                 }
             }
         });
@@ -271,9 +271,9 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
     public void setWikiProjectGroupUser(ProjectE projectE, String groupName, String group) {
         Page<RoleE> rolePage = null;
-        if (group.equals(Stage.ADMIN_GROUP)) {
+        if (group.equals(BaseStage.ADMIN_GROUP)) {
             rolePage = iamRepository.roleList(InitRoleCode.PROJECT_OWNER);
-        } else if (group.equals(Stage.USER_GROUP)) {
+        } else if (group.equals(BaseStage.USER_GROUP)) {
             rolePage = iamRepository.roleList(InitRoleCode.PROJECT_MEMBER);
         }
 
@@ -299,7 +299,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 }
 
                 for (UserE user : userEList) {
-                    wikiGroupService.setUserToGroup(groupName, user.getId(), Stage.USERNAME);
+                    wikiGroupService.setUserToGroup(groupName, user.getId(), BaseStage.USERNAME);
                 }
             }
         }
@@ -330,7 +330,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 }
 
                 for (UserE user : userEList) {
-                    wikiGroupService.setUserToGroup(groupName, user.getId(), Stage.USERNAME);
+                    wikiGroupService.setUserToGroup(groupName, user.getId(), BaseStage.USERNAME);
                 }
             }
         }

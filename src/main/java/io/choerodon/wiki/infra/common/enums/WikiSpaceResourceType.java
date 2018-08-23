@@ -5,6 +5,9 @@ package io.choerodon.wiki.infra.common.enums;
  */
 public enum WikiSpaceResourceType {
 
+    /**
+     *标记
+     */
     ORGANIZATION("organization"),
     ORGANIZATION_S("organization-s"),
     PROJECT("project"),

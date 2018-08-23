@@ -13,7 +13,7 @@ import retrofit2.Response;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebPreferencesService;
-import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -41,7 +41,7 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
         }
         Response<ResponseBody> response;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);
             response = wikiClient.createSpace1WebPreferences(username,
                     client, param1, requestBody).execute();
             LOGGER.info("create webPreferences code:{} ", response.code());
@@ -60,7 +60,7 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
         }
         Response<ResponseBody> response;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);
             response = wikiClient.createSpace2WebPreferences(username,
                     client, param1, param2, requestBody).execute();
             LOGGER.info("create webPreferences code:{} ", response.code());
@@ -79,7 +79,7 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
         }
         Response<ResponseBody> response;
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);
             response = wikiClient.createSpace3WebPreferences(username,
                     client, param1, param2, param3, requestBody).execute();
             LOGGER.info("create webPreferences code:{} ", response.code());

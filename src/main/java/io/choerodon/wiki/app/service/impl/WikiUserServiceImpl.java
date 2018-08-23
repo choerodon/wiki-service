@@ -47,7 +47,7 @@ public class WikiUserServiceImpl implements WikiUserService {
 
     private String getXml(WikiUserE wikiUserE) {
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/user.xml");
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(16);
         params.put("{{ FIRST_NAME }}", wikiUserE.getFirstName());
         params.put("{{ LAST_NAME }}", wikiUserE.getLastName());
         params.put("{{ USER_EMAIL }}", wikiUserE.getEmail());

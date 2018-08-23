@@ -5,13 +5,24 @@ package io.choerodon.wiki.infra.common.enums;
  */
 public enum OrganizationSpaceType {
 
-
+    /**
+     * wiki项目管理员
+     */
     PROJECT_WIKI_ADMIN("project.wiki.admin"),
 
+    /**
+     * wiki项目成员
+     */
     PROJECT_WIKI_USER("project.wiki.user"),
 
+    /**
+     * wiki组织管理员
+     */
     ORGANIZATION_WIKI_ADMIN("organization.wiki.admin"),
 
+    /**
+     * wiki组织成员
+     */
     ORGANIZATION_WIKI_USER("organization.wiki.user");
 
 

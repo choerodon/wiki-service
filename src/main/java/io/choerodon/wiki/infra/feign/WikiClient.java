@@ -318,27 +318,6 @@ public interface WikiClient {
             @Path("param3") String param3,
             @Path("className") String className);
 
-//    //创建页面
-//    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-//    @PUT("/rest/wikis/{client}/spaces/{param1}/pages/{name}")
-//    Call<ResponseBody> createPage1Name(
-//            @Header("username") String username,
-//            @Path("client") String client,
-//            @Path("param1") String param1,
-//            @Path("name") String name,
-//            @Body RequestBody xmlParam);
-//
-//    //创建页面
-//    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-//    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/pages/{name}")
-//    Call<ResponseBody> createPage2Name(
-//            @Header("username") String username,
-//            @Path("client") String client,
-//            @Path("param1") String param1,
-//            @Path("param2") String param2,
-//            @Path("name") String name,
-//            @Body RequestBody xmlParam);
-
     //删除组织页面里的对象
     @DELETE("/rest/wikis/{client}/spaces/{param1}/pages/{name}/objects/{className}/{objectNumber}")
     Call<ResponseBody> deletePageClass(
