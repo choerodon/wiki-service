@@ -9,10 +9,6 @@ public class UserE {
     private String phone;
     private OrganizationE organization;
 
-    public UserE() {
-
-    }
-
     public Long getId() {
         return id;
     }

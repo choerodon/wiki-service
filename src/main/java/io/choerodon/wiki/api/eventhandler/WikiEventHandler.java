@@ -17,7 +17,7 @@ import io.choerodon.wiki.app.service.WikiGroupService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
 import io.choerodon.wiki.domain.application.event.ProjectEvent;
-import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
@@ -60,22 +60,22 @@ public class WikiEventHandler {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationEventPayload.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), Stage.USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), BaseStage.USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType());
 
-        String adminGroupName = "O-" + organizationEventPayload.getCode() + Stage.ADMIN_GROUP;
-        String userGroupName = "O-" + organizationEventPayload.getCode() + Stage.USER_GROUP;
+        String adminGroupName = BaseStage.O + organizationEventPayload.getCode() + BaseStage.ADMIN_GROUP;
+        String userGroupName = BaseStage.O + organizationEventPayload.getCode() + BaseStage.USER_GROUP;
 
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setOrganizationCode(organizationEventPayload.getCode());
         wikiGroupDTO.setOrganizationName(organizationEventPayload.getName());
-        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, true);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, true);
 
-        wikiGroupService.setUserToGroup(adminGroupName, organizationEventPayload.getUserId(), Stage.USERNAME);
+        wikiGroupService.setUserToGroup(adminGroupName, organizationEventPayload.getUserId(), BaseStage.USERNAME);
 
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, true);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, true);
 
         return data;
     }
@@ -95,21 +95,21 @@ public class WikiEventHandler {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
         wikiSpaceDTO.setIcon(PROJECT_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(), Stage.USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(), BaseStage.USERNAME,
                 WikiSpaceResourceType.PROJECT.getResourceType());
         //创建组
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
-        String adminGroupName = "P-" + projectEvent.getOrganizationCode() + "-" + projectEvent.getProjectCode() + Stage.ADMIN_GROUP;
-        String userGroupName = "P-" + projectEvent.getOrganizationCode() + "-" + projectEvent.getProjectCode() + Stage.USER_GROUP;
+        String adminGroupName = BaseStage.P + projectEvent.getOrganizationCode() + BaseStage.LINE + projectEvent.getProjectCode() + BaseStage.ADMIN_GROUP;
+        String userGroupName = BaseStage.P + projectEvent.getOrganizationCode() +  BaseStage.LINE + projectEvent.getProjectCode() + BaseStage.USER_GROUP;
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setProjectCode(projectEvent.getProjectCode());
         wikiGroupDTO.setProjectName(projectEvent.getProjectName());
         wikiGroupDTO.setOrganizationName(projectEvent.getOrganizationName());
         wikiGroupDTO.setOrganizationCode(projectEvent.getOrganizationCode());
-        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, true, false);
-        wikiGroupService.setUserToGroup(adminGroupName, projectEvent.getUserId(), Stage.USERNAME);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, false);
+        wikiGroupService.setUserToGroup(adminGroupName, projectEvent.getUserId(), BaseStage.USERNAME);
         wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, Stage.USERNAME, false, false);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, false);
 
         return data;
     }
@@ -124,12 +124,12 @@ public class WikiEventHandler {
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
-    public String handleCreateGroupMemberEvent(String data) throws IOException {
+    public String handleCreateGroupMemberEvent(String data) {
         loggerInfo(data);
         List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
                 new TypeToken<List<GroupMemberDTO>>() {
                 }.getType());
-        wikiGroupService.createWikiGroupUsers(groupMemberDTOList, Stage.USERNAME);
+        wikiGroupService.createWikiGroupUsers(groupMemberDTOList, BaseStage.USERNAME);
 
         return data;
     }
@@ -143,12 +143,12 @@ public class WikiEventHandler {
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
-    public String handledeleteMemberRoleEvent(String data) throws IOException {
+    public String handledeleteMemberRoleEvent(String data) {
         loggerInfo(data);
         List<GroupMemberDTO> groupMemberDTOList = gson.fromJson(data,
                 new TypeToken<List<GroupMemberDTO>>() {
                 }.getType());
-        wikiGroupService.deleteWikiGroupUsers(groupMemberDTOList, Stage.USERNAME);
+        wikiGroupService.deleteWikiGroupUsers(groupMemberDTOList, BaseStage.USERNAME);
         return data;
     }
 
@@ -161,12 +161,12 @@ public class WikiEventHandler {
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
-    public String handleCreateUserEvent(String data) throws IOException {
+    public String handleCreateUserEvent(String data) {
         loggerInfo(data);
         List<UserDTO> userDTOList = gson.fromJson(data,
                 new TypeToken<List<UserDTO>>() {
                 }.getType());
-        wikiGroupService.createWikiUserToGroup(userDTOList, Stage.USERNAME);
+        wikiGroupService.createWikiUserToGroup(userDTOList, BaseStage.USERNAME);
         return data;
     }
 
@@ -182,7 +182,7 @@ public class WikiEventHandler {
     public String handleOrganizationDisableEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
-        wikiGroupService.disableOrganizationGroup(organizationDTO.getOrganizationId(), Stage.USERNAME);
+        wikiGroupService.disableOrganizationGroup(organizationDTO.getOrganizationId(), BaseStage.USERNAME);
         return data;
     }
 
@@ -198,7 +198,7 @@ public class WikiEventHandler {
     public String handleProjectDisableEvent(String data) throws IOException {
         loggerInfo(data);
         ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
-        wikiGroupService.disableProjectGroup(projectDTO.getProjectId(), Stage.USERNAME);
+        wikiGroupService.disableProjectGroup(projectDTO.getProjectId(), BaseStage.USERNAME);
         return data;
     }
 
@@ -214,7 +214,7 @@ public class WikiEventHandler {
     public String handleOrganizationEnableEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
-        wikiGroupService.enableOrganizationGroup(organizationDTO.getOrganizationId(), Stage.USERNAME);
+        wikiGroupService.enableOrganizationGroup(organizationDTO.getOrganizationId(), BaseStage.USERNAME);
         return data;
     }
 
@@ -230,7 +230,7 @@ public class WikiEventHandler {
     public String handleProjectEnableEvent(String data) throws IOException {
         loggerInfo(data);
         ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
-        wikiGroupService.enableProjectGroup(projectDTO.getProjectId(), Stage.USERNAME);
+        wikiGroupService.enableProjectGroup(projectDTO.getProjectId(), BaseStage.USERNAME);
         return data;
     }
 }

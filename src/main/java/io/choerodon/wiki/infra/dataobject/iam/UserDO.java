@@ -21,7 +21,7 @@ public class UserDO extends AuditDomain {
     private String timeZone;
     private Date lastPasswordUpdatedAt;
     private Date lastLoginAt;
-    private Boolean isLocked; //连续登录错误次数超出规定次数后是否锁定账户
+    private Boolean isLocked;
     private Date lockedUntilAt;
     private Integer passwordAttempt;
 

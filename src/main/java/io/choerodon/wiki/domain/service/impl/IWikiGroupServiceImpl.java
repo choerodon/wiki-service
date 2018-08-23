@@ -23,7 +23,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.api.dto.WikiGroupDTO;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.infra.common.FileUtil;
-import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -50,12 +50,12 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     public Boolean createGroup(String groupName, String username) {
         LOGGER.info("create group: {}", groupName);
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), getGroupXml());
+            RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), getGroupXml());
             Call<ResponseBody> call = wikiClient.createGroup(username,
                     client, groupName, requestBody);
             Response response = call.execute();
             LOGGER.info("create group code:{} ", response.code());
-            if (response.code() == 201 || response.code() == 202) {
+            if (response.code() == BaseStage.CREATED || response.code() == BaseStage.ACCEPTED) {
                 return true;
             } else {
                 throw new CommonException("error.create.group", response.code());
@@ -82,7 +82,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             Call<ResponseBody> call = wikiClient.createGroupUsers(username, client, groupName, body);
             Response response = call.execute();
             LOGGER.info("create the code returned by the group user:{}", response.code());
-            if (response.code() == 201) {
+            if (response.code() == BaseStage.CREATED) {
                 return true;
             } else {
                 throw new CommonException("error.create.group.user", response.code());
@@ -95,18 +95,18 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     @Override
     public Boolean disableOrgGroupView(String organizationCode, String organizationName, String username) {
         try {
-            String groupName = "O-" + organizationCode + Stage.USER_GROUP;
+            String groupName = BaseStage.O + organizationCode + BaseStage.USER_GROUP;
             LOGGER.info("disable organization group view,groupName:{}", groupName);
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
-                throw new CommonException(Stage.ERROR_QUERY_GROUP);
+                throw new CommonException(BaseStage.ERROR_QUERY_GROUP);
             }
 
             Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client,
-                    "O-" + organizationName, getBody(groupName, "0", "view"));
+                    BaseStage.O + organizationName, getBody(groupName, "0", "view"));
             Response response = call.execute();
             LOGGER.info("disable organization group view code: {}", response.code());
-            if (response.code() == 201) {
+            if (response.code() == BaseStage.CREATED) {
                 return true;
             } else {
                 throw new CommonException("error.organization.disable.group.view", response.code());
@@ -120,18 +120,18 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     public Boolean disableProjectGroupView(String projectName, String projectCode, String organizationName, String organizationCode, String username) {
         try {
             String groupName = "";
-            if (iWikiUserService.checkDocExsist(username, "P-" + organizationCode + "-" + projectCode + Stage.USER_GROUP)) {
-                groupName = "P-" + organizationCode + "-" + projectCode + Stage.USER_GROUP;
-            } else if (iWikiUserService.checkDocExsist(username, "P-" + projectCode + Stage.USER_GROUP)) {
-                groupName = "P-" + projectCode + Stage.USER_GROUP;
+            if (iWikiUserService.checkDocExsist(username, BaseStage.P + organizationCode + BaseStage.LINE + projectCode + BaseStage.USER_GROUP)) {
+                groupName = BaseStage.P + organizationCode + BaseStage.LINE + projectCode + BaseStage.USER_GROUP;
+            } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectCode + BaseStage.USER_GROUP)) {
+                groupName = BaseStage.P + projectCode + BaseStage.USER_GROUP;
             }
             LOGGER.info("disable project group view,groupName:{}", groupName);
             if (!StringUtils.isEmpty(groupName)) {
                 Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client,
-                        "O-" + organizationName, "P-" + projectName, getBody(groupName, "0", "view"));
+                        BaseStage.O + organizationName, BaseStage.P + projectName, getBody(groupName, "0", "view"));
                 Response response = call.execute();
                 LOGGER.info("disable project group view code: {}", response.code());
-                if (response.code() == 201) {
+                if (response.code() == BaseStage.CREATED) {
                     return true;
                 } else {
                     throw new CommonException("error.project.disable.group.view", response.code());
@@ -147,11 +147,11 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     @Override
     public Boolean addRightsToOrg(WikiGroupDTO wikiGroupDTO, List<String> rights, Boolean isAdmin, String username) {
         try {
-            String groupName = "O-" + wikiGroupDTO.getOrganizationCode() + (isAdmin ? Stage.ADMIN_GROUP : Stage.USER_GROUP);
+            String groupName = BaseStage.O + wikiGroupDTO.getOrganizationCode() + (isAdmin ? BaseStage.ADMIN_GROUP : BaseStage.USER_GROUP);
             LOGGER.info("{} assignment permission", groupName);
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
-                throw new CommonException(Stage.ERROR_QUERY_GROUP);
+                throw new CommonException(BaseStage.ERROR_QUERY_GROUP);
             }
             StringBuilder stringBuilder = new StringBuilder();
             for (String right : rights) {
@@ -161,12 +161,12 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             String levels = stringBuilder.toString();
             levels = levels.substring(0, levels.length() - 1);
 
-            String encodeStr = "O-" + wikiGroupDTO.getOrganizationName();
+            String encodeStr = BaseStage.O + wikiGroupDTO.getOrganizationName();
             URLEncoder.encode(encodeStr, "UTF-8");
             Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, encodeStr, getBody(groupName, "1", levels));
             Response response = call.execute();
             LOGGER.info("{} assignment permission return code: {}",groupName, response.code());
-            if (response.code() == 201) {
+            if (response.code() == BaseStage.CREATED) {
                 return true;
             } else {
                 throw new CommonException("error.organization.add.rights", response.code());
@@ -179,11 +179,11 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
     @Override
     public Boolean addRightsToProject(WikiGroupDTO wikiGroupDTO, List<String> rights, Boolean isAdmin, String username) {
         try {
-            String groupName = "P-" + wikiGroupDTO.getOrganizationCode() + "-" + wikiGroupDTO.getProjectCode() + (isAdmin ? Stage.ADMIN_GROUP : Stage.USER_GROUP);
+            String groupName = BaseStage.P + wikiGroupDTO.getOrganizationCode() + BaseStage.LINE + wikiGroupDTO.getProjectCode() + (isAdmin ? BaseStage.ADMIN_GROUP : BaseStage.USER_GROUP);
             LOGGER.info("{} assignment permission", groupName);
             Boolean falg = iWikiUserService.checkDocExsist(username, groupName);
             if (!falg) {
-                throw new CommonException(Stage.ERROR_QUERY_GROUP);
+                throw new CommonException(BaseStage.ERROR_QUERY_GROUP);
             }
 
             StringBuilder stringBuilder = new StringBuilder();
@@ -194,11 +194,11 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             String levels = stringBuilder.toString();
             levels = levels.substring(0, levels.length() - 1);
 
-            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, "O-" + wikiGroupDTO.getOrganizationName(),
-                    "P-" + wikiGroupDTO.getProjectName(), getBody(groupName, "1", levels));
+            Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, BaseStage.O + wikiGroupDTO.getOrganizationName(),
+                    BaseStage.P + wikiGroupDTO.getProjectName(), getBody(groupName, "1", levels));
             Response response = call.execute();
             LOGGER.info("{} assignment permission return code: {}",groupName, response.code());
-            if (response.code() == 201) {
+            if (response.code() == BaseStage.CREATED) {
                 return true;
             } else {
                 throw new CommonException("error.project.add.rights", response.code());
@@ -210,7 +210,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
 
     private String getGroupXml() {
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/group.xml");
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<String,String>(16);
         return FileUtil.replaceReturnString(inputStream, params);
     }
 

@@ -21,8 +21,7 @@ import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
 import io.choerodon.wiki.app.service.WikiSpaceService;
-import io.choerodon.wiki.infra.common.GetUserNameUtil;
-import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
@@ -47,7 +46,7 @@ public class WikiOrganizationSpaceController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "检查组织下空间名唯一性")
     @GetMapping(value = "/check")
     public ResponseEntity<Boolean> checkName(
@@ -69,7 +68,7 @@ public class WikiOrganizationSpaceController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "组织下创建wiki空间")
     @PostMapping
     public ResponseEntity create(
@@ -77,7 +76,7 @@ public class WikiOrganizationSpaceController {
             @PathVariable(value = "organization_id") Long organizationId,
             @ApiParam(value = "空间信息", required = true)
             @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        wikiSpaceService.create(wikiSpaceDTO, organizationId,Stage.USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO, organizationId, BaseStage.USERNAME,
                 WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -92,7 +91,7 @@ public class WikiOrganizationSpaceController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "分页查询组织下创建的空间")
     @CustomPageRequest
     @PostMapping(value = "/list_by_options")
@@ -118,7 +117,7 @@ public class WikiOrganizationSpaceController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "查询组织下单个wiki空间")
     @GetMapping(value = "/{id}")
     public ResponseEntity<WikiSpaceResponseDTO> query(
@@ -141,7 +140,7 @@ public class WikiOrganizationSpaceController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "更新组织下单个空间")
     @PutMapping(value = "/{id}")
     public ResponseEntity<WikiSpaceResponseDTO> update(@ApiParam(value = "组织ID", required = true)
@@ -150,7 +149,7 @@ public class WikiOrganizationSpaceController {
                                                        @PathVariable Long id,
                                                        @ApiParam(value = "空间信息", required = true)
                                                        @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, Stage.USERNAME))
+        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, BaseStage.USERNAME))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.wiki.space.update"));
     }
@@ -164,7 +163,7 @@ public class WikiOrganizationSpaceController {
      */
     @Permission(level = ResourceLevel.PROJECT,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-            Stage.ORGANIZATION_MEMBER})
+            BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "删除组织下的空间")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity delete(@ApiParam(value = "组织ID", required = true)

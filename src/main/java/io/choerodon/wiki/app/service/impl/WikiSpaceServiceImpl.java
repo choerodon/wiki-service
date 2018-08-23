@@ -31,7 +31,7 @@ import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.GetUserNameUtil;
-import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
@@ -77,7 +77,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setResourceId(resourceId);
         wikiSpaceE.setResourceType(type);
         wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
-        LOGGER.info("start creating spaces under the path:{} and wikiSpaceE: {} ", path, wikiSpaceE.toString());
+        LOGGER.info("start creating spaces, path:{} and wikiSpaceE: {} ", path, wikiSpaceE.toString());
         WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(type);
         switch (wikiSpaceResourceType) {
             case ORGANIZATION:
@@ -138,7 +138,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
         LOGGER.info("start update the space,query wikiSpace:{} by id:{}", wikiSpaceE, id);
         if (wikiSpaceE != null && wikiSpaceE.getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
-            Map<String, String> params = new HashMap<>();
+            Map<String, String> params = new HashMap<>(16);
             if (!wikiSpaceE.getIcon().equals(wikiSpaceDTO.getIcon())) {
                 params.put("{{ SPACE_ICON }}", wikiSpaceDTO.getIcon());
                 wikiSpaceE.setIcon(wikiSpaceDTO.getIcon());
@@ -257,19 +257,13 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                 param[0],
                 param[1],
                 param[2],
-                Stage.WEBHOME,
+                BaseStage.WEBHOME,
                 GetUserNameUtil.getUsername());
         iWikiSpaceWebHomeService.deletePage2(
                 param[0],
                 param[1],
                 param[2],
-                Stage.WEBPREFERENCES,
-                GetUserNameUtil.getUsername());
-        iWikiSpaceWebHomeService.deletePage2(
-                param[0],
-                param[1],
-                param[2],
-                Stage.PAGE,
+                BaseStage.WEBPREFERENCES,
                 GetUserNameUtil.getUsername());
         checkCodeDelete(webHome, wikiSpaceE.getId());
     }
@@ -281,17 +275,12 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         int webHome = iWikiSpaceWebHomeService.deletePage1(
                 param[0],
                 param[1],
-                Stage.WEBHOME,
+                BaseStage.WEBHOME,
                 GetUserNameUtil.getUsername());
         iWikiSpaceWebHomeService.deletePage1(
                 param[0],
                 param[1],
-                Stage.WEBPREFERENCES,
-                GetUserNameUtil.getUsername());
-        iWikiSpaceWebHomeService.deletePage1(
-                param[0],
-                param[1],
-                Stage.PAGE,
+                BaseStage.WEBPREFERENCES,
                 GetUserNameUtil.getUsername());
         checkCodeDelete(webHome, wikiSpaceE.getId());
     }
@@ -299,27 +288,23 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     @Async
     public void deleteOrgPage(Long resourceId, Long id) {
         OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
-        String adminGroupName = "O-" + organization.getCode() + Stage.ADMIN_GROUP;
-        String userGroupName = "O-" + organization.getCode() + Stage.USER_GROUP;
+        String adminGroupName = BaseStage.O + organization.getCode() + BaseStage.ADMIN_GROUP;
+        String userGroupName = BaseStage.O + organization.getCode() + BaseStage.USER_GROUP;
         iWikiSpaceWebHomeService.deletePage(
-                Stage.SPACE,
+                BaseStage.SPACE,
                 adminGroupName,
                 GetUserNameUtil.getUsername());
         iWikiSpaceWebHomeService.deletePage(
-                Stage.SPACE,
+                BaseStage.SPACE,
                 userGroupName,
                 GetUserNameUtil.getUsername());
         int webHome = iWikiSpaceWebHomeService.deletePage(
-                "O-" + organization.getName(),
-                Stage.WEBHOME,
+                BaseStage.O + organization.getName(),
+                BaseStage.WEBHOME,
                 GetUserNameUtil.getUsername());
         iWikiSpaceWebHomeService.deletePage(
-                "O-" + organization.getName(),
-                Stage.WEBPREFERENCES,
-                GetUserNameUtil.getUsername());
-        iWikiSpaceWebHomeService.deletePage(
-                "O-" + organization.getName(),
-                Stage.PAGE,
+                BaseStage.O + organization.getName(),
+                BaseStage.WEBPREFERENCES,
                 GetUserNameUtil.getUsername());
         checkCodeDelete(webHome, id);
     }
@@ -330,30 +315,25 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         if (projectE != null) {
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
-            String adminGroupName = "P-" + organization.getCode() + "-" + projectE.getCode() + Stage.ADMIN_GROUP;
-            String userGroupName = "P-" + organization.getCode() + "-" + projectE.getCode() + Stage.USER_GROUP;
+            String adminGroupName = BaseStage.P + organization.getCode() +  BaseStage.LINE + projectE.getCode() + BaseStage.ADMIN_GROUP;
+            String userGroupName = BaseStage.P + organization.getCode() +  BaseStage.LINE + projectE.getCode() + BaseStage.USER_GROUP;
             iWikiSpaceWebHomeService.deletePage(
-                    Stage.SPACE,
+                    BaseStage.SPACE,
                     adminGroupName,
                     GetUserNameUtil.getUsername());
             iWikiSpaceWebHomeService.deletePage(
-                    Stage.SPACE,
+                    BaseStage.SPACE,
                     userGroupName,
                     GetUserNameUtil.getUsername());
             int webHome = iWikiSpaceWebHomeService.deletePage1(
-                    "O-" + organization.getName(),
-                    "P-" + projectE.getName(),
-                    Stage.WEBHOME,
+                    BaseStage.O + organization.getName(),
+                    BaseStage.P + projectE.getName(),
+                    BaseStage.WEBHOME,
                     GetUserNameUtil.getUsername());
             iWikiSpaceWebHomeService.deletePage1(
-                    "O-" + organization.getName(),
-                    "P-" + projectE.getName(),
-                    Stage.WEBPREFERENCES,
-                    GetUserNameUtil.getUsername());
-            iWikiSpaceWebHomeService.deletePage1(
-                    "O-" + organization.getName(),
-                    "P-" + projectE.getName(),
-                    Stage.PAGE,
+                    BaseStage.O + organization.getName(),
+                    BaseStage.P + projectE.getName(),
+                    BaseStage.WEBPREFERENCES,
                     GetUserNameUtil.getUsername());
             checkCodeDelete(webHome, id);
         }
@@ -361,7 +341,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
 
     public void checkCodeDelete(int webHomeCode, long id) {
         LOGGER.info("delete page webHome code: {}", webHomeCode);
-        if (webHomeCode == 204 || webHomeCode == 404) {
+        if (webHomeCode == BaseStage.NO_CONTENT || webHomeCode == BaseStage.NOT_FOUND) {
             WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
             wikiSpaceE.setStatus(SpaceStatus.DELETED.getSpaceStatus());
             wikiSpaceRepository.update(wikiSpaceE);
@@ -395,7 +375,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     private void createOrgSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String username) {
-        String orgName = "O-" + wikiSpaceDTO.getName();
+        String orgName = BaseStage.O + wikiSpaceDTO.getName();
         wikiSpaceE.setPath(orgName);
         wikiSpaceE.setName(orgName);
         WikiSpaceE orgSpace = wikiSpaceRepository.insertIfNotExist(wikiSpaceE);
@@ -404,8 +384,8 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
 
     private void createProjectSpace(WikiSpaceE wikiSpaceE, WikiSpaceDTO wikiSpaceDTO, String username) {
         String[] names = wikiSpaceDTO.getName().split("/");
-        String param1 = "O-" + names[0];
-        String param2 = "P-" + names[1];
+        String param1 = BaseStage.O + names[0];
+        String param2 = BaseStage.P + names[1];
         wikiSpaceE.setPath(param1 + "/" + param2);
         wikiSpaceE.setName(param2);
         WikiSpaceE projectSpace = wikiSpaceRepository.insertIfNotExist(wikiSpaceE);

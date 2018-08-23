@@ -3,9 +3,9 @@ package io.choerodon.wiki.infra.common;
 /**
  * Created by Zenger on 2018/7/18.
  */
-public abstract class Stage {
+public abstract class BaseStage {
 
-    private Stage(){
+    private BaseStage(){
 
     }
 
@@ -18,7 +18,14 @@ public abstract class Stage {
     public static final String SPACE = "XWiki";
     public static final String WEBHOME = "WebHome";
     public static final String WEBPREFERENCES = "WebPreferences";
-    public static final String PAGE = "页面";
     public static final String XWIKIGROUPS = "XWiki.XWikiGroups";
     public static final String XWIKIGLOBALRIGHTS = "XWiki.XWikiGlobalRights";
+    public static final String O = "O-";
+    public static final String P = "P-";
+    public static final String LINE = "-";
+    public static final int OK = 200;
+    public static final int CREATED = 201;
+    public static final int ACCEPTED = 202;
+    public static final int NO_CONTENT = 204;
+    public static final int NOT_FOUND = 404;
 }

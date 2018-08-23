@@ -16,7 +16,7 @@ import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.api.dto.WikiUserDTO;
 import io.choerodon.wiki.app.service.WikiUserService;
 import io.choerodon.wiki.infra.common.GetUserNameUtil;
-import io.choerodon.wiki.infra.common.Stage;
+import io.choerodon.wiki.infra.common.BaseStage;
 
 /**
  * Created by Ernst on 2018/7/4.
@@ -39,7 +39,7 @@ public class WikiUserController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "创建wiki用户")
     @PostMapping
     public ResponseEntity<Boolean> create(
@@ -59,7 +59,7 @@ public class WikiUserController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "wiki用户是否存在")
     @GetMapping("/{user_name}")
     public ResponseEntity<Boolean> checkUser(
@@ -79,7 +79,7 @@ public class WikiUserController {
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    Stage.ORGANIZATION_MEMBER})
+                    BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "删除wiki底下的文档")
     @GetMapping("/delete/{page_name}")
     public ResponseEntity<Boolean> delete(
