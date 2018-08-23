@@ -36,7 +36,7 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
     @Override
     public int createSpace1WebPreferences(String param1, String xmlParam, String username) {
         LOGGER.info("create webPreferences,path: {}", param1);
-        Response<ResponseBody> response = null;
+        Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace1WebPreferences(username,
@@ -46,13 +46,13 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
             throw new CommonException("error.webPreferences.create", e);
         }
 
-        return response == null ? 500 : response.code();
+        return response.code();
     }
 
     @Override
     public int createSpace2WebPreferences(String param1, String param2, String xmlParam, String username) {
         LOGGER.info("create webPreferences,path: {}/{}", param1, param2);
-        Response<ResponseBody> response = null;
+        Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace2WebPreferences(username,
@@ -62,13 +62,13 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
             throw new CommonException("error.webPreferences.create", e);
         }
 
-        return response == null ? 500 : response.code();
+        return response.code();
     }
 
     @Override
     public int createSpace3WebPreferences(String param1, String param2, String param3, String xmlParam, String username) {
         LOGGER.info("create webPreferences,path: {}/{}/{}", param1, param2, param3);
-        Response<ResponseBody> response = null;
+        Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(Stage.APPXML), xmlParam);
             response = wikiClient.createSpace3WebPreferences(username,
@@ -78,6 +78,6 @@ public class IWikiSpaceWebPreferencesServiceImpl implements IWikiSpaceWebPrefere
             throw new CommonException("error.webPreferences.create", e);
         }
 
-        return response == null ? 500 : response.code();
+        return response.code();
     }
 }
