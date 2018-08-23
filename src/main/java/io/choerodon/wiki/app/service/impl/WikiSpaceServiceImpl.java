@@ -41,7 +41,7 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 @Service
 public class WikiSpaceServiceImpl implements WikiSpaceService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WikiSpaceAsynServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WikiSpaceServiceImpl.class);
     private static final String LOCATION = "bin/view/";
 
     private WikiSpaceRepository wikiSpaceRepository;
@@ -77,7 +77,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setResourceId(resourceId);
         wikiSpaceE.setResourceType(type);
         wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
-        LOGGER.info("path:{} and wikiSpaceE: {} ", path, wikiSpaceE.toString());
+        LOGGER.info("start creating spaces under the path:{} and wikiSpaceE: {} ", path, wikiSpaceE.toString());
         WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(type);
         switch (wikiSpaceResourceType) {
             case ORGANIZATION:
@@ -136,6 +136,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     @Override
     public WikiSpaceResponseDTO update(Long id, WikiSpaceDTO wikiSpaceDTO, String username) {
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
+        LOGGER.info("start update the space,query wikiSpace:{} by id:{}", wikiSpaceE, id);
         if (wikiSpaceE != null && wikiSpaceE.getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
             Map<String, String> params = new HashMap<>();
             if (!wikiSpaceE.getIcon().equals(wikiSpaceDTO.getIcon())) {
@@ -186,6 +187,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     @Override
     public void delete(Long resourceId, Long id) {
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
+        LOGGER.info("start delete the space,query wikiSpace:{} by id:{}", wikiSpaceE, id);
         if (!resourceId.equals(wikiSpaceE.getResourceId())) {
             throw new CommonException("error.resourceId.equal");
         }
@@ -358,7 +360,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     public void checkCodeDelete(int webHomeCode, long id) {
-        LOGGER.info("delete page webHomeCode: {}", webHomeCode);
+        LOGGER.info("delete page webHome code: {}", webHomeCode);
         if (webHomeCode == 204 || webHomeCode == 404) {
             WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
             wikiSpaceE.setStatus(SpaceStatus.DELETED.getSpaceStatus());
