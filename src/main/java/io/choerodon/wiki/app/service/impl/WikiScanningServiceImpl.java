@@ -125,7 +125,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             params.put("{{ SPACE_ICON }}", p.getIcon());
             params.put("{{ SPACE_TITLE }}", p.getName());
             params.put("{{ SPACE_LABEL }}", p.getName());
-            params.put("{{ SPACE_TARGET }}", p.getName());
+            params.put("{{ SPACE_TARGET }}", p.getName().replace(".","\\."));
 
             InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
             String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
@@ -140,8 +140,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 orgUnderParams.put("{{ SPACE_TITLE }}", space.getName());
                 orgUnderParams.put("{{ SPACE_LABEL }}", space.getName());
                 orgUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
-                orgUnderParams.put("{{ SPACE_PARENT }}", path[0]);
-                orgUnderParams.put("{{ SPACE_TARGET }}", path[1]);
+                orgUnderParams.put("{{ SPACE_PARENT }}", path[0].replace(".","\\."));
+                orgUnderParams.put("{{ SPACE_TARGET }}", path[1].replace(".","\\."));
 
                 InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                 String xmlParam = FileUtil.replaceReturnString(inputStream, orgUnderParams);
@@ -160,8 +160,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             projectParams.put("{{ SPACE_TITLE }}", p.getName());
             projectParams.put("{{ SPACE_LABEL }}", p.getName());
             projectParams.put("{{ SPACE_ICON }}", p.getIcon());
-            projectParams.put("{{ SPACE_PARENT }}", projectPath[0]);
-            projectParams.put("{{ SPACE_TARGET }}", projectPath[1]);
+            projectParams.put("{{ SPACE_PARENT }}", projectPath[0].replace(".","\\."));
+            projectParams.put("{{ SPACE_TARGET }}", projectPath[1].replace(".","\\."));
 
             InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
             String xmlParam = FileUtil.replaceReturnString(inputStream, projectParams);
@@ -176,9 +176,9 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 projectUnderParams.put("{{ SPACE_TITLE }}", space.getName());
                 projectUnderParams.put("{{ SPACE_LABEL }}", space.getName());
                 projectUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
-                projectUnderParams.put("{{ SPACE_ROOT }}", projectUnderPath[0]);
-                projectUnderParams.put("{{ SPACE_PARENT }}", projectUnderPath[1]);
-                projectUnderParams.put("{{ SPACE_TARGET }}", projectUnderPath[2]);
+                projectUnderParams.put("{{ SPACE_ROOT }}", projectUnderPath[0].replace(".","\\."));
+                projectUnderParams.put("{{ SPACE_PARENT }}", projectUnderPath[1].replace(".","\\."));
+                projectUnderParams.put("{{ SPACE_TARGET }}", projectUnderPath[2].replace(".","\\."));
 
                 InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
                 String xml = FileUtil.replaceReturnString(is, projectUnderParams);
