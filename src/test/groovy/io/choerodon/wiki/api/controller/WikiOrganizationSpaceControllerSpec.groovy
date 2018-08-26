@@ -6,6 +6,7 @@ import io.choerodon.wiki.api.dto.WikiSpaceDTO
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO
 import io.choerodon.wiki.api.eventhandler.WikiEventHandler
+import io.choerodon.wiki.domain.application.entity.ProjectE
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
@@ -291,7 +292,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         Assert.assertEquals(payload, entity);
     }
 
-    def '去除角色'() {
+    def '去除角色不包含label'() {
         given: '定义请求数据格式'
         def payload = "[\n" +
                 "  {\n" +
@@ -334,18 +335,26 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         Assert.assertEquals(payload, entity);
     }
 
-//    def '删除组织下的空间'() {
-//        given: '定义请求数据格式'
-//        def id = orgUnderWikiId
-//
-//        and: 'Mock'
-//        1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_)
-//
-//        when: '向接口发请求'
-//        def entity = restTemplate.exchange('/v1/organizations/{organization_id}/space/{id}', HttpMethod.DELETE,
-//                null, null, organizationId, id)
-//
-//        then: '校验返回数据'
-//        Assert.assertEquals(204, entity.statusCodeValue)
-//    }
+    def '删除组织下的空间'() {
+        given: '定义请求数据格式'
+        def id = wikiId
+        Page<ProjectE> projectEPage = new Page<>()
+        projectEPage.setTotalPages(2)
+        ProjectE projectE = new ProjectE()
+        projectE.setId(1)
+        projectEPage.setContent(Arrays.asList(projectE))
+
+
+        and: 'Mock'
+        1 * iamRepository.queryOrganizationById(_) >> organizationE
+        4 * iWikiSpaceWebHomeService.deletePage(*_) >> 204
+        2 * iWikiSpaceWebHomeService.deletePage1(*_) >> 204
+        2 * iamRepository.pageByProject(*_) >>  projectEPage
+//        2 * iWikiSpaceWebHomeService.deletePage2(*_) >> 204
+
+        when: '向接口发请求'
+        restTemplate.delete('/v1/organizations/{organization_id}/space/{id}',organizationId, id)
+
+        then: '校验返回数据'
+    }
 }

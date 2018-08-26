@@ -63,7 +63,7 @@ public class IamServiceClientFallback implements IamServiceClient {
                                                                                Long sourceId,
                                                                                int page,
                                                                                int size,
-                                                                               @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO) {
+                                                                               @RequestBody RoleAssignmentSearch roleAssignmentSearch) {
         throw new FeignException("error.user.get");
     }
 
@@ -72,7 +72,7 @@ public class IamServiceClientFallback implements IamServiceClient {
                                                                                     Long sourceId,
                                                                                     int page,
                                                                                     int size,
-                                                                                    @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO) {
+                                                                                    @RequestBody RoleAssignmentSearch roleAssignmentSearch) {
         throw new FeignException("error.user.get");
     }
 }

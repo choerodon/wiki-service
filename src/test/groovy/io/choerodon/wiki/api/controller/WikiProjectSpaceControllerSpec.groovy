@@ -67,6 +67,9 @@ class WikiProjectSpaceControllerSpec extends Specification {
     def spaceName = 'wewe'
 
     @Shared
+    def OrganizationE organizationE
+
+    @Shared
     def ProjectE projectE
 
     @Shared
@@ -75,14 +78,20 @@ class WikiProjectSpaceControllerSpec extends Specification {
     @Shared
     def wikiId
 
+    @Shared
+    def projectUnderWikiId
+
     void setup() {
         UserDO userDO = new UserDO()
         userDO.setId(1L)
         userDO.setEmail("test@org.com")
         userDO.setLoginName("test")
 
-        OrganizationE organizationE = new OrganizationE()
+        organizationE = new OrganizationE()
         organizationE.setId(1)
+        organizationE.setCode("org")
+        organizationE.setName("测试组织")
+        organizationE.setEnabled(true)
 
         projectE = new ProjectE()
         projectE.setId(1L)
@@ -166,6 +175,7 @@ class WikiProjectSpaceControllerSpec extends Specification {
         def entity = restTemplate.postForEntity('/v1/projects/{project_id}/space/list_by_options?page=0&size=10', searchParam, Page.class, projectId)
         List<WikiSpaceListTreeDTO> list = entity.body.content
         wikiId = list.get(0).id
+        projectUnderWikiId =list.get(0).children.get(0).id
 
         then: '状态码为201'
         Assert.assertEquals(201, entity.statusCodeValue)
@@ -183,7 +193,7 @@ class WikiProjectSpaceControllerSpec extends Specification {
         Assert.assertEquals(id, entity.body.getId())
     }
 
-    def '更新项目下单个空间'() {
+    def '更新项目对应的空间'() {
         given: '定义请求数据格式'
         def id = wikiId
 
@@ -193,6 +203,26 @@ class WikiProjectSpaceControllerSpec extends Specification {
 
         and: 'Mock'
         1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_)
+
+        when: '向接口发请求'
+        def entity = restTemplate.exchange('/v1/projects/{project_id}/space/{id}', HttpMethod.PUT,
+                new HttpEntity<>(wikiSpaceDTO), WikiSpaceResponseDTO.class, projectId, id)
+
+        then: '状态码为201,返回数据与请求数据相同'
+        Assert.assertEquals(201, entity.statusCodeValue)
+        Assert.assertEquals(id, entity.body.getId())
+        Assert.assertEquals("dns", entity.body.getIcon())
+    }
+
+    def '更新项目下的空间'() {
+        given: '定义请求数据格式'
+        def id = projectUnderWikiId
+        WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO()
+        wikiSpaceDTO.setIcon("dns")
+        wikiSpaceDTO.setName(spaceName)
+
+        and: 'Mock'
+        1 * iWikiSpaceWebHomeService.createSpace3WebHome(*_)
 
         when: '向接口发请求'
         def entity = restTemplate.exchange('/v1/projects/{project_id}/space/{id}', HttpMethod.PUT,
@@ -258,5 +288,27 @@ class WikiProjectSpaceControllerSpec extends Specification {
 
         then: '校验返回数据'
         Assert.assertEquals(payload, entity);
+    }
+
+    def '删除项目下的空间'() {
+        given: '定义请求数据格式'
+        def id = wikiId
+        Page<ProjectE> projectEPage = new Page<>()
+        projectEPage.setTotalPages(2)
+        projectEPage.setContent(Arrays.asList(projectE))
+
+
+        and: 'Mock'
+        1 * iamRepository.queryIamProject(_) >> projectE
+        1 * iamRepository.queryOrganizationById(_) >> organizationE
+        2 * iWikiSpaceWebHomeService.deletePage(*_) >> 204
+        2 * iWikiSpaceWebHomeService.deletePage1(*_) >> 204
+//        2 * iamRepository.pageByProject(*_) >>  projectEPage
+        2 * iWikiSpaceWebHomeService.deletePage2(*_) >> 204
+
+        when: '向接口发请求'
+        restTemplate.delete('/v1/projects/{project_id}/space/{id}',projectId, id)
+
+        then: '校验返回数据'
     }
 }
