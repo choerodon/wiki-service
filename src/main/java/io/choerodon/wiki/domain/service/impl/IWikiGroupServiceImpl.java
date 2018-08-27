@@ -86,7 +86,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             if (response.code() == BaseStage.CREATED) {
                 return true;
             } else {
-                throw new NetworkRequestStatusCodeException("error creating group user return status code:", response.code());
+                throw new NetworkRequestStatusCodeException("error creating group user return status code: " + response.code());
             }
         } catch (IOException e) {
             throw new CommonException("error.create.group.user", e);
