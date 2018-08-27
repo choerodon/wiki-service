@@ -86,17 +86,17 @@ class IntegrationTestConfiguration {
         detachedMockFactory.Mock(IWikiClassService.class);
     }
 
-    @Bean
-    @Primary
-    WikiSpaceRepository wikiSpaceRepository() {
-        detachedMockFactory.Mock(WikiSpaceRepository.class);
-    }
-
-    @Bean
-    @Primary
-    WikiSpaceService wikiSpaceService() {
-        detachedMockFactory.Mock(WikiSpaceService.class);
-    }
+//    @Bean
+//    @Primary
+//    WikiSpaceRepository wikiSpaceRepository() {
+//        detachedMockFactory.Mock(WikiSpaceRepository.class);
+//    }
+//
+//    @Bean
+//    @Primary
+//    WikiSpaceService wikiSpaceService() {
+//        detachedMockFactory.Mock(WikiSpaceService.class);
+//    }
 
     @PostConstruct
     void init() {

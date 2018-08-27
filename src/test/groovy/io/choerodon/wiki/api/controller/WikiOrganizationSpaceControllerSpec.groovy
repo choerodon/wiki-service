@@ -102,7 +102,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         given: '给定一个空间名'
 
         when: '向接口发请求'
-        def entity = restTemplate.getForEntity('/v1/organizations/{organization_id}/space/check?' + 'name=' + spaceName, Boolean, organizationId)
+        def entity = restTemplate.getForEntity('/v1/organizations/{organization_id}/space/check?' + 'name=' + spaceName, Boolean.class, organizationId)
 
         then: '状态码为200;返回的数据为true'
         entity.statusCode.is2xxSuccessful()
