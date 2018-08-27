@@ -22,8 +22,9 @@ import retrofit2.Response;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.api.dto.WikiGroupDTO;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
-import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.BaseStage;
+import io.choerodon.wiki.infra.common.FileUtil;
+import io.choerodon.wiki.infra.common.exception.NetworkRequestStatusCodeException;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -58,7 +59,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             if (response.code() == BaseStage.CREATED || response.code() == BaseStage.ACCEPTED) {
                 return true;
             } else {
-                throw new CommonException("error.create.group", response.code());
+                throw new NetworkRequestStatusCodeException("error creating group return status code: " + response.code());
             }
         } catch (IOException e) {
             throw new CommonException("error.create.group", e);
@@ -72,7 +73,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             //如果组不存在则新建组
             Boolean flag = iWikiUserService.checkDocExsist(username, groupName);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Does the group exist? " + flag);
+                LOGGER.debug("Does the group exist? {} ", flag);
             }
             if (!flag) {
                 this.createGroup(groupName, username);
@@ -85,7 +86,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             if (response.code() == BaseStage.CREATED) {
                 return true;
             } else {
-                throw new CommonException("error.create.group.user", response.code());
+                throw new NetworkRequestStatusCodeException("error creating group user return status code:", response.code());
             }
         } catch (IOException e) {
             throw new CommonException("error.create.group.user", e);
@@ -109,7 +110,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             if (response.code() == BaseStage.CREATED) {
                 return true;
             } else {
-                throw new CommonException("error.organization.disable.group.view", response.code());
+                throw new NetworkRequestStatusCodeException("error organization disable group view return code: " + response.code());
             }
         } catch (IOException e) {
             throw new CommonException("error.organization.disable.group.view", e);
@@ -134,7 +135,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
                 if (response.code() == BaseStage.CREATED) {
                     return true;
                 } else {
-                    throw new CommonException("error.project.disable.group.view", response.code());
+                    throw new NetworkRequestStatusCodeException("error project disable group view return code: " + response.code());
                 }
             }
         } catch (IOException e) {
@@ -165,11 +166,11 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             URLEncoder.encode(encodeStr, "UTF-8");
             Call<ResponseBody> call = wikiClient.offerRightToOrgGroupView(username, client, encodeStr, getBody(groupName, "1", levels));
             Response response = call.execute();
-            LOGGER.info("{} assignment permission return code: {}",groupName, response.code());
+            LOGGER.info("{} assignment permission return code: {}", groupName, response.code());
             if (response.code() == BaseStage.CREATED) {
                 return true;
             } else {
-                throw new CommonException("error.organization.add.rights", response.code());
+                throw new NetworkRequestStatusCodeException("error organization add rights return code: " + response.code());
             }
         } catch (IOException e) {
             throw new CommonException("error.organization.add.rights", e);
@@ -197,11 +198,11 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
             Call<ResponseBody> call = wikiClient.offerRightToProjectGroupView(username, client, BaseStage.O + wikiGroupDTO.getOrganizationName(),
                     BaseStage.P + wikiGroupDTO.getProjectName(), getBody(groupName, "1", levels));
             Response response = call.execute();
-            LOGGER.info("{} assignment permission return code: {}",groupName, response.code());
+            LOGGER.info("{} assignment permission return code: {}", groupName, response.code());
             if (response.code() == BaseStage.CREATED) {
                 return true;
             } else {
-                throw new CommonException("error.project.add.rights", response.code());
+                throw new NetworkRequestStatusCodeException("error project add rights return code: " + response.code());
             }
         } catch (IOException e) {
             throw new CommonException("error.project.add.rights", e);
@@ -210,7 +211,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
 
     private String getGroupXml() {
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/group.xml");
-        Map<String, String> params = new HashMap<String,String>(16);
+        Map<String, String> params = new HashMap<String, String>(16);
         return FileUtil.replaceReturnString(inputStream, params);
     }
 

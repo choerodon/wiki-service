@@ -17,6 +17,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.application.entity.WikiUserE;
 import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.common.BaseStage;
+import io.choerodon.wiki.infra.common.exception.NetworkRequestStatusCodeException;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -58,13 +59,6 @@ public class IWikiUserServiceImpl implements IWikiUserService {
         }
     }
 
-    private Boolean addUserToDefaultGroup(String param1, String username) throws IOException {
-        FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + param1).build();
-        Call<ResponseBody> addGroupCall = wikiClient.createGroupUsers(username, client, defaultGroup, body);
-        Response addGroupResponse = addGroupCall.execute();
-        return addGroupResponse.code() == 201;
-    }
-
     @Override
     public Boolean checkDocExsist(String username, String param1) {
         LOGGER.info("check that the document: {}", param1);
@@ -78,7 +72,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
             } else if (response.code() == BaseStage.NOT_FOUND) {
                 return false;
             } else {
-                throw new CommonException("error.get.user", response.code());
+                throw new NetworkRequestStatusCodeException("error get user return code: " + response.code());
             }
         } catch (IOException e) {
             throw new CommonException("error.get.user", e);
@@ -96,12 +90,19 @@ public class IWikiUserServiceImpl implements IWikiUserService {
             if (response.code() == BaseStage.NO_CONTENT) {
                 return true;
             } else if (response.code() == BaseStage.NOT_FOUND) {
-                throw new CommonException("error.get.page");
+                throw new NetworkRequestStatusCodeException("error get page return code: " + response.code());
             } else {
-                throw new CommonException("error.delete.page");
+                throw new NetworkRequestStatusCodeException("error delete page return code: " + response.code());
             }
         } catch (IOException e) {
             throw new CommonException("error.delete.page", e);
         }
+    }
+
+    private Boolean addUserToDefaultGroup(String param1, String username) throws IOException {
+        FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + param1).build();
+        Call<ResponseBody> addGroupCall = wikiClient.createGroupUsers(username, client, defaultGroup, body);
+        Response addGroupResponse = addGroupCall.execute();
+        return addGroupResponse.code() == 201;
     }
 }
