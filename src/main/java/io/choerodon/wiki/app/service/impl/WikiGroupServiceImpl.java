@@ -178,8 +178,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void disableOrganizationGroup(Long orgId, String username) {
         OrganizationE organization = iamRepository.queryOrganizationById(orgId);
-        LOGGER.info("disable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
         if (organization != null) {
+            LOGGER.info("disable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
             iWikiGroupService.disableOrgGroupView(organization.getCode(), organization.getName(), username);
         } else {
             throw new CommonException("error.query.organization");
@@ -189,8 +189,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void enableOrganizationGroup(Long orgId, String username) {
         OrganizationE organization = iamRepository.queryOrganizationById(orgId);
-        LOGGER.info("enable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
         if (organization != null) {
+            LOGGER.info("enable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
             List<Integer> list = getGlobalRightsObjectNumber(BaseStage.O + organization.getName(), null, username);
             for (Integer i : list) {
                 //删除角色
@@ -204,8 +204,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void disableProjectGroup(Long projectId, String username) {
         ProjectE projectE = iamRepository.queryIamProject(projectId);
-        LOGGER.info("disable project group,projectId: {} and project: {} ", projectId, projectE.toString());
         if (projectE != null) {
+            LOGGER.info("disable project group,projectId: {} and project: {} ", projectId, projectE.toString());
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
             iWikiGroupService.disableProjectGroupView(projectE.getName(), projectE.getCode(), organization.getName(), organization.getCode(), username);
@@ -217,8 +217,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void enableProjectGroup(Long projectId, String username) {
         ProjectE projectE = iamRepository.queryIamProject(projectId);
-        LOGGER.info("enable project group,projectId: {} and project: {} ", projectId, projectE.toString());
         if (projectE != null) {
+            LOGGER.info("enable project group,projectId: {} and project: {} ", projectId, projectE.toString());
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
             if (organization != null) {
