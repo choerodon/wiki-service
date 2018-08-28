@@ -11,7 +11,9 @@ import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
 import io.choerodon.wiki.domain.service.*
+import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
+import io.choerodon.wiki.infra.feign.IamServiceClient
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -20,8 +22,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import spock.lang.Shared
 import spock.lang.Specification
+
+import java.lang.reflect.Field
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -48,6 +54,9 @@ class WikiCreateUserSpec extends Specification {
     private IamRepository iamRepository
 
     @Shared
+    def OrganizationDO organizationDO
+
+    @Shared
     def OrganizationE organizationE
 
     @Shared
@@ -56,11 +65,23 @@ class WikiCreateUserSpec extends Specification {
     @Shared
     def UserE userE
 
+    @Shared
+    def UserDO userDO
+
+    @Shared
+    IamServiceClient iamServiceClient
+
     void setup() {
-        UserDO userDO = new UserDO()
+        userDO = new UserDO()
         userDO.setId(1L)
         userDO.setEmail("test@org.com")
         userDO.setLoginName("test")
+
+        organizationDO = new OrganizationDO()
+        organizationDO.setId(1)
+        organizationDO.setCode("org")
+        organizationDO.setName("测试组织")
+        organizationDO.setEnabled(true)
 
         organizationE = new OrganizationE()
         organizationE.setId(1)
@@ -82,6 +103,11 @@ class WikiCreateUserSpec extends Specification {
         userE.setRealName("毕冉")
         userE.setPhone("110")
         userE.setOrganization(organizationE)
+
+        iamServiceClient = Mock(IamServiceClient)
+        Field field=iamRepository.getClass().getDeclaredFields()[0];
+        field.setAccessible(true)
+        field.set(iamRepository,iamServiceClient)
     }
 
     def '创建用户'() {
@@ -91,9 +117,12 @@ class WikiCreateUserSpec extends Specification {
                 "\"username\":\"WT1336\"," +
                 "\"email\":\"biran.wt@hand-china.com\"}]";
 
+        ResponseEntity<UserDO> responseEntity = new ResponseEntity<>(userDO,HttpStatus.OK)
+        ResponseEntity<OrganizationDO> organization = new ResponseEntity<>(organizationDO,HttpStatus.OK)
+
         and: 'Mock'
-        1 * iamRepository.queryByLoginName(_) >>  userE
-        1 * iamRepository.queryOrganizationById(_) >> organizationE
+        1 * iamServiceClient.queryByLoginName(_) >> responseEntity
+        1 * iamServiceClient.queryOrganizationById(_) >> organization
         1 * iWikiUserService.checkDocExsist(_, _) >> false
         1 * iWikiUserService.createUser(*_)
         1 * iWikiGroupService.createGroupUsers(*_)

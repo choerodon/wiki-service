@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
-import io.choerodon.wiki.app.service.WikiSpaceService
-import io.choerodon.wiki.domain.application.repository.IamRepository
-import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository
 import io.choerodon.wiki.domain.service.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -76,27 +73,9 @@ class IntegrationTestConfiguration {
 
     @Bean
     @Primary
-    IamRepository iamRepository() {
-        detachedMockFactory.Mock(IamRepository.class);
-    }
-
-    @Bean
-    @Primary
     IWikiClassService iWikiClassService() {
         detachedMockFactory.Mock(IWikiClassService.class);
     }
-
-//    @Bean
-//    @Primary
-//    WikiSpaceRepository wikiSpaceRepository() {
-//        detachedMockFactory.Mock(WikiSpaceRepository.class);
-//    }
-//
-//    @Bean
-//    @Primary
-//    WikiSpaceService wikiSpaceService() {
-//        detachedMockFactory.Mock(WikiSpaceService.class);
-//    }
 
     @PostConstruct
     void init() {

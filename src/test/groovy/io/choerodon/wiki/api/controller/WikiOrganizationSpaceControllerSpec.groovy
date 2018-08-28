@@ -6,12 +6,14 @@ import io.choerodon.wiki.api.dto.WikiSpaceDTO
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO
 import io.choerodon.wiki.api.eventhandler.WikiEventHandler
-import io.choerodon.wiki.domain.application.entity.ProjectE
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
 import io.choerodon.wiki.domain.service.*
+import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
+import io.choerodon.wiki.infra.dataobject.iam.ProjectDO
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
+import io.choerodon.wiki.infra.feign.IamServiceClient
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -20,9 +22,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import spock.lang.Shared
 import spock.lang.Specification
+
+import java.lang.reflect.Field
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -71,7 +76,13 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
     def OrganizationE organizationE
 
     @Shared
+    def OrganizationDO organizationDO
+
+    @Shared
     def UserE userE
+
+    @Shared
+    def UserDO userDO
 
     @Shared
     def wikiId
@@ -79,30 +90,52 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
     @Shared
     def orgUnderWikiId
 
-    void setup() {
-        UserDO userDO = new UserDO()
-        userDO.setId(1L)
-        userDO.setEmail("test@org.com")
-        userDO.setLoginName("test")
+    @Shared
+    def path = '/v1/organizations/{organization_id}/space'
 
+    @Shared
+    IamServiceClient iamServiceClient
+
+    @Shared
+    ResponseEntity<OrganizationDO> organization
+
+    void setup() {
         organizationE = new OrganizationE()
         organizationE.setId(1)
         organizationE.setCode("org")
         organizationE.setName("测试组织")
         organizationE.setEnabled(true)
 
+        organizationDO = new OrganizationDO()
+        organizationDO.setId(1)
+        organizationDO.setCode("org")
+        organizationDO.setName("测试组织")
+        organizationDO.setEnabled(true)
+
         userE = new UserE()
         userE.setId(1L)
         userE.setLoginName("test")
         userE.setEmail("test@org.com")
         userE.setRealName("test")
+
+        userDO = new UserDO()
+        userDO.setId(1L)
+        userDO.setEmail("test@org.com")
+        userDO.setLoginName("test")
+
+        organization = new ResponseEntity<>(organizationDO,HttpStatus.OK)
+
+        iamServiceClient = Mock(IamServiceClient)
+        Field field=iamRepository.getClass().getDeclaredFields()[0];
+        field.setAccessible(true)
+        field.set(iamRepository,iamServiceClient)
     }
 
     def '检查组织下空间名唯一性'() {
         given: '给定一个空间名'
 
         when: '向接口发请求'
-        def entity = restTemplate.getForEntity('/v1/organizations/{organization_id}/space/check?' + 'name=' + spaceName, Boolean.class, organizationId)
+        def entity = restTemplate.getForEntity(path + '/check?name=' + spaceName, Boolean.class, organizationId)
 
         then: '状态码为200;返回的数据为true'
         entity.statusCode.is2xxSuccessful()
@@ -118,13 +151,17 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "\"userId\":2\n" +
                 "}";
 
+        List<UserDO> list = new ArrayList<>();
+        list.add(userDO)
+        ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(list,HttpStatus.OK)
+
         and: 'Mock'
         1 * iWikiSpaceWebHomeService.createSpace1WebHome(_, _, _) >> 201
         1 * iWikiSpaceWebPreferencesService.createSpace1WebPreferences(_, _, _) >> 201
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
         2 * iWikiGroupService.createGroup(_, _)
         2 * iWikiGroupService.addRightsToOrg(_, _, _, _)
-        1 * iamRepository.queryUserById(_) >> userE
+        1 * iamServiceClient.queryUsersByIds(_) >> responseEntity
         1 * iWikiUserService.checkDocExsist(_, _) >> false
         1 * iWikiUserService.createUser(_, _, _, _)
         1 * iWikiGroupService.createGroupUsers(_, _, _)
@@ -144,11 +181,11 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         wikiSpaceDTO.setName(spaceName)
 
         and: 'Mock'
-        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_,_,_,_) >> 201
-        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(_,_,_,_) >> 201
+        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_, _, _, _) >> 201
+        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(_, _, _, _) >> 201
 
         when: '向接口发请求'
-        def entity = restTemplate.postForEntity('/v1/organizations/{organization_id}/space', wikiSpaceDTO, null, organizationId)
+        def entity = restTemplate.postForEntity(path, wikiSpaceDTO, null, organizationId)
 
         then: '状态码为201'
         Assert.assertEquals(201, entity.statusCodeValue)
@@ -159,10 +196,10 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         def searchParam = ""
 
         when: '向接口发请求'
-        def entity = restTemplate.postForEntity('/v1/organizations/{organization_id}/space/list_by_options?page=0&size=10', searchParam, Page.class, organizationId)
+        def entity = restTemplate.postForEntity(path + '/list_by_options?page=0&size=10', searchParam, Page.class, organizationId)
         List<WikiSpaceListTreeDTO> list = entity.body.content
         wikiId = list.get(0).id
-        orgUnderWikiId =list.get(0).children.get(0).id
+        orgUnderWikiId = list.get(0).children.get(0).id
 
         then: '状态码为201'
         Assert.assertEquals(201, entity.statusCodeValue)
@@ -173,7 +210,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         def id = wikiId
 
         when: '向接口发请求'
-        def entity = restTemplate.getForEntity('/v1/organizations/{organization_id}/space/{id}', WikiSpaceResponseDTO.class, organizationId, id)
+        def entity = restTemplate.getForEntity(path + '/{id}', WikiSpaceResponseDTO.class, organizationId, id)
 
         then: '状态码为200,返回数据与请求数据相同'
         Assert.assertEquals(200, entity.statusCodeValue)
@@ -191,7 +228,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         1 * iWikiSpaceWebHomeService.createSpace1WebHome(*_)
 
         when: '向接口发请求'
-        def entity = restTemplate.exchange('/v1/organizations/{organization_id}/space/{id}', HttpMethod.PUT,
+        def entity = restTemplate.exchange(path + '/{id}', HttpMethod.PUT,
                 new HttpEntity<>(wikiSpaceDTO), WikiSpaceResponseDTO.class, organizationId, id)
 
         then: '状态码为201,返回数据与请求数据相同'
@@ -211,7 +248,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_)
 
         when: '向接口发请求'
-        def entity = restTemplate.exchange('/v1/organizations/{organization_id}/space/{id}', HttpMethod.PUT,
+        def entity = restTemplate.exchange(path + '/{id}', HttpMethod.PUT,
                 new HttpEntity<>(wikiSpaceDTO), WikiSpaceResponseDTO.class, organizationId, id)
 
         then: '状态码为201,返回数据与请求数据相同'
@@ -227,7 +264,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "}"
 
         and: 'Mock'
-        1 * iamRepository.queryOrganizationById(_) >> new OrganizationE()
+        1 * iamServiceClient.queryOrganizationById(_) >> organization
         1 * iWikiGroupService.disableOrgGroupView(_, _, _)
 
         when: '模拟发送消息'
@@ -252,7 +289,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '</objects>'
 
         and: 'Mock'
-        1 * iamRepository.queryOrganizationById(_) >> new OrganizationE()
+        1 * iamServiceClient.queryOrganizationById(_) >> organization
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> page
         1 * iWikiClassService.deletePageClass(_, _, _, _, _)
 
@@ -278,9 +315,11 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "  }\n" +
                 "]";
 
+        ResponseEntity<UserDO> userDOResponseEntity = new ResponseEntity<>(userDO,HttpStatus.OK)
+
         and: 'Mock'
-        1 * iamRepository.queryOrganizationById(_) >> organizationE
-        1 * iamRepository.queryByLoginName(_) >> userE
+        1 * iamServiceClient.queryOrganizationById(_) >> organization
+        1 * iamServiceClient.queryByLoginName(_) >> userDOResponseEntity
         1 * iWikiUserService.checkDocExsist(_, _) >> false
         1 * iWikiUserService.createUser(_, _, _, _)
         1 * iWikiGroupService.createGroupUsers(_, _, _)
@@ -323,7 +362,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '</objects>'
 
         and: 'Mock'
-        2 * iamRepository.queryOrganizationById(_) >> organizationE
+        2 * iamServiceClient.queryOrganizationById(_) >> organization
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> admin
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> user
         2 * iWikiClassService.deletePageClass(_, _, _, _, _);
@@ -338,22 +377,23 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
     def '删除组织下的空间'() {
         given: '定义请求数据格式'
         def id = wikiId
-        Page<ProjectE> projectEPage = new Page<>()
-        projectEPage.setTotalPages(2)
-        ProjectE projectE = new ProjectE()
-        projectE.setId(1)
-        projectEPage.setContent(Arrays.asList(projectE))
+        Page<ProjectDO> page = new Page<>()
+        page.setTotalPages(2)
+        ProjectDO projectDO = new ProjectDO()
+        projectDO.setId(1)
+        page.setContent(Arrays.asList(projectDO))
 
+        ResponseEntity<Page<ProjectDO>> pageResponseEntity = new ResponseEntity<>(page,HttpStatus.OK)
 
         and: 'Mock'
-        1 * iamRepository.queryOrganizationById(_) >> organizationE
+        1 * iamServiceClient.queryOrganizationById(_) >> organization
         4 * iWikiSpaceWebHomeService.deletePage(*_) >> 204
         2 * iWikiSpaceWebHomeService.deletePage1(*_) >> 204
-        2 * iamRepository.pageByProject(*_) >>  projectEPage
+        2 * iamServiceClient.pageByProject(*_) >> pageResponseEntity
 //        2 * iWikiSpaceWebHomeService.deletePage2(*_) >> 204
 
         when: '向接口发请求'
-        restTemplate.delete('/v1/organizations/{organization_id}/space/{id}',organizationId, id)
+        restTemplate.delete(path + '/{id}', organizationId, id)
 
         then: '校验返回数据'
     }
