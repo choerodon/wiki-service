@@ -1,13 +1,14 @@
 package io.choerodon.wiki.infra.persistence.impl
 
-import io.choerodon.core.convertor.ConvertPageHelper
 import io.choerodon.core.domain.Page
+import io.choerodon.wiki.IntegrationTestConfiguration
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
 import io.choerodon.wiki.infra.dataobject.iam.ProjectDO
 import io.choerodon.wiki.infra.dataobject.iam.RoleDO
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
 import io.choerodon.wiki.infra.feign.IamServiceClient
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import spock.lang.Specification
@@ -18,6 +19,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  * Created by Zenger on 2018/7/25.
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@Import(IntegrationTestConfiguration)
 class IamRepositoryImplSpec extends Specification {
 
     IamServiceClient iamServiceClient
