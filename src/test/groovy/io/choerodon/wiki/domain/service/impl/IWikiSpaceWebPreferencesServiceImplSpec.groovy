@@ -2,7 +2,6 @@ package io.choerodon.wiki.domain.service.impl
 
 import io.choerodon.wiki.infra.feign.WikiClient
 import okhttp3.Headers
-import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.ResponseBody
 import okhttp3.internal.http.RealResponseBody
@@ -16,46 +15,38 @@ import spock.lang.Specification
 /**
  * Created by Zenger on 2018/7/25.
  */
-class IWikiClassServiceImplSpec extends Specification {
+class IWikiSpaceWebPreferencesServiceImplSpec extends Specification {
 
-    WikiClient wikiClient;
-    IWikiClassServiceImpl service
+    WikiClient wikiClient
+    IWikiSpaceWebPreferencesServiceImpl service
 
     void setup(){
         wikiClient=Mock(WikiClient)
-        service = new IWikiClassServiceImpl(wikiClient)
+        service = new IWikiSpaceWebPreferencesServiceImpl(wikiClient)
     }
 
-    def 'getPageClassResource'() {
+    def 'createSpace1WebPreferences'() {
         when:''
-        service.getPageClassResource("1","2","3","4")
+        service.createSpace1WebPreferences("1","2","3")
 
         then:''
-        1 * wikiClient.getPageClassResource(*_) >>  getCall(200)
+        1 * wikiClient.createSpace1WebPreferences(*_) >>  getCall(201)
     }
 
-    def 'getProjectPageClassResource'() {
+    def 'createSpace2WebPreferences'() {
         when:''
-        service.getProjectPageClassResource("1","2","3","4","5")
+        service.createSpace2WebPreferences("1","2","3","4")
 
         then:''
-        1 * wikiClient.getProjectPageClassResource(*_) >>  getCall(200)
+        1 * wikiClient.createSpace2WebPreferences(*_) >>  getCall(201)
     }
 
-    def 'deletePageClass'() {
+    def 'createSpace3WebPreferences'() {
         when:''
-        service.deletePageClass("1","2","3","4",5)
+        service.createSpace3WebPreferences("1","2","3","4","5")
 
         then:''
-        1 * wikiClient.deletePageClass(*_) >>  getCall(200)
-    }
-
-    def 'deleteProjectPageClass'() {
-        when:''
-        service.deleteProjectPageClass("1","2","3","4","5",6)
-
-        then:''
-        1 * wikiClient.deleteProjectPageClass(*_) >>  getCall(200)
+        1 * wikiClient.createSpace3WebPreferences(*_) >>  getCall(201)
     }
 
     Call<ResponseBody> getCall(int code) {

@@ -1,8 +1,8 @@
 package io.choerodon.wiki.domain.service.impl
 
+import io.choerodon.wiki.api.dto.WikiGroupDTO
 import io.choerodon.wiki.infra.feign.WikiClient
 import okhttp3.Headers
-import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.ResponseBody
 import okhttp3.internal.http.RealResponseBody
@@ -16,46 +16,62 @@ import spock.lang.Specification
 /**
  * Created by Zenger on 2018/7/25.
  */
-class IWikiClassServiceImplSpec extends Specification {
+class IWikiSpaceWebHomeServiceImplSpec extends Specification {
 
-    WikiClient wikiClient;
-    IWikiClassServiceImpl service
+    WikiClient wikiClient
+    IWikiSpaceWebHomeServiceImpl service
 
     void setup(){
         wikiClient=Mock(WikiClient)
-        service = new IWikiClassServiceImpl(wikiClient)
+        service = new IWikiSpaceWebHomeServiceImpl(wikiClient)
     }
 
-    def 'getPageClassResource'() {
+    def 'createSpace1WebHome'() {
         when:''
-        service.getPageClassResource("1","2","3","4")
+        service.createSpace1WebHome("1","2","3")
 
         then:''
-        1 * wikiClient.getPageClassResource(*_) >>  getCall(200)
+        1 * wikiClient.createSpace1WebHome(*_) >>  getCall(201)
     }
 
-    def 'getProjectPageClassResource'() {
+    def 'createSpace2WebHome'() {
         when:''
-        service.getProjectPageClassResource("1","2","3","4","5")
+        service.createSpace2WebHome("1","2","3","4")
 
         then:''
-        1 * wikiClient.getProjectPageClassResource(*_) >>  getCall(200)
+        1 * wikiClient.createSpace2WebHome(*_) >>  getCall(201)
     }
 
-    def 'deletePageClass'() {
+    def 'createSpace3WebHome'() {
         when:''
-        service.deletePageClass("1","2","3","4",5)
+        service.createSpace3WebHome("1","2","3","4","5")
 
         then:''
-        1 * wikiClient.deletePageClass(*_) >>  getCall(200)
+        1 * wikiClient.createSpace3WebHome(*_) >>  getCall(201)
     }
 
-    def 'deleteProjectPageClass'() {
+    def 'deletePage'() {
         when:''
-        service.deleteProjectPageClass("1","2","3","4","5",6)
+        service.deletePage("1","2","3")
 
         then:''
-        1 * wikiClient.deleteProjectPageClass(*_) >>  getCall(200)
+        1 * wikiClient.deletePage(*_) >>  getCall(201)
+    }
+
+    def 'deletePage1'() {
+        when:''
+        service.deletePage1("1","2","3","4")
+
+        then:''
+        1 * wikiClient.deletePage1(*_) >>  getCall(201)
+    }
+
+    def 'deletePage2'() {
+        when:''
+        service.deletePage2("1","2","3","4","5")
+
+        then:''
+        1 * wikiClient.deletePage2(*_) >>  getCall(201)
     }
 
     Call<ResponseBody> getCall(int code) {

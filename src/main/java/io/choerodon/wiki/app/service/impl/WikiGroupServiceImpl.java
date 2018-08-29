@@ -119,7 +119,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         wikiUserE.setPhone(user.getPhone());
                         String xmlParam = getUserXml(wikiUserE);
                         if (!checkDocExsist(username, user.getLoginName())) {
-                            iWikiUserService.createUser(wikiUserE, user.getLoginName(), xmlParam, username);
+                            iWikiUserService.createUser(user.getLoginName(), xmlParam, username);
                         }
 
                         iWikiGroupService.createGroupUsers(groupName, user.getLoginName(), username);
@@ -166,7 +166,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                             wikiUserE.setEmail(user.getEmail());
 
                             String xmlParam = getUserXml(wikiUserE);
-                            iWikiUserService.createUser(wikiUserE, loginName, xmlParam, username);
+                            iWikiUserService.createUser(loginName, xmlParam, username);
                         }
 
                         //通过groupName给组添加成员
@@ -248,7 +248,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 wikiUserE.setEmail(userE.getEmail());
                 wikiUserE.setPhone(userE.getPhone());
 
-                iWikiUserService.createUser(wikiUserE, loginName, getUserXml(wikiUserE), username);
+                iWikiUserService.createUser(loginName, getUserXml(wikiUserE), username);
             }
             iWikiGroupService.createGroupUsers(groupName, loginName, username);
         } else {

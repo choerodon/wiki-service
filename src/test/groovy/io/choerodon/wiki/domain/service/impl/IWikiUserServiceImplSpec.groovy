@@ -2,7 +2,6 @@ package io.choerodon.wiki.domain.service.impl
 
 import io.choerodon.wiki.infra.feign.WikiClient
 import okhttp3.Headers
-import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.ResponseBody
 import okhttp3.internal.http.RealResponseBody
@@ -16,48 +15,41 @@ import spock.lang.Specification
 /**
  * Created by Zenger on 2018/7/25.
  */
-class IWikiClassServiceImplSpec extends Specification {
+class IWikiUserServiceImplSpec extends Specification {
 
-    WikiClient wikiClient;
-    IWikiClassServiceImpl service
+    WikiClient wikiClient
+    IWikiUserServiceImpl service
 
     void setup(){
         wikiClient=Mock(WikiClient)
-        service = new IWikiClassServiceImpl(wikiClient)
+        service = new IWikiUserServiceImpl(wikiClient)
     }
 
-    def 'getPageClassResource'() {
+    def 'createUser'() {
         when:''
-        service.getPageClassResource("1","2","3","4")
+        service.createUser("1","2","3")
 
         then:''
-        1 * wikiClient.getPageClassResource(*_) >>  getCall(200)
+        1 * wikiClient.createUser(*_) >>  getCall(201)
+        1 * wikiClient.createGroupUsers(*_) >> getCall(201)
     }
 
-    def 'getProjectPageClassResource'() {
+    def 'checkDocExsist'() {
         when:''
-        service.getProjectPageClassResource("1","2","3","4","5")
+        service.checkDocExsist("1","2")
 
         then:''
-        1 * wikiClient.getProjectPageClassResource(*_) >>  getCall(200)
+        1 * wikiClient.checkDocExsist(*_) >>  getCall(200)
     }
 
-    def 'deletePageClass'() {
+    def 'deletePage'() {
         when:''
-        service.deletePageClass("1","2","3","4",5)
+        service.deletePage("1","2")
 
         then:''
-        1 * wikiClient.deletePageClass(*_) >>  getCall(200)
+        1 * wikiClient.deletePage(*_) >>  getCall(204)
     }
-
-    def 'deleteProjectPageClass'() {
-        when:''
-        service.deleteProjectPageClass("1","2","3","4","5",6)
-
-        then:''
-        1 * wikiClient.deleteProjectPageClass(*_) >>  getCall(200)
-    }
-
+    
     Call<ResponseBody> getCall(int code) {
         return new Call<ResponseBody>() {
             @Override

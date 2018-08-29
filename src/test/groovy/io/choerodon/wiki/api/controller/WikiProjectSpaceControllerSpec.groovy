@@ -193,7 +193,7 @@ class WikiProjectSpaceControllerSpec extends Specification {
         2 * iWikiGroupService.addRightsToProject(_, _, _, _)
         1 * iamServiceClient.queryUsersByIds(_) >> responseEntity
         1 * iWikiUserService.checkDocExsist(_, _) >> false
-        1 * iWikiUserService.createUser(_, _, _, _)
+        1 * iWikiUserService.createUser(_, _, _)
         1 * iWikiGroupService.createGroupUsers(_, _, _)
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
 

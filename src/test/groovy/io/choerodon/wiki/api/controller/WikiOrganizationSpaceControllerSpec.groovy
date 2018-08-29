@@ -163,7 +163,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         2 * iWikiGroupService.addRightsToOrg(_, _, _, _)
         1 * iamServiceClient.queryUsersByIds(_) >> responseEntity
         1 * iWikiUserService.checkDocExsist(_, _) >> false
-        1 * iWikiUserService.createUser(_, _, _, _)
+        1 * iWikiUserService.createUser(_, _, _)
         1 * iWikiGroupService.createGroupUsers(_, _, _)
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
 
@@ -181,8 +181,8 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         wikiSpaceDTO.setName(spaceName)
 
         and: 'Mock'
-        1 * iWikiSpaceWebHomeService.createSpace2WebHome(_, _, _, _) >> 201
-        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(_, _, _, _) >> 201
+        1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_) >> 201
+        1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(*_) >> 201
 
         when: '向接口发请求'
         def entity = restTemplate.postForEntity(path, wikiSpaceDTO, null, organizationId)
@@ -321,7 +321,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         1 * iamServiceClient.queryOrganizationById(_) >> organization
         1 * iamServiceClient.queryByLoginName(_) >> userDOResponseEntity
         1 * iWikiUserService.checkDocExsist(_, _) >> false
-        1 * iWikiUserService.createUser(_, _, _, _)
+        1 * iWikiUserService.createUser(_, _, _)
         1 * iWikiGroupService.createGroupUsers(_, _, _)
 
         when: '模拟发送消息'
