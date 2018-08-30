@@ -78,8 +78,8 @@ class WikiSpaceRepositoryImplSpec extends Specification {
         when:
         service.listWikiSpaceByPage(1L,"testType",pageRequest,"testValue")
         then:
-        def e = thrown()
-        e.message == ""
+        def e = thrown(CommonException)
+        e.message == "error.space.list.query"
     }
 
     def "checkNameFailed"() {
@@ -97,5 +97,12 @@ class WikiSpaceRepositoryImplSpec extends Specification {
         then:
         def e = thrown(CommonException)
         e.message == "error.space.update"
+    }
+
+    def "getWikiSpaceByType"(){
+        when:
+        service.getWikiSpaceByType("testresourceType")
+        then:
+        1 * wikiSpaceMapper.select(_) >> new Page<WikiSpaceE>()
     }
 }
