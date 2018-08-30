@@ -1,6 +1,5 @@
 package io.choerodon.wiki.api.controller.v1;
 
-import java.util.Optional;
 import javax.validation.Valid;
 
 import io.swagger.annotations.ApiOperation;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -54,9 +52,11 @@ public class WikiProjectSpaceController {
             @PathVariable(value = "project_id") Long projectId,
             @ApiParam(value = "空间名", required = true)
             @RequestParam String name) {
-        return Optional.ofNullable(wikiSpaceService.checkName(projectId, name, WikiSpaceResourceType.PROJECT_S.getResourceType()))
-                .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.space.name.check"));
+        return new ResponseEntity<>(wikiSpaceService.checkName(
+                projectId,
+                name,
+                WikiSpaceResourceType.PROJECT_S.getResourceType()),
+                HttpStatus.OK);
     }
 
     /**
@@ -76,7 +76,9 @@ public class WikiProjectSpaceController {
             @PathVariable(value = "project_id") Long projectId,
             @ApiParam(value = "空间信息", required = true)
             @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        wikiSpaceService.create(wikiSpaceDTO, projectId, BaseStage.USERNAME,
+        wikiSpaceService.create(wikiSpaceDTO,
+                projectId,
+                BaseStage.USERNAME,
                 WikiSpaceResourceType.PROJECT_S.getResourceType());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -102,10 +104,12 @@ public class WikiProjectSpaceController {
             @ApiIgnore PageRequest pageRequest,
             @ApiParam(value = "查询参数")
             @RequestBody(required = false) String searchParam) {
-        return Optional.ofNullable(wikiSpaceService.listTreeWikiSpaceByPage(projectId,
-                WikiSpaceResourceType.PROJECT.getResourceType(), pageRequest, searchParam))
-                .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.wiki.space.query"));
+        return new ResponseEntity<>(wikiSpaceService.listTreeWikiSpaceByPage(
+                projectId,
+                WikiSpaceResourceType.PROJECT.getResourceType(),
+                pageRequest,
+                searchParam),
+                HttpStatus.CREATED);
     }
 
     /**
@@ -125,9 +129,7 @@ public class WikiProjectSpaceController {
             @PathVariable(value = "project_id") Long projectId,
             @ApiParam(value = "空间ID", required = true)
             @PathVariable Long id) {
-        return Optional.ofNullable(wikiSpaceService.query(id))
-                .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.wiki.space.query"));
+        return new ResponseEntity<>(wikiSpaceService.query(id), HttpStatus.OK);
     }
 
     /**
@@ -149,9 +151,11 @@ public class WikiProjectSpaceController {
                                                        @PathVariable Long id,
                                                        @ApiParam(value = "空间信息", required = true)
                                                        @RequestBody @Valid WikiSpaceDTO wikiSpaceDTO) {
-        return Optional.ofNullable(wikiSpaceService.update(id, wikiSpaceDTO, BaseStage.USERNAME))
-                .map(target -> new ResponseEntity<>(target, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.wiki.space.update"));
+        return new ResponseEntity<>(wikiSpaceService.update(
+                id,
+                wikiSpaceDTO,
+                BaseStage.USERNAME),
+                HttpStatus.CREATED);
     }
 
     /**
