@@ -91,7 +91,7 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
                                 null));
             }
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            throw new CommonException("error.space.list.query");
         }
 
         return ConvertPageHelper.convertPage(wikiSpaceDOPage, WikiSpaceE.class);
