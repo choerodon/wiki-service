@@ -16,7 +16,7 @@
     </parent>
 
     <properties>
-        <choerodon.starters.version>0.6.2.RELEASE</choerodon.starters.version>
+        <choerodon.starters.version>0.6.0.RELEASE</choerodon.starters.version>
     </properties>
 
     <build>
