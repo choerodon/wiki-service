@@ -3,7 +3,6 @@ package io.choerodon.wiki.infra.persistence.impl
 import io.choerodon.core.domain.Page
 import io.choerodon.core.exception.CommonException
 import io.choerodon.wiki.IntegrationTestConfiguration
-import io.choerodon.wiki.domain.application.valueobject.RoleAssignmentSearch
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
 import io.choerodon.wiki.infra.dataobject.iam.ProjectDO
 import io.choerodon.wiki.infra.dataobject.iam.RoleDO

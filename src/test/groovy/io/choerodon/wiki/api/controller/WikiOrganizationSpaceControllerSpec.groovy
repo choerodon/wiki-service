@@ -123,12 +123,12 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         userDO.setEmail("test@org.com")
         userDO.setLoginName("test")
 
-        organization = new ResponseEntity<>(organizationDO,HttpStatus.OK)
+        organization = new ResponseEntity<>(organizationDO, HttpStatus.OK)
 
         iamServiceClient = Mock(IamServiceClient)
-        Field field=iamRepository.getClass().getDeclaredFields()[0];
+        Field field = iamRepository.getClass().getDeclaredFields()[0];
         field.setAccessible(true)
-        field.set(iamRepository,iamServiceClient)
+        field.set(iamRepository, iamServiceClient)
     }
 
     def '检查组织下空间名唯一性'() {
@@ -153,7 +153,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
         List<UserDO> list = new ArrayList<>();
         list.add(userDO)
-        ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(list,HttpStatus.OK)
+        ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(list, HttpStatus.OK)
 
         and: 'Mock'
         1 * iWikiSpaceWebHomeService.createSpace1WebHome(_, _, _) >> 201
@@ -315,7 +315,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "  }\n" +
                 "]";
 
-        ResponseEntity<UserDO> userDOResponseEntity = new ResponseEntity<>(userDO,HttpStatus.OK)
+        ResponseEntity<UserDO> userDOResponseEntity = new ResponseEntity<>(userDO, HttpStatus.OK)
 
         and: 'Mock'
         1 * iamServiceClient.queryOrganizationById(_) >> organization
@@ -384,8 +384,8 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         projectDO.setOrganizationId(1L)
         page.setContent(Arrays.asList(projectDO))
 
-        ResponseEntity<Page<ProjectDO>> pageResponseEntity = new ResponseEntity<>(page,HttpStatus.OK)
-        ResponseEntity<ProjectDO> projectDOResponseEntity = new ResponseEntity<>(projectDO,HttpStatus.OK)
+        ResponseEntity<Page<ProjectDO>> pageResponseEntity = new ResponseEntity<>(page, HttpStatus.OK)
+        ResponseEntity<ProjectDO> projectDOResponseEntity = new ResponseEntity<>(projectDO, HttpStatus.OK)
 
         and: 'Mock'
         3 * iamServiceClient.queryOrganizationById(_) >> organization

@@ -104,7 +104,7 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
 
     @Override
     public Boolean checkName(Long resourceId, String name, String type) {
-        int selectCount = wikiSpaceMapper.checkName(resourceId,type,name);
+        int selectCount = wikiSpaceMapper.checkName(resourceId, type, name);
         if (selectCount > 0) {
             throw new CommonException("error.space.name.check");
         }

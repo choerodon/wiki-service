@@ -35,12 +35,12 @@ class WikiScanningServiceImplSpec extends Specification {
     @Shared
     def UserE userE
 
-    void setup(){
-        iamRepository=Mock(IamRepository)
-        wikiSpaceRepository=Mock(WikiSpaceRepository)
-        wikiSpaceService=Mock(WikiSpaceService)
-        wikiGroupService=Mock(WikiGroupService)
-        iWikiSpaceWebHomeService=Mock(IWikiSpaceWebHomeService)
+    void setup() {
+        iamRepository = Mock(IamRepository)
+        wikiSpaceRepository = Mock(WikiSpaceRepository)
+        wikiSpaceService = Mock(WikiSpaceService)
+        wikiGroupService = Mock(WikiGroupService)
+        iWikiSpaceWebHomeService = Mock(IWikiSpaceWebHomeService)
         service = new WikiScanningServiceImpl(iamRepository,
                 wikiSpaceRepository,
                 wikiSpaceService,
@@ -92,18 +92,18 @@ class WikiScanningServiceImplSpec extends Specification {
         3 * wikiSpaceRepository.getWikiSpaceList(*_) >> null
         3 * wikiSpaceService.create(*_)
         6 * wikiGroupService.create(*_)
-        2 * iamRepository.pageByProject(*_) >>  projectEPage
+        2 * iamRepository.pageByProject(*_) >> projectEPage
         5 * iamRepository.roleList(*_) >> rolePage
         2 * iamRepository.pagingQueryUsersByRoleIdOnOrganizationLevel(*_) >> userEPage
         8 * iamRepository.pagingQueryUsersByRoleIdOnProjectLevel(*_) >> userEPage
         10 * wikiGroupService.setUserToGroup(*_)
-        2 *  wikiGroupService.disableProjectGroup(*_)
+        2 * wikiGroupService.disableProjectGroup(*_)
         1 * wikiGroupService.disableOrganizationGroup(*_)
 
         when: '模拟发送消息'
         service.syncOrg(orgId)
 
-        then:''
+        then: ''
     }
 
     def 'scanning'() {
@@ -135,7 +135,7 @@ class WikiScanningServiceImplSpec extends Specification {
         when: '模拟发送消息'
         service.scanning()
 
-        then:''
+        then: ''
     }
 
     def 'updateWikiPage'() {
@@ -196,6 +196,6 @@ class WikiScanningServiceImplSpec extends Specification {
         when: '模拟发送消息'
         service.updateWikiPage()
 
-        then:''
+        then: ''
     }
 }

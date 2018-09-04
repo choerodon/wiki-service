@@ -20,33 +20,33 @@ class IWikiSpaceWebPreferencesServiceImplSpec extends Specification {
     WikiClient wikiClient
     IWikiSpaceWebPreferencesServiceImpl service
 
-    void setup(){
-        wikiClient=Mock(WikiClient)
+    void setup() {
+        wikiClient = Mock(WikiClient)
         service = new IWikiSpaceWebPreferencesServiceImpl(wikiClient)
     }
 
     def 'createSpace1WebPreferences'() {
-        when:''
-        service.createSpace1WebPreferences("1","2","3")
+        when: ''
+        service.createSpace1WebPreferences("1", "2", "3")
 
-        then:''
-        1 * wikiClient.createSpace1WebPreferences(*_) >>  getCall(201)
+        then: ''
+        1 * wikiClient.createSpace1WebPreferences(*_) >> getCall(201)
     }
 
     def 'createSpace2WebPreferences'() {
-        when:''
-        service.createSpace2WebPreferences("1","2","3","4")
+        when: ''
+        service.createSpace2WebPreferences("1", "2", "3", "4")
 
-        then:''
-        1 * wikiClient.createSpace2WebPreferences(*_) >>  getCall(201)
+        then: ''
+        1 * wikiClient.createSpace2WebPreferences(*_) >> getCall(201)
     }
 
     def 'createSpace3WebPreferences'() {
-        when:''
-        service.createSpace3WebPreferences("1","2","3","4","5")
+        when: ''
+        service.createSpace3WebPreferences("1", "2", "3", "4", "5")
 
-        then:''
-        1 * wikiClient.createSpace3WebPreferences(*_) >>  getCall(201)
+        then: ''
+        1 * wikiClient.createSpace3WebPreferences(*_) >> getCall(201)
     }
 
     Call<ResponseBody> getCall(int code) {
@@ -58,13 +58,13 @@ class IWikiSpaceWebPreferencesServiceImplSpec extends Specification {
                 builder.message("haha")
                 okhttp3.Response rawResponse = new okhttp3.Response(builder)
 
-                BufferedSource buffer  = null
+                BufferedSource buffer = null
                 def source = Okio.source(this.class.getResourceAsStream("/xml/webhome.xml"));
-                buffer  = Okio.buffer(source);
+                buffer = Okio.buffer(source);
 
-                RealResponseBody realResponseBody = new RealResponseBody(new Headers(),buffer)
+                RealResponseBody realResponseBody = new RealResponseBody(new Headers(), buffer)
 
-                Response<ResponseBody> response = new Response<>(rawResponse,realResponseBody,null);
+                Response<ResponseBody> response = new Response<>(rawResponse, realResponseBody, null);
 
                 return response;
             }

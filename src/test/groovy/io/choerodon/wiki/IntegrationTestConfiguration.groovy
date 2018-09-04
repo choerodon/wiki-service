@@ -129,13 +129,13 @@ class IntegrationTestConfiguration {
                 builder.message("haha")
                 okhttp3.Response rawResponse = new okhttp3.Response(builder)
 
-                BufferedSource buffer  = null
+                BufferedSource buffer = null
                 def source = Okio.source(this.class.getResourceAsStream("/xml/webhome.xml"));
-                buffer  = Okio.buffer(source);
+                buffer = Okio.buffer(source);
 
-                RealResponseBody realResponseBody = new RealResponseBody(new Headers(),buffer)
+                RealResponseBody realResponseBody = new RealResponseBody(new Headers(), buffer)
 
-                Response<ResponseBody> response = new Response<>(rawResponse,realResponseBody,null);
+                Response<ResponseBody> response = new Response<>(rawResponse, realResponseBody, null);
 
                 return response;
             }

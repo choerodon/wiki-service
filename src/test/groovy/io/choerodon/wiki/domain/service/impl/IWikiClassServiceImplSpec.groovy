@@ -2,7 +2,6 @@ package io.choerodon.wiki.domain.service.impl
 
 import io.choerodon.wiki.infra.feign.WikiClient
 import okhttp3.Headers
-import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.ResponseBody
 import okhttp3.internal.http.RealResponseBody
@@ -21,41 +20,41 @@ class IWikiClassServiceImplSpec extends Specification {
     WikiClient wikiClient;
     IWikiClassServiceImpl service
 
-    void setup(){
-        wikiClient=Mock(WikiClient)
+    void setup() {
+        wikiClient = Mock(WikiClient)
         service = new IWikiClassServiceImpl(wikiClient)
     }
 
     def 'getPageClassResource'() {
-        when:''
-        service.getPageClassResource("1","2","3","4")
+        when: ''
+        service.getPageClassResource("1", "2", "3", "4")
 
-        then:''
-        1 * wikiClient.getPageClassResource(*_) >>  getCall(200)
+        then: ''
+        1 * wikiClient.getPageClassResource(*_) >> getCall(200)
     }
 
     def 'getProjectPageClassResource'() {
-        when:''
-        service.getProjectPageClassResource("1","2","3","4","5")
+        when: ''
+        service.getProjectPageClassResource("1", "2", "3", "4", "5")
 
-        then:''
-        1 * wikiClient.getProjectPageClassResource(*_) >>  getCall(200)
+        then: ''
+        1 * wikiClient.getProjectPageClassResource(*_) >> getCall(200)
     }
 
     def 'deletePageClass'() {
-        when:''
-        service.deletePageClass("1","2","3","4",5)
+        when: ''
+        service.deletePageClass("1", "2", "3", "4", 5)
 
-        then:''
-        1 * wikiClient.deletePageClass(*_) >>  getCall(200)
+        then: ''
+        1 * wikiClient.deletePageClass(*_) >> getCall(200)
     }
 
     def 'deleteProjectPageClass'() {
-        when:''
-        service.deleteProjectPageClass("1","2","3","4","5",6)
+        when: ''
+        service.deleteProjectPageClass("1", "2", "3", "4", "5", 6)
 
-        then:''
-        1 * wikiClient.deleteProjectPageClass(*_) >>  getCall(200)
+        then: ''
+        1 * wikiClient.deleteProjectPageClass(*_) >> getCall(200)
     }
 
     Call<ResponseBody> getCall(int code) {
@@ -67,13 +66,13 @@ class IWikiClassServiceImplSpec extends Specification {
                 builder.message("haha")
                 okhttp3.Response rawResponse = new okhttp3.Response(builder)
 
-                BufferedSource buffer  = null
+                BufferedSource buffer = null
                 def source = Okio.source(this.class.getResourceAsStream("/xml/webhome.xml"));
-                buffer  = Okio.buffer(source);
+                buffer = Okio.buffer(source);
 
-                RealResponseBody realResponseBody = new RealResponseBody(new Headers(),buffer)
+                RealResponseBody realResponseBody = new RealResponseBody(new Headers(), buffer)
 
-                Response<ResponseBody> response = new Response<>(rawResponse,realResponseBody,null);
+                Response<ResponseBody> response = new Response<>(rawResponse, realResponseBody, null);
 
                 return response;
             }

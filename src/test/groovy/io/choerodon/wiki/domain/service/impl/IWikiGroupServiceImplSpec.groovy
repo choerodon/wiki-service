@@ -22,50 +22,50 @@ class IWikiGroupServiceImplSpec extends Specification {
     IWikiUserServiceImpl iWikiUserService
     IWikiGroupServiceImpl service
 
-    void setup(){
-        wikiClient=Mock(WikiClient)
-        iWikiUserService=Mock(IWikiUserServiceImpl)
-        service = new IWikiGroupServiceImpl(wikiClient,iWikiUserService)
+    void setup() {
+        wikiClient = Mock(WikiClient)
+        iWikiUserService = Mock(IWikiUserServiceImpl)
+        service = new IWikiGroupServiceImpl(wikiClient, iWikiUserService)
     }
 
     def 'createGroup'() {
-        when:''
-        service.createGroup("1","2")
+        when: ''
+        service.createGroup("1", "2")
 
-        then:''
-        1 * wikiClient.createGroup(*_) >>  getCall(201)
+        then: ''
+        1 * wikiClient.createGroup(*_) >> getCall(201)
     }
 
     def 'createGroupUsers'() {
-        when:''
-        service.createGroupUsers("1","2","3")
+        when: ''
+        service.createGroupUsers("1", "2", "3")
 
-        then:''
+        then: ''
         1 * iWikiUserService.checkDocExsist(*_) >> false
-        1 * wikiClient.createGroupUsers(*_) >>  getCall(201)
-        1 * wikiClient.createGroup(*_) >>  getCall(201)
+        1 * wikiClient.createGroupUsers(*_) >> getCall(201)
+        1 * wikiClient.createGroup(*_) >> getCall(201)
     }
 
     def 'disableOrgGroupView'() {
-        when:''
-        service.disableOrgGroupView("1","2","3")
+        when: ''
+        service.disableOrgGroupView("1", "2", "3")
 
-        then:''
+        then: ''
         1 * iWikiUserService.checkDocExsist(*_) >> true
-        1 * wikiClient.offerRightToOrgGroupView(*_) >>  getCall(201)
+        1 * wikiClient.offerRightToOrgGroupView(*_) >> getCall(201)
     }
 
     def 'disableProjectGroupView'() {
-        when:''
-        service.disableProjectGroupView("1","2","3","4","5")
+        when: ''
+        service.disableProjectGroupView("1", "2", "3", "4", "5")
 
-        then:''
+        then: ''
         1 * iWikiUserService.checkDocExsist(*_) >> true
-        1 * wikiClient.offerRightToProjectGroupView(*_) >>  getCall(201)
+        1 * wikiClient.offerRightToProjectGroupView(*_) >> getCall(201)
     }
 
     def 'addRightsToOrg'() {
-        given:'参数定义'
+        given: '参数定义'
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO()
         wikiGroupDTO.setGroupName("test")
         wikiGroupDTO.setOrganizationCode("test")
@@ -73,18 +73,18 @@ class IWikiGroupServiceImplSpec extends Specification {
         wikiGroupDTO.setProjectCode("test")
         wikiGroupDTO.setProjectName("test")
 
-        List<String> rights = Arrays.asList("a","b")
+        List<String> rights = Arrays.asList("a", "b")
 
-        when:''
-        service.addRightsToOrg(wikiGroupDTO,rights,true,"admin")
+        when: ''
+        service.addRightsToOrg(wikiGroupDTO, rights, true, "admin")
 
-        then:''
+        then: ''
         1 * iWikiUserService.checkDocExsist(*_) >> true
-        1 * wikiClient.offerRightToOrgGroupView(*_) >>  getCall(201)
+        1 * wikiClient.offerRightToOrgGroupView(*_) >> getCall(201)
     }
 
     def 'addRightsToProject'() {
-        given:'参数定义'
+        given: '参数定义'
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO()
         wikiGroupDTO.setGroupName("test")
         wikiGroupDTO.setOrganizationCode("test")
@@ -92,14 +92,14 @@ class IWikiGroupServiceImplSpec extends Specification {
         wikiGroupDTO.setProjectCode("test")
         wikiGroupDTO.setProjectName("test")
 
-        List<String> rights = Arrays.asList("a","b")
+        List<String> rights = Arrays.asList("a", "b")
 
-        when:''
-        service.addRightsToProject(wikiGroupDTO,rights,true,"admin")
+        when: ''
+        service.addRightsToProject(wikiGroupDTO, rights, true, "admin")
 
-        then:''
+        then: ''
         1 * iWikiUserService.checkDocExsist(*_) >> true
-        1 * wikiClient.offerRightToProjectGroupView(*_) >>  getCall(201)
+        1 * wikiClient.offerRightToProjectGroupView(*_) >> getCall(201)
     }
 
     Call<ResponseBody> getCall(int code) {
@@ -111,13 +111,13 @@ class IWikiGroupServiceImplSpec extends Specification {
                 builder.message("haha")
                 okhttp3.Response rawResponse = new okhttp3.Response(builder)
 
-                BufferedSource buffer  = null
+                BufferedSource buffer = null
                 def source = Okio.source(this.class.getResourceAsStream("/xml/webhome.xml"));
-                buffer  = Okio.buffer(source);
+                buffer = Okio.buffer(source);
 
-                RealResponseBody realResponseBody = new RealResponseBody(new Headers(),buffer)
+                RealResponseBody realResponseBody = new RealResponseBody(new Headers(), buffer)
 
-                Response<ResponseBody> response = new Response<>(rawResponse,realResponseBody,null);
+                Response<ResponseBody> response = new Response<>(rawResponse, realResponseBody, null);
 
                 return response;
             }

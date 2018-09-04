@@ -148,13 +148,13 @@ class WikiProjectSpaceControllerSpec extends Specification {
         userDO.setLoginName("test")
         userDO.setRealName("test")
 
-        organization = new ResponseEntity<>(organizationDO,HttpStatus.OK)
-        projectDOResponseEntity = new ResponseEntity<>(projectDO,HttpStatus.OK)
+        organization = new ResponseEntity<>(organizationDO, HttpStatus.OK)
+        projectDOResponseEntity = new ResponseEntity<>(projectDO, HttpStatus.OK)
 
         iamServiceClient = Mock(IamServiceClient)
-        Field field=iamRepository.getClass().getDeclaredFields()[0];
+        Field field = iamRepository.getClass().getDeclaredFields()[0];
         field.setAccessible(true)
-        field.set(iamRepository,iamServiceClient)
+        field.set(iamRepository, iamServiceClient)
     }
 
     def '检查项目下空间名唯一性'() {
@@ -183,7 +183,7 @@ class WikiProjectSpaceControllerSpec extends Specification {
 
         List<UserDO> list = new ArrayList<>();
         list.add(userDO)
-        ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(list,HttpStatus.OK)
+        ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(list, HttpStatus.OK)
 
         and: 'Mock'
         1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_) >> 201
@@ -211,8 +211,8 @@ class WikiProjectSpaceControllerSpec extends Specification {
         wikiSpaceDTO.setName(spaceName)
 
         and: 'Mock'
-        1 * iWikiSpaceWebHomeService.createSpace3WebHome(_,_,_,_,_) >> 201
-        1 * iWikiSpaceWebPreferencesService.createSpace3WebPreferences(_,_,_,_,_) >> 201
+        1 * iWikiSpaceWebHomeService.createSpace3WebHome(_, _, _, _, _) >> 201
+        1 * iWikiSpaceWebPreferencesService.createSpace3WebPreferences(_, _, _, _, _) >> 201
 
         when: '向接口发请求'
         def entity = restTemplate.postForEntity(path, wikiSpaceDTO, null, projectId)
@@ -229,7 +229,7 @@ class WikiProjectSpaceControllerSpec extends Specification {
         def entity = restTemplate.postForEntity(path + '/list_by_options?page=0&size=10', searchParam, Page.class, projectId)
         List<WikiSpaceListTreeDTO> list = entity.body.content
         wikiId = list.get(0).id
-        projectUnderWikiId =list.get(0).children.get(0).id
+        projectUnderWikiId = list.get(0).children.get(0).id
 
         then: '状态码为201'
         Assert.assertEquals(201, entity.statusCodeValue)
@@ -356,7 +356,7 @@ class WikiProjectSpaceControllerSpec extends Specification {
         2 * iWikiSpaceWebHomeService.deletePage2(*_) >> 204
 
         when: '向接口发请求'
-        restTemplate.delete(path + '/{id}',projectId, id)
+        restTemplate.delete(path + '/{id}', projectId, id)
 
         then: '校验返回数据'
     }

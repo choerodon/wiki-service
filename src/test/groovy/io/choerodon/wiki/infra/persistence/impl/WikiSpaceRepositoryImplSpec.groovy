@@ -6,7 +6,6 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest
 import io.choerodon.wiki.IntegrationTestConfiguration
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE
 import io.choerodon.wiki.infra.dataobject.WikiSpaceDO
-import io.choerodon.wiki.infra.feign.IamServiceClient
 import io.choerodon.wiki.infra.mapper.WikiSpaceMapper
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -60,23 +59,23 @@ class WikiSpaceRepositoryImplSpec extends Specification {
         e.message == "error.space.insert"
     }
 
-    def "listWikiSpaceByPage"(){
-        given:'自定义数据'
-        PageRequest pageRequest = new PageRequest(1,2);
+    def "listWikiSpaceByPage"() {
+        given: '自定义数据'
+        PageRequest pageRequest = new PageRequest(1, 2);
         String searchParam = "{\"searchParam\":{},\"param\":\"\"}"
         List<WikiSpaceDO> listWikiSpaceByPage = new Page<>();
-        and:'Mock'
-        1 * wikiSpaceMapper.listWikiSpaceByPage(_,_,_,_) >> listWikiSpaceByPage
+        and: 'Mock'
+        1 * wikiSpaceMapper.listWikiSpaceByPage(_, _, _, _) >> listWikiSpaceByPage
         when:
-        service.listWikiSpaceByPage(1L,"testType",pageRequest,searchParam)
-        then:''
+        service.listWikiSpaceByPage(1L, "testType", pageRequest, searchParam)
+        then: ''
     }
 
-    def "listWikiSpaceByPageFailed"(){
-        given:'自定义数据'
-        PageRequest pageRequest = new PageRequest(1,2);
+    def "listWikiSpaceByPageFailed"() {
+        given: '自定义数据'
+        PageRequest pageRequest = new PageRequest(1, 2);
         when:
-        service.listWikiSpaceByPage(1L,"testType",pageRequest,"testValue")
+        service.listWikiSpaceByPage(1L, "testType", pageRequest, "testValue")
         then:
         def e = thrown(CommonException)
         e.message == "error.space.list.query"
@@ -91,7 +90,7 @@ class WikiSpaceRepositoryImplSpec extends Specification {
         e.message == "error.space.name.check"
     }
 
-    def "updateFailed"(){
+    def "updateFailed"() {
         when:
         service.update(wikiSpaceE)
         then:
@@ -99,7 +98,7 @@ class WikiSpaceRepositoryImplSpec extends Specification {
         e.message == "error.space.update"
     }
 
-    def "getWikiSpaceByType"(){
+    def "getWikiSpaceByType"() {
         when:
         service.getWikiSpaceByType("testresourceType")
         then:

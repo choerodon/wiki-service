@@ -1,27 +1,21 @@
 package io.choerodon.wiki.api.controller
 
-import io.choerodon.core.domain.Page
 import io.choerodon.wiki.IntegrationTestConfiguration
-import io.choerodon.wiki.api.dto.WikiSpaceDTO
-import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO
-import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO
 import io.choerodon.wiki.api.eventhandler.WikiEventHandler
 import io.choerodon.wiki.domain.application.entity.ProjectE
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
-import io.choerodon.wiki.domain.service.*
+import io.choerodon.wiki.domain.service.IWikiGroupService
+import io.choerodon.wiki.domain.service.IWikiUserService
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
 import io.choerodon.wiki.infra.feign.IamServiceClient
 import org.junit.Assert
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import spock.lang.Shared
@@ -105,9 +99,9 @@ class WikiCreateUserSpec extends Specification {
         userE.setOrganization(organizationE)
 
         iamServiceClient = Mock(IamServiceClient)
-        Field field=iamRepository.getClass().getDeclaredFields()[0];
+        Field field = iamRepository.getClass().getDeclaredFields()[0];
         field.setAccessible(true)
-        field.set(iamRepository,iamServiceClient)
+        field.set(iamRepository, iamServiceClient)
     }
 
     def '创建用户'() {
@@ -117,8 +111,8 @@ class WikiCreateUserSpec extends Specification {
                 "\"username\":\"WT1336\"," +
                 "\"email\":\"biran.wt@hand-china.com\"}]";
 
-        ResponseEntity<UserDO> responseEntity = new ResponseEntity<>(userDO,HttpStatus.OK)
-        ResponseEntity<OrganizationDO> organization = new ResponseEntity<>(organizationDO,HttpStatus.OK)
+        ResponseEntity<UserDO> responseEntity = new ResponseEntity<>(userDO, HttpStatus.OK)
+        ResponseEntity<OrganizationDO> organization = new ResponseEntity<>(organizationDO, HttpStatus.OK)
 
         and: 'Mock'
         1 * iamServiceClient.queryByLoginName(_) >> responseEntity

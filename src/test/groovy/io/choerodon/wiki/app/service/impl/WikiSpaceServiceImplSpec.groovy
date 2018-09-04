@@ -24,10 +24,10 @@ class WikiSpaceServiceImplSpec extends Specification {
     def WikiSpaceE wikiSpaceE;
 
     void setup() {
-        wikiSpaceRepository=Mock(WikiSpaceRepository)
-        wikiSpaceAsynService=Mock(WikiSpaceAsynService)
-        iWikiSpaceWebHomeService=Mock(IWikiSpaceWebHomeService)
-        iamRepository=Mock(IamRepository)
+        wikiSpaceRepository = Mock(WikiSpaceRepository)
+        wikiSpaceAsynService = Mock(WikiSpaceAsynService)
+        iWikiSpaceWebHomeService = Mock(IWikiSpaceWebHomeService)
+        iamRepository = Mock(IamRepository)
         wikiSpaceService = new WikiSpaceServiceImpl(
                 wikiSpaceRepository,
                 wikiSpaceAsynService,
@@ -41,24 +41,24 @@ class WikiSpaceServiceImplSpec extends Specification {
     }
 
 
-    def "delete"(){
+    def "delete"() {
         given:
         wikiSpaceE.setResourceId(1L);
-        and:'Mock'
+        and: 'Mock'
         1 * wikiSpaceRepository.selectById(_) >> wikiSpaceE
         when:
-        wikiSpaceService.delete(11L,1L)
+        wikiSpaceService.delete(11L, 1L)
         then:
         def e = thrown(CommonException)
         e.message == "error.resourceId.equal"
     }
 
-   def "checkCodeDelete"(){
-       when:
-       wikiSpaceService.checkCodeDelete(403,1L)
-       then:
-       1 * wikiSpaceRepository.selectById(_) >> wikiSpaceE
-       1 * wikiSpaceRepository.update(wikiSpaceE)
-   }
+    def "checkCodeDelete"() {
+        when:
+        wikiSpaceService.checkCodeDelete(403, 1L)
+        then:
+        1 * wikiSpaceRepository.selectById(_) >> wikiSpaceE
+        1 * wikiSpaceRepository.update(wikiSpaceE)
+    }
 
 }
