@@ -26,8 +26,8 @@ import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.service.IWikiClassService;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiUserService;
-import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.BaseStage;
+import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.enums.OrganizationSpaceType;
 
 /**
@@ -94,7 +94,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 }
             }
         } catch (InterruptedException e) {
-            throw new CommonException("error.interrupt", e);
+            Thread.currentThread().interrupt();
+            throw new CommonException("error.interrupted.exception", e);
         }
 
         return true;
