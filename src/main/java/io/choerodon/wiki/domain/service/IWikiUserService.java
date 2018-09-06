@@ -7,7 +7,7 @@ import io.choerodon.wiki.domain.application.entity.WikiUserE;
  */
 public interface IWikiUserService {
 
-    Boolean createUser(WikiUserE wikiUserE, String param1, String xmlParam,String username);
+    Boolean createUser(String param1, String xmlParam,String username);
 
     Boolean checkDocExsist(String username,String param1);
 

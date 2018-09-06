@@ -49,7 +49,7 @@ public interface IamServiceClient {
             @PathVariable(name = "project_id") Long sourceId,
             @RequestParam("page") int page,
             @RequestParam("size") int size,
-            @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO);
+            @RequestBody RoleAssignmentSearch roleAssignmentSearch);
 
     @PostMapping(value = "/v1/organizations/{organization_id}/role_members/users")
     public ResponseEntity<Page<UserDO>> pagingQueryUsersByRoleIdOnOrganizationLevel(
@@ -57,5 +57,5 @@ public interface IamServiceClient {
             @PathVariable(name = "organization_id") Long sourceId,
             @RequestParam("page") int page,
             @RequestParam("size") int size,
-            @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO);
+            @RequestBody RoleAssignmentSearch roleAssignmentSearch);
 }

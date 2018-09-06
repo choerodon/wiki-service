@@ -4,7 +4,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.core.convertor.ConvertorI;
-import io.choerodon.wiki.api.dto.WikiUserDTO;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.infra.dataobject.iam.UserDO;
@@ -14,7 +13,7 @@ import io.choerodon.wiki.infra.dataobject.iam.UserDO;
  * @data 2018/7/10
  */
 @Component
-public class UserConverter implements ConvertorI<UserE, UserDO, WikiUserDTO> {
+public class UserConverter implements ConvertorI<UserE, UserDO, Object> {
 
     @Override
     public UserE doToEntity(UserDO dataObject) {

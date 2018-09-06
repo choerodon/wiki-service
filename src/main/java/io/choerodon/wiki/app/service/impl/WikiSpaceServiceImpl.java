@@ -29,9 +29,9 @@ import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.GetUserNameUtil;
-import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
@@ -400,6 +400,11 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setPath(path + "/" + orgUnderName);
         wikiSpaceE.setName(orgUnderName);
         WikiSpaceE orgUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
+        this.createOrgUnderSpace(path, orgUnderName, orgUnderSpace, username);
+    }
+
+    @Async
+    private void createOrgUnderSpace(String path,String orgUnderName,WikiSpaceE orgUnderSpace,String username){
         wikiSpaceAsynService.createOrgUnderSpace(path, orgUnderName, orgUnderSpace, username);
     }
 
@@ -412,6 +417,15 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceE.setPath(path + "/" + projectUnderName);
         wikiSpaceE.setName(projectUnderName);
         WikiSpaceE projectUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
-        wikiSpaceAsynService.createProjectUnderSpace(param[0], param[1], projectUnderName, projectUnderSpace, username);
+        this.createProjectUnderSpace(param[0], param[1], projectUnderName, projectUnderSpace, username);
+    }
+
+    @Async
+    private void createProjectUnderSpace(String param1,
+                                         String param2,
+                                         String projectUnderName,
+                                         WikiSpaceE projectUnderSpace,
+                                         String username) {
+        wikiSpaceAsynService.createProjectUnderSpace(param1, param2, projectUnderName, projectUnderSpace, username);
     }
 }

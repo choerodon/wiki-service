@@ -26,8 +26,8 @@ import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.service.IWikiClassService;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiUserService;
-import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.BaseStage;
+import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.enums.OrganizationSpaceType;
 
 /**
@@ -94,7 +94,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 }
             }
         } catch (InterruptedException e) {
-            throw new CommonException("error.interrupt", e);
+            Thread.currentThread().interrupt();
+            throw new CommonException("error.interrupted.exception", e);
         }
 
         return true;
@@ -119,7 +120,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         wikiUserE.setPhone(user.getPhone());
                         String xmlParam = getUserXml(wikiUserE);
                         if (!checkDocExsist(username, user.getLoginName())) {
-                            iWikiUserService.createUser(wikiUserE, user.getLoginName(), xmlParam, username);
+                            iWikiUserService.createUser(user.getLoginName(), xmlParam, username);
                         }
 
                         iWikiGroupService.createGroupUsers(groupName, user.getLoginName(), username);
@@ -166,7 +167,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                             wikiUserE.setEmail(user.getEmail());
 
                             String xmlParam = getUserXml(wikiUserE);
-                            iWikiUserService.createUser(wikiUserE, loginName, xmlParam, username);
+                            iWikiUserService.createUser(loginName, xmlParam, username);
                         }
 
                         //通过groupName给组添加成员
@@ -178,8 +179,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void disableOrganizationGroup(Long orgId, String username) {
         OrganizationE organization = iamRepository.queryOrganizationById(orgId);
-        LOGGER.info("disable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
         if (organization != null) {
+            LOGGER.info("disable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
             iWikiGroupService.disableOrgGroupView(organization.getCode(), organization.getName(), username);
         } else {
             throw new CommonException("error.query.organization");
@@ -189,8 +190,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void enableOrganizationGroup(Long orgId, String username) {
         OrganizationE organization = iamRepository.queryOrganizationById(orgId);
-        LOGGER.info("enable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
         if (organization != null) {
+            LOGGER.info("enable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
             List<Integer> list = getGlobalRightsObjectNumber(BaseStage.O + organization.getName(), null, username);
             for (Integer i : list) {
                 //删除角色
@@ -204,8 +205,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void disableProjectGroup(Long projectId, String username) {
         ProjectE projectE = iamRepository.queryIamProject(projectId);
-        LOGGER.info("disable project group,projectId: {} and project: {} ", projectId, projectE.toString());
         if (projectE != null) {
+            LOGGER.info("disable project group,projectId: {} and project: {} ", projectId, projectE.toString());
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
             iWikiGroupService.disableProjectGroupView(projectE.getName(), projectE.getCode(), organization.getName(), organization.getCode(), username);
@@ -217,8 +218,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void enableProjectGroup(Long projectId, String username) {
         ProjectE projectE = iamRepository.queryIamProject(projectId);
-        LOGGER.info("enable project group,projectId: {} and project: {} ", projectId, projectE.toString());
         if (projectE != null) {
+            LOGGER.info("enable project group,projectId: {} and project: {} ", projectId, projectE.toString());
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
             if (organization != null) {
@@ -248,7 +249,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 wikiUserE.setEmail(userE.getEmail());
                 wikiUserE.setPhone(userE.getPhone());
 
-                iWikiUserService.createUser(wikiUserE, loginName, getUserXml(wikiUserE), username);
+                iWikiUserService.createUser(loginName, getUserXml(wikiUserE), username);
             }
             iWikiGroupService.createGroupUsers(groupName, loginName, username);
         } else {

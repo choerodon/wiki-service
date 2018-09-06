@@ -41,7 +41,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     }
 
     @Override
-    public Boolean createUser(WikiUserE wikiUserE, String param1, String xmlParam, String username) {
+    public Boolean createUser(String param1, String xmlParam, String username) {
         LOGGER.info("create wiki user: {}", param1);
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);

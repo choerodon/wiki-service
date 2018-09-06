@@ -68,9 +68,9 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         if (organizationE != null) {
             List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
                     organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
-            LOGGER.info("wikiSpaceEList size :{}", wikiSpaceEList.size());
-            if (!wikiSpaceEList.isEmpty() && wikiSpaceEList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
-                if (organizationE.getProjectCount() > 0) {
+            if (wikiSpaceEList != null && !wikiSpaceEList.isEmpty()) {
+                if (wikiSpaceEList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus()) &&
+                        organizationE.getProjectCount() > 0) {
                     setProject(organizationE);
                 }
             } else {
@@ -219,6 +219,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     public void setProject(OrganizationE organizationE) {
+        LOGGER.info("start sync project, organizationE: {}", organizationE.toString());
         List<ProjectE> projectEList = new ArrayList<>();
         Page<ProjectE> projectEPage = iamRepository.pageByProject(organizationE.getId(), 0, 400);
         int projectPage = projectEPage.getTotalPages();
