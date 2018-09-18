@@ -27,4 +27,6 @@ public interface WikiSpaceRepository {
     WikiSpaceE update(WikiSpaceE wikiSpaceE);
 
     List<WikiSpaceE> getWikiSpaceByType(String resourceType);
+
+    WikiSpaceE selectOne(Long resourceId, String name, String type);
 }
