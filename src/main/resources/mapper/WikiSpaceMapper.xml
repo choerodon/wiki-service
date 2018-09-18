@@ -13,19 +13,19 @@
             <if test='searchParam.icon != null and searchParam.icon.size > 0'>
                 AND
                 <foreach collection="searchParam.icon" item="icon" open="(" separator=" OR " close=")">
-                    ws.icon LIKE CONCAT(CONCAT('%', #{icon, jdbcType=VARCHAR}),'%')
+                    ws.icon LIKE concat(concat('%', #{icon, jdbcType=VARCHAR}),'%')
                 </foreach>
             </if>
             <if test='searchParam.name != null and searchParam.name.size > 0'>
                 AND
                 <foreach collection="searchParam.name" item="name" open="(" separator=" OR " close=")">
-                    ws.name LIKE CONCAT(CONCAT('%', #{name, jdbcType=VARCHAR}),'%')
+                    ws.name LIKE concat(concat('%', #{name, jdbcType=VARCHAR}),'%')
                 </foreach>
             </if>
         </if>
         <if test='param != null and param != ""'>
-            AND (ws.icon LIKE CONCAT(CONCAT('%', #{param, jdbcType=VARCHAR}),'%')
-            OR ws.name LIKE CONCAT(CONCAT('%', #{param, jdbcType=VARCHAR}),'%'))
+            AND (ws.icon LIKE concat(concat('%', #{param, jdbcType=VARCHAR}),'%')
+            OR ws.name LIKE concat(concat('%', #{param, jdbcType=VARCHAR}),'%'))
         </if>
     </select>
 
@@ -37,8 +37,8 @@
         WHERE
             ws.resource_id = #{resourceId}
         AND ws.resource_type = #{type}
-        AND ws.`name` = #{name}
-        AND ws.`status` != 'deleted'
+        AND ws.name = #{name}
+        AND ws.status != 'deleted'
     </select>
 
 </mapper>

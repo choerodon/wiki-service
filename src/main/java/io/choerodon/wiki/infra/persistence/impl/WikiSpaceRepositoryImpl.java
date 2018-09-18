@@ -126,4 +126,13 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
         wikiSpaceDO.setResourceType(resourceType);
         return ConvertHelper.convertList(wikiSpaceMapper.select(wikiSpaceDO), WikiSpaceE.class);
     }
+
+    @Override
+    public WikiSpaceE selectOne(Long resourceId, String name, String type) {
+        WikiSpaceDO wikiSpaceDO = new WikiSpaceDO();
+        wikiSpaceDO.setResourceId(resourceId);
+        wikiSpaceDO.setResourceType(type);
+        wikiSpaceDO.setName(name);
+        return ConvertHelper.convert(wikiSpaceMapper.selectOne(wikiSpaceDO), WikiSpaceE.class);
+    }
 }
