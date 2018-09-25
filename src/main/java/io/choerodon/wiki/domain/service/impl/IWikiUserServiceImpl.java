@@ -14,7 +14,6 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.wiki.domain.application.entity.WikiUserE;
 import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.exception.NetworkRequestStatusCodeException;
@@ -61,21 +60,21 @@ public class IWikiUserServiceImpl implements IWikiUserService {
 
     @Override
     public Boolean checkDocExsist(String username, String param1) {
-        LOGGER.info("check that the document: {}", param1);
+        LOGGER.info("Check if the page exists in the wiki: {}", param1);
         Call<ResponseBody> call = wikiClient.checkDocExsist(username,
                 client, param1);
         try {
             Response response = call.execute();
-            LOGGER.info("check that the document exists return code: {}", response.code());
+            LOGGER.info("Check if the page exists in the wiki return code: {}", response.code());
             if (response.code() == BaseStage.OK) {
                 return true;
             } else if (response.code() == BaseStage.NOT_FOUND) {
                 return false;
             } else {
-                throw new NetworkRequestStatusCodeException("error get user return code: " + response.code());
+                throw new NetworkRequestStatusCodeException("Check that the page has returned error code in the wiki: " + response.code());
             }
         } catch (IOException e) {
-            throw new CommonException("error.get.user", e);
+            throw new CommonException("error.wiki.page.check", e);
         }
     }
 
@@ -103,6 +102,6 @@ public class IWikiUserServiceImpl implements IWikiUserService {
         FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + param1).build();
         Call<ResponseBody> addGroupCall = wikiClient.createGroupUsers(username, client, defaultGroup, body);
         Response addGroupResponse = addGroupCall.execute();
-        return addGroupResponse.code() == 201;
+        return addGroupResponse.code() == BaseStage.CREATED;
     }
 }

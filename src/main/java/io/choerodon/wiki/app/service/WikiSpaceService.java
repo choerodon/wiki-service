@@ -11,7 +11,7 @@ import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
  */
 public interface WikiSpaceService {
 
-    void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId,String username, String type);
+    void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId,String username, String type, Boolean flag);
 
     Page<WikiSpaceListTreeDTO> listTreeWikiSpaceByPage(Long resourceId, String type,
                                                        PageRequest pageRequest, String searchParam);
@@ -21,6 +21,10 @@ public interface WikiSpaceService {
     WikiSpaceResponseDTO update(Long id,WikiSpaceDTO wikiSpaceDTO,String username);
 
     Boolean checkName(Long resourceId,String name,String type);
+
+    void syncOrg(Long id);
+
+    void syncProject(Long id);
 
     void delete(Long resourceId,Long id);
 }

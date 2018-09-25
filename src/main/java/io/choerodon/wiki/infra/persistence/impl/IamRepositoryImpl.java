@@ -111,13 +111,13 @@ public class IamRepositoryImpl implements IamRepository {
         roleSearchDO.setCode(code);
         ResponseEntity<Page<RoleDO>> responseEntity = iamServiceClient.roleList(roleSearchDO);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-            throw new CommonException("error.organization.get");
+            throw new CommonException("error.role.get");
         }
         Page<RoleDO> roleDOPage = responseEntity.getBody();
         if (roleDOPage != null && !roleDOPage.isEmpty()) {
             return ConvertPageHelper.convertPage(roleDOPage, RoleE.class);
         } else {
-            throw new CommonException("error.organization.get");
+            throw new CommonException("error.role.get");
         }
     }
 

@@ -26,14 +26,14 @@ public class WikiScanningController {
     }
 
     /**
-     * 扫描组织和项目
+     * 同步组织和项目
      *
      * @return DevopsServiceDTO
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
-    @ApiOperation(value = "扫描组织和项目")
+    @ApiOperation(value = "同步组织和项目")
     @GetMapping(value = "/scan")
     public ResponseEntity query() {
         wikiScanningService.scanning();
@@ -49,11 +49,45 @@ public class WikiScanningController {
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
-    @ApiOperation(value = "同步指定组织和项目组织和项目")
-    @GetMapping("/organizations/{organization_id}/spaces/sync_org")
+    @ApiOperation(value = "同步指定组织和项目")
+    @GetMapping("/organizations/{organization_id}/space/sync")
+    public ResponseEntity syncOrgAndProject(@ApiParam(value = "组织ID", required = true)
+                                            @PathVariable(value = "organization_id") Long organizationId) {
+        wikiScanningService.syncOrgAndProject(organizationId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /**
+     * 同步指定组织
+     *
+     * @param organizationId 组织id
+     * @return ResponseEntity
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION,
+            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
+                    BaseStage.ORGANIZATION_MEMBER})
+    @ApiOperation(value = "同步指定组织")
+    @GetMapping("/organizations/{organization_id}/space/sync_org")
     public ResponseEntity syncOrg(@ApiParam(value = "组织ID", required = true)
                                   @PathVariable(value = "organization_id") Long organizationId) {
         wikiScanningService.syncOrg(organizationId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /**
+     * 同步指定项目
+     *
+     * @param projectId 项目id
+     * @return ResponseEntity
+     */
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
+    @ApiOperation(value = "同步指定项目")
+    @GetMapping("/projects/{project_id}/space/sync_project")
+    public ResponseEntity syncProject(@ApiParam(value = "项目ID", required = true)
+                                      @PathVariable(value = "project_id") Long projectId) {
+        wikiScanningService.syncProject(projectId);
         return new ResponseEntity(HttpStatus.OK);
     }
 

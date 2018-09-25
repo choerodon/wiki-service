@@ -57,17 +57,18 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
     @Override
     public WikiSpaceE insertIfNotExist(WikiSpaceE wikiSpaceE) {
         WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
-        WikiSpaceDO wikiSpaceDOCheck = new WikiSpaceDO();
-        wikiSpaceDOCheck.setResourceId(wikiSpaceDO.getResourceId());
-        wikiSpaceDOCheck.setResourceType(wikiSpaceDO.getResourceType());
-        WikiSpaceDO wikiSpaceDOCheck2 = wikiSpaceMapper.selectOne(wikiSpaceDOCheck);
+        WikiSpaceDO wikiSpaceDOCheck2 = wikiSpaceMapper.selectOne(wikiSpaceDO);
         if (wikiSpaceDOCheck2 != null) {
+            if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDOCheck2) != 1) {
+                throw new CommonException("error.space.update");
+            }
             return ConvertHelper.convert(wikiSpaceDOCheck2, WikiSpaceE.class);
+        } else {
+            if (wikiSpaceMapper.insert(wikiSpaceDO) != 1) {
+                throw new CommonException("error.space.insert");
+            }
+            return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
         }
-        if (wikiSpaceMapper.insert(wikiSpaceDO) != 1) {
-            throw new CommonException("error.space.insert");
-        }
-        return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
     }
 
     @Override
