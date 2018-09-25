@@ -61,7 +61,7 @@ public class WikiEventHandler {
         wikiSpaceDTO.setName(organizationEventPayload.getName());
         wikiSpaceDTO.setIcon(ORG_ICON);
         wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), BaseStage.USERNAME,
-                WikiSpaceResourceType.ORGANIZATION.getResourceType());
+                WikiSpaceResourceType.ORGANIZATION.getResourceType(), true);
 
         String adminGroupName = BaseStage.O + organizationEventPayload.getCode() + BaseStage.ADMIN_GROUP;
         String userGroupName = BaseStage.O + organizationEventPayload.getCode() + BaseStage.USER_GROUP;
@@ -96,7 +96,7 @@ public class WikiEventHandler {
         wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
         wikiSpaceDTO.setIcon(PROJECT_ICON);
         wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(), BaseStage.USERNAME,
-                WikiSpaceResourceType.PROJECT.getResourceType());
+                WikiSpaceResourceType.PROJECT.getResourceType(), true);
         //创建组
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
         String adminGroupName = BaseStage.P + projectEvent.getOrganizationCode() + BaseStage.LINE + projectEvent.getProjectCode() + BaseStage.ADMIN_GROUP;

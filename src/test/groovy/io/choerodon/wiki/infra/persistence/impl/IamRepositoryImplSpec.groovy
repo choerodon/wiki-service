@@ -202,7 +202,7 @@ class IamRepositoryImplSpec extends Specification {
         then:
         1 * iamServiceClient.roleList(_) >> responseEntity
         def e = thrown(CommonException)
-        e.message == "error.organization.get"
+        e.message == "error.role.get"
     }
 
     def "roleListFailedGet2"() {
@@ -213,7 +213,7 @@ class IamRepositoryImplSpec extends Specification {
         then:
         1 * iamServiceClient.roleList(_) >> responseEntity
         def e = thrown(CommonException)
-        e.message == "error.organization.get"
+        e.message == "error.role.get"
     }
 
     def "pagingQueryUsersByRoleIdOnProjectLevelFailed"() {

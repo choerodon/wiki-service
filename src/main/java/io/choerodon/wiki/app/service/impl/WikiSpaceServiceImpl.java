@@ -68,8 +68,10 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String username, String type) {
-        checkName(resourceId, wikiSpaceDTO.getName(), type);
+    public void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String username, String type, Boolean flag) {
+        if (flag) {
+            checkName(resourceId, wikiSpaceDTO.getName(), type);
+        }
         String path = getPath(resourceId, type);
 
         WikiSpaceE wikiSpaceE = new WikiSpaceE();
@@ -179,9 +181,52 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                 }
                 return ConvertHelper.convert(wikiSpaceRepository.update(wikiSpaceE), WikiSpaceResponseDTO.class);
             }
+        } else {
+            throw new CommonException("error.space.update");
         }
 
         return ConvertHelper.convert(wikiSpaceE, WikiSpaceResponseDTO.class);
+    }
+
+    @Override
+    public void syncOrg(Long id) {
+        WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
+        LOGGER.info("start sync the spaces under the organization,query wikiSpace:{} by id:{}", wikiSpaceE, id);
+        if (wikiSpaceE != null && wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.ORGANIZATION_S.getResourceType())) {
+            if (wikiSpaceE.getStatus().equals(SpaceStatus.FAILED.getSpaceStatus())) {
+                wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
+                wikiSpaceE = wikiSpaceRepository.update(wikiSpaceE);
+                this.createOrgUnderSpace(wikiSpaceE.getPath().split("/")[0],
+                        wikiSpaceE.getPath().split("/")[1],
+                        wikiSpaceE,
+                        BaseStage.USERNAME);
+            } else {
+                throw new CommonException("error.space.status");
+            }
+        } else {
+            throw new CommonException("error.under.organization.space.not.sync");
+        }
+    }
+
+    @Override
+    public void syncProject(Long id) {
+        WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
+        LOGGER.info("start sync the spaces under the project,query wikiSpace:{} by id:{}", wikiSpaceE, id);
+        if (wikiSpaceE != null && wikiSpaceE.getResourceType().equals(WikiSpaceResourceType.PROJECT_S.getResourceType())) {
+            if (wikiSpaceE.getStatus().equals(SpaceStatus.FAILED.getSpaceStatus())) {
+                wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
+                wikiSpaceE = wikiSpaceRepository.update(wikiSpaceE);
+                this.createProjectUnderSpace(wikiSpaceE.getPath().split("/")[0],
+                        wikiSpaceE.getPath().split("/")[0],
+                        wikiSpaceE.getPath().split("/")[0],
+                        wikiSpaceE,
+                        BaseStage.USERNAME);
+            } else {
+                throw new CommonException("error.space.status");
+            }
+        } else {
+            throw new CommonException("error.under.project.space.not.sync");
+        }
     }
 
     @Override

@@ -87,17 +87,20 @@ class WikiScanningServiceImplSpec extends Specification {
         userEPage.setTotalPages(2)
         userEPage.setContent(Arrays.asList(userE))
 
+        List<WikiSpaceE> wikiSpaceEList = new ArrayList<>()
+        WikiSpaceE wikiSpaceE = new WikiSpaceE()
+        wikiSpaceE.setId(1)
+        wikiSpaceE.setStatus("failed")
+        wikiSpaceEList.add(wikiSpaceE)
+
         and: 'Mock'
         1 * iamRepository.queryOrganizationById(_) >> organizationE
-        3 * wikiSpaceRepository.getWikiSpaceList(*_) >> null
-        3 * wikiSpaceService.create(*_)
-        6 * wikiGroupService.create(*_)
-        2 * iamRepository.pageByProject(*_) >> projectEPage
-        5 * iamRepository.roleList(*_) >> rolePage
+        1 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceEList
+        1 * wikiSpaceService.create(*_)
+        2 * wikiGroupService.create(*_)
+        1 * iamRepository.roleList(*_) >> rolePage
         2 * iamRepository.pagingQueryUsersByRoleIdOnOrganizationLevel(*_) >> userEPage
-        8 * iamRepository.pagingQueryUsersByRoleIdOnProjectLevel(*_) >> userEPage
-        10 * wikiGroupService.setUserToGroup(*_)
-        2 * wikiGroupService.disableProjectGroup(*_)
+        2 * wikiGroupService.setUserToGroup(*_)
         1 * wikiGroupService.disableOrganizationGroup(*_)
 
         when: '模拟发送消息'
@@ -129,8 +132,7 @@ class WikiScanningServiceImplSpec extends Specification {
 
         and: 'Mock'
         2 * iamRepository.pageByOrganization(*_) >> pageByOrganization
-        4 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceEList
-        2 * iamRepository.pageByProject(*_) >> page
+        2 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceEList
 
         when: '模拟发送消息'
         service.scanning()

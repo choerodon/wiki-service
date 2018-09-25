@@ -40,7 +40,7 @@ public class WikiOrganizationSpaceController {
      *
      * @param organizationId 组织ID
      * @param name           空间名
-     * @return
+     * @return Boolean
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
@@ -64,7 +64,7 @@ public class WikiOrganizationSpaceController {
      *
      * @param organizationId 组织id
      * @param wikiSpaceDTO   空间信息
-     * @return responseEntity
+     * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
@@ -79,7 +79,7 @@ public class WikiOrganizationSpaceController {
         wikiSpaceService.create(wikiSpaceDTO,
                 organizationId,
                 BaseStage.USERNAME,
-                WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+                WikiSpaceResourceType.ORGANIZATION_S.getResourceType(), true);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -117,7 +117,7 @@ public class WikiOrganizationSpaceController {
      *
      * @param organizationId 组织id
      * @param id             空间id
-     * @return DevopsServiceDTO
+     * @return WikiSpaceResponseDTO
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
@@ -138,7 +138,7 @@ public class WikiOrganizationSpaceController {
      * @param organizationId 组织id
      * @param id             空间id
      * @param wikiSpaceDTO   空间信息
-     * @return Boolean
+     * @return WikiSpaceResponseDTO
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
@@ -156,6 +156,27 @@ public class WikiOrganizationSpaceController {
                 wikiSpaceDTO,
                 BaseStage.USERNAME),
                 HttpStatus.CREATED);
+    }
+
+    /**
+     * 同步组织下的单个空间
+     *
+     * @param organizationId 组织id
+     * @param id 空间id
+     * @return ResponseEntity
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION,
+            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
+                    BaseStage.ORGANIZATION_MEMBER})
+    @ApiOperation(value = "同步组织下的单个空间")
+    @PutMapping(value = "/sync/{id}")
+    public ResponseEntity sync(
+            @ApiParam(value = "组织ID", required = true)
+            @PathVariable(value = "organization_id") Long organizationId,
+            @ApiParam(value = "空间ID", required = true)
+            @PathVariable Long id) {
+        wikiSpaceService.syncOrg(id);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     /**

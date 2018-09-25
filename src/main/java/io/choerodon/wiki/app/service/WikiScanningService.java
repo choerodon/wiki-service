@@ -5,9 +5,13 @@ package io.choerodon.wiki.app.service;
  */
 public interface WikiScanningService {
 
-    void syncOrg(Long orgId);
+    void syncOrgAndProject(Long orgId);
 
     void scanning();
 
     void updateWikiPage();
+
+    void syncOrg(Long organizationId);
+
+    void syncProject(Long projectId);
 }

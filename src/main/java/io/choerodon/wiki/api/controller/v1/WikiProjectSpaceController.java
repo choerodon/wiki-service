@@ -40,7 +40,7 @@ public class WikiProjectSpaceController {
      *
      * @param projectId 项目ID
      * @param name      空间名
-     * @return
+     * @return Boolean
      */
     @Permission(level = ResourceLevel.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
@@ -64,7 +64,7 @@ public class WikiProjectSpaceController {
      *
      * @param projectId    组织id
      * @param wikiSpaceDTO 空间信息
-     * @return responseEntity
+     * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
@@ -79,7 +79,7 @@ public class WikiProjectSpaceController {
         wikiSpaceService.create(wikiSpaceDTO,
                 projectId,
                 BaseStage.USERNAME,
-                WikiSpaceResourceType.PROJECT_S.getResourceType());
+                WikiSpaceResourceType.PROJECT_S.getResourceType(), true);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -117,7 +117,7 @@ public class WikiProjectSpaceController {
      *
      * @param projectId 组织id
      * @param id        空间id
-     * @return DevopsServiceDTO
+     * @return WikiSpaceResponseDTO
      */
     @Permission(level = ResourceLevel.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
@@ -138,14 +138,14 @@ public class WikiProjectSpaceController {
      * @param projectId    项目id
      * @param id           空间id
      * @param wikiSpaceDTO 空间信息
-     * @return Boolean
+     * @return WikiSpaceResponseDTO
      */
     @Permission(level = ResourceLevel.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "更新项目下单个空间")
     @PutMapping(value = "/{id}")
-    public ResponseEntity<WikiSpaceResponseDTO> update(@ApiParam(value = "组织ID", required = true)
+    public ResponseEntity<WikiSpaceResponseDTO> update(@ApiParam(value = "项目ID", required = true)
                                                        @PathVariable(value = "project_id") Long projectId,
                                                        @ApiParam(value = "空间ID", required = true)
                                                        @PathVariable Long id,
@@ -159,6 +159,27 @@ public class WikiProjectSpaceController {
     }
 
     /**
+     * 同步项目下的单个空间
+     *
+     * @param projectId 项目id
+     * @param id 空间id
+     * @return ResponseEntity
+     */
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
+    @ApiOperation(value = "同步项目下的单个空间")
+    @PutMapping(value = "/sync/{id}")
+    public ResponseEntity sync(
+            @ApiParam(value = "项目ID", required = true)
+            @PathVariable(value = "project_id") Long projectId,
+            @ApiParam(value = "空间ID", required = true)
+            @PathVariable Long id) {
+        wikiSpaceService.syncProject(id);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    /**
      * 删除项目下的空间
      *
      * @param projectId 项目id
@@ -168,7 +189,7 @@ public class WikiProjectSpaceController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
     @ApiOperation(value = "删除项目下的空间")
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity delete(@ApiParam(value = "组织ID", required = true)
+    public ResponseEntity delete(@ApiParam(value = "项目ID", required = true)
                                  @PathVariable(value = "project_id") Long projectId,
                                  @ApiParam(value = "空间ID", required = true)
                                  @PathVariable Long id) {
