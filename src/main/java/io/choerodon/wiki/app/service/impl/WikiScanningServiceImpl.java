@@ -100,8 +100,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     @Async("org-pro-sync")
     public void syncOrgAndProject(Long orgId) {
         OrganizationE organizationE = iamRepository.queryOrganizationById(orgId);
-        LOGGER.info("sync organization,orgId: {} and organization: {} ", orgId, organizationE.toString());
         if (organizationE != null) {
+            LOGGER.info("sync organization,orgId: {} and organization: {} ", orgId, organizationE.toString());
             List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
                     organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
             if (wikiSpaceEList != null && !wikiSpaceEList.isEmpty()) {
@@ -124,8 +124,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     @Override
     public void syncOrg(Long organizationId) {
         OrganizationE organizationE = iamRepository.queryOrganizationById(organizationId);
-        LOGGER.info("only sync organization space,orgId: {} and organization: {} ", organizationId, organizationE.toString());
         if (organizationE != null) {
+            LOGGER.info("only sync organization space,orgId: {} and organization: {} ", organizationId, organizationE.toString());
             List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(
                     organizationE.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
             if (wikiSpaceEList != null && !wikiSpaceEList.isEmpty() &&
