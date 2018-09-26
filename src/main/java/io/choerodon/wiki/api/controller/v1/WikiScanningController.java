@@ -35,7 +35,7 @@ public class WikiScanningController {
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "同步组织和项目")
     @GetMapping(value = "/scan")
-    public ResponseEntity query() {
+    public ResponseEntity scanning() {
         wikiScanningService.scanning();
         return new ResponseEntity(HttpStatus.OK);
     }
