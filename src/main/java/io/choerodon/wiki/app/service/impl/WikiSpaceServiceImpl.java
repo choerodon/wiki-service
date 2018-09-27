@@ -155,26 +155,26 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                     case ORGANIZATION:
                         InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
                         String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
-                        iWikiSpaceWebHomeService.createSpace1WebHome(path[0], orgXmlParam, username);
+                        iWikiSpaceWebHomeService.createSpace1WebHome(id,path[0], orgXmlParam, username);
                         break;
                     case PROJECT:
                         params.put("{{ SPACE_PARENT }}", path[0]);
                         InputStream projectIs = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                         String projectXmlParam = FileUtil.replaceReturnString(projectIs, params);
-                        iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], projectXmlParam, username);
+                        iWikiSpaceWebHomeService.createSpace2WebHome(id,path[0], path[1], projectXmlParam, username);
                         break;
                     case ORGANIZATION_S:
                         params.put("{{ SPACE_PARENT }}", path[0]);
                         InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                         String xmlParam = FileUtil.replaceReturnString(inputStream, params);
-                        iWikiSpaceWebHomeService.createSpace2WebHome(path[0], path[1], xmlParam, username);
+                        iWikiSpaceWebHomeService.createSpace2WebHome(id,path[0], path[1], xmlParam, username);
                         break;
                     case PROJECT_S:
                         params.put("{{ SPACE_ROOT }}", path[0]);
                         params.put("{{ SPACE_PARENT }}", path[1]);
                         InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
                         String xml = FileUtil.replaceReturnString(is, params);
-                        iWikiSpaceWebHomeService.createSpace3WebHome(path[0], path[1], path[2], xml, username);
+                        iWikiSpaceWebHomeService.createSpace3WebHome(id,path[0], path[1], path[2], xml, username);
                         break;
                     default:
                         break;
@@ -299,12 +299,14 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         LOGGER.info("delete the page under the project,wikiSpaceE:{}", wikiSpaceE.toString());
         String[] param = wikiSpaceE.getPath().split("/");
         int webHome = iWikiSpaceWebHomeService.deletePage2(
+                wikiSpaceE.getId(),
                 param[0],
                 param[1],
                 param[2],
                 BaseStage.WEBHOME,
                 GetUserNameUtil.getUsername());
         iWikiSpaceWebHomeService.deletePage2(
+                wikiSpaceE.getId(),
                 param[0],
                 param[1],
                 param[2],
@@ -318,11 +320,13 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         LOGGER.info("delete the page under the organization,wikiSpaceE:{}", wikiSpaceE.toString());
         String[] param = wikiSpaceE.getPath().split("/");
         int webHome = iWikiSpaceWebHomeService.deletePage1(
+                wikiSpaceE.getId(),
                 param[0],
                 param[1],
                 BaseStage.WEBHOME,
                 GetUserNameUtil.getUsername());
         iWikiSpaceWebHomeService.deletePage1(
+                wikiSpaceE.getId(),
                 param[0],
                 param[1],
                 BaseStage.WEBPREFERENCES,
@@ -336,18 +340,22 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         String adminGroupName = BaseStage.O + organization.getCode() + BaseStage.ADMIN_GROUP;
         String userGroupName = BaseStage.O + organization.getCode() + BaseStage.USER_GROUP;
         iWikiSpaceWebHomeService.deletePage(
+                id,
                 BaseStage.SPACE,
                 adminGroupName,
                 GetUserNameUtil.getUsername());
         iWikiSpaceWebHomeService.deletePage(
+                id,
                 BaseStage.SPACE,
                 userGroupName,
                 GetUserNameUtil.getUsername());
         int webHome = iWikiSpaceWebHomeService.deletePage(
+                id,
                 BaseStage.O + organization.getName(),
                 BaseStage.WEBHOME,
                 GetUserNameUtil.getUsername());
         iWikiSpaceWebHomeService.deletePage(
+                id,
                 BaseStage.O + organization.getName(),
                 BaseStage.WEBPREFERENCES,
                 GetUserNameUtil.getUsername());
@@ -363,19 +371,23 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             String adminGroupName = BaseStage.P + organization.getCode() + BaseStage.LINE + projectE.getCode() + BaseStage.ADMIN_GROUP;
             String userGroupName = BaseStage.P + organization.getCode() + BaseStage.LINE + projectE.getCode() + BaseStage.USER_GROUP;
             iWikiSpaceWebHomeService.deletePage(
+                    id,
                     BaseStage.SPACE,
                     adminGroupName,
                     GetUserNameUtil.getUsername());
             iWikiSpaceWebHomeService.deletePage(
+                    id,
                     BaseStage.SPACE,
                     userGroupName,
                     GetUserNameUtil.getUsername());
             int webHome = iWikiSpaceWebHomeService.deletePage1(
+                    id,
                     BaseStage.O + organization.getName(),
                     BaseStage.P + projectE.getName(),
                     BaseStage.WEBHOME,
                     GetUserNameUtil.getUsername());
             iWikiSpaceWebHomeService.deletePage1(
+                    id,
                     BaseStage.O + organization.getName(),
                     BaseStage.P + projectE.getName(),
                     BaseStage.WEBPREFERENCES,
