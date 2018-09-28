@@ -1,5 +1,6 @@
 package io.choerodon.wiki.domain.service.impl
 
+import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository
 import io.choerodon.wiki.infra.feign.WikiClient
 import okhttp3.Headers
 import okhttp3.Request
@@ -18,16 +19,18 @@ import spock.lang.Specification
 class IWikiSpaceWebHomeServiceImplSpec extends Specification {
 
     WikiClient wikiClient
+    WikiSpaceRepository wikiSpaceRepository
     IWikiSpaceWebHomeServiceImpl service
 
     void setup() {
         wikiClient = Mock(WikiClient)
-        service = new IWikiSpaceWebHomeServiceImpl(wikiClient)
+        wikiSpaceRepository = Mock(WikiSpaceRepository)
+        service = new IWikiSpaceWebHomeServiceImpl(wikiClient,wikiSpaceRepository)
     }
 
     def 'createSpace1WebHome'() {
         when: ''
-        service.createSpace1WebHome("1", "2", "3")
+        service.createSpace1WebHome(1, "2", "3","4")
 
         then: ''
         1 * wikiClient.createSpace1WebHome(*_) >> getCall(201)
@@ -35,7 +38,7 @@ class IWikiSpaceWebHomeServiceImplSpec extends Specification {
 
     def 'createSpace2WebHome'() {
         when: ''
-        service.createSpace2WebHome("1", "2", "3", "4")
+        service.createSpace2WebHome(1, "2", "3", "4","5")
 
         then: ''
         1 * wikiClient.createSpace2WebHome(*_) >> getCall(201)
@@ -43,7 +46,7 @@ class IWikiSpaceWebHomeServiceImplSpec extends Specification {
 
     def 'createSpace3WebHome'() {
         when: ''
-        service.createSpace3WebHome("1", "2", "3", "4", "5")
+        service.createSpace3WebHome(1, "2", "3", "4", "5","6")
 
         then: ''
         1 * wikiClient.createSpace3WebHome(*_) >> getCall(201)
@@ -51,7 +54,7 @@ class IWikiSpaceWebHomeServiceImplSpec extends Specification {
 
     def 'deletePage'() {
         when: ''
-        service.deletePage("1", "2", "3")
+        service.deletePage(1, "2", "3","4")
 
         then: ''
         1 * wikiClient.deletePage(*_) >> getCall(201)
@@ -59,7 +62,7 @@ class IWikiSpaceWebHomeServiceImplSpec extends Specification {
 
     def 'deletePage1'() {
         when: ''
-        service.deletePage1("1", "2", "3", "4")
+        service.deletePage1(1, "2", "3", "4","5")
 
         then: ''
         1 * wikiClient.deletePage1(*_) >> getCall(201)
@@ -67,7 +70,7 @@ class IWikiSpaceWebHomeServiceImplSpec extends Specification {
 
     def 'deletePage2'() {
         when: ''
-        service.deletePage2("1", "2", "3", "4", "5")
+        service.deletePage2(1, "2", "3", "4", "5","6")
 
         then: ''
         1 * wikiClient.deletePage2(*_) >> getCall(201)

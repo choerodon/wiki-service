@@ -156,8 +156,8 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(list, HttpStatus.OK)
 
         and: 'Mock'
-        1 * iWikiSpaceWebHomeService.createSpace1WebHome(_, _, _) >> 201
-        1 * iWikiSpaceWebPreferencesService.createSpace1WebPreferences(_, _, _) >> 201
+        1 * iWikiSpaceWebHomeService.createSpace1WebHome(*_) >> 201
+        1 * iWikiSpaceWebPreferencesService.createSpace1WebPreferences(*_) >> 201
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
         2 * iWikiGroupService.createGroup(_, _)
         2 * iWikiGroupService.addRightsToOrg(_, _, _, _)
