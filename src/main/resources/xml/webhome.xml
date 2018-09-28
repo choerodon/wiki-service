@@ -637,21 +637,15 @@
                 <attribute name="number" value="3"/>
                 <attribute name="values" value="currentPage|onDemand|always"/>
                 <attribute name="allowedValues" value="currentPage,onDemand,always"/>
-<value>currentPage</value>
-</property></objectSummary>
-
-
-<objectSummary
-xsi:type="Object"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <value>currentPage</value>
+            </property></objectSummary>
+        <objectSummary xsi:type="Object"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.UIExtensionClass</className>
             <number>0</number>
             <headline></headline>
             <property name="content" type="TextArea">
-                <attribute name="name" value="content"/>
-
-
-<attribute name="prettyName"
-value="Extension Content"/>
+            <attribute name="name" value="content"/>
+            <attribute name="prettyName" value="Extension Content"/>
                 <attribute name="unmodifiable" value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="size" value="40"/>

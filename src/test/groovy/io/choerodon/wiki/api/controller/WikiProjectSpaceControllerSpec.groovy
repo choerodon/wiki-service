@@ -211,8 +211,8 @@ class WikiProjectSpaceControllerSpec extends Specification {
         wikiSpaceDTO.setName(spaceName)
 
         and: 'Mock'
-        1 * iWikiSpaceWebHomeService.createSpace3WebHome(_, _, _, _, _) >> 201
-        1 * iWikiSpaceWebPreferencesService.createSpace3WebPreferences(_, _, _, _, _) >> 201
+        1 * iWikiSpaceWebHomeService.createSpace3WebHome(*_) >> 201
+        1 * iWikiSpaceWebPreferencesService.createSpace3WebPreferences(*_) >> 201
 
         when: '向接口发请求'
         def entity = restTemplate.postForEntity(path, wikiSpaceDTO, null, projectId)
