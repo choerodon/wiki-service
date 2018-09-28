@@ -42,9 +42,7 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     @Override
     public int createSpace1WebHome(Long spaceId,String param1, String xmlParam, String username) {
         LOGGER.info("create webhome,path: {}", param1);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("create webhome request xml: {}", xmlParam);
-        }
+        LOGGER.info("create webhome request xml: {}", xmlParam);
         Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);
