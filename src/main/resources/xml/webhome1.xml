@@ -643,7 +643,9 @@
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.UIExtensionClass</className>
             <number>0</number>
-            <headline></headline>
+
+            
+<headline></headline>
             <property name="content" type="TextArea">
                 <attribute name="name" value="content"/>
                 <attribute name="prettyName" value="Extension Content"/>
