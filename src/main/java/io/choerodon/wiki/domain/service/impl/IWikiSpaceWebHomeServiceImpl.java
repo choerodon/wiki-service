@@ -40,7 +40,7 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int createSpace1WebHome(Long spaceId,String param1, String xmlParam, String username) {
+    public int createSpace1WebHome(Long spaceId, String param1, String xmlParam, String username) {
         LOGGER.info("create webhome,path: {}", param1);
         LOGGER.info("create webhome request xml: {}", xmlParam);
         Response<ResponseBody> response;
@@ -58,11 +58,9 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int createSpace2WebHome(Long spaceId,String param1, String param2, String xmlParam, String username) {
+    public int createSpace2WebHome(Long spaceId, String param1, String param2, String xmlParam, String username) {
         LOGGER.info("create webhome,path: {}/{}", param1, param2);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("create webhome request xml: {}", xmlParam);
-        }
+        LOGGER.info("create webhome request xml: {}", xmlParam);
         Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);
@@ -78,11 +76,9 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int createSpace3WebHome(Long spaceId,String param1, String param2, String param3, String xmlParam, String username) {
+    public int createSpace3WebHome(Long spaceId, String param1, String param2, String param3, String xmlParam, String username) {
         LOGGER.info("create webhome,path: {}/{}/{}", param1, param2, param3);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("create webhome request xml: {}", xmlParam);
-        }
+        LOGGER.info("create webhome request xml: {}", xmlParam);
         Response<ResponseBody> response;
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);
@@ -98,7 +94,7 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int deletePage(Long spaceId,String param1, String page, String username) {
+    public int deletePage(Long spaceId, String param1, String page, String username) {
         LOGGER.info("delete page,path: {} and page: {}", param1, page);
         Response<ResponseBody> response;
         try {
@@ -114,7 +110,7 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int deletePage1(Long spaceId,String param1, String param2, String page, String username) {
+    public int deletePage1(Long spaceId, String param1, String param2, String page, String username) {
         LOGGER.info("delete page,path: {}/{} and page: {}", param1, param2, page);
         Response<ResponseBody> response;
         try {
@@ -130,7 +126,7 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     }
 
     @Override
-    public int deletePage2(Long spaceId,String param1, String param2, String param3, String page, String username) {
+    public int deletePage2(Long spaceId, String param1, String param2, String param3, String page, String username) {
         LOGGER.info("delete page,path: {}/{}/{} and page: {}", param1, param2, param3, page);
         Response<ResponseBody> response;
         try {

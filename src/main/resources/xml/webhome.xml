@@ -648,6 +648,8 @@ xsi:type="Object"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <headline></headline>
             <property name="content" type="TextArea">
                 <attribute name="name" value="content"/>
+
+
 <attribute name="prettyName"
 value="Extension Content"/>
                 <attribute name="unmodifiable" value="0"/>
