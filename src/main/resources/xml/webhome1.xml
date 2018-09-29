@@ -645,8 +645,9 @@
 
             
 <headline></headline>
-            <property name="content" type="TextArea">
-                <attribute name="name" value="content"/>
+
+<property name="content" type="TextArea">
+<attribute name="name" value="content"/>
 
 <attribute name="prettyName"
 value="Extension Content"/>
