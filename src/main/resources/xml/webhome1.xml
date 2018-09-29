@@ -647,7 +647,9 @@
 <headline></headline>
             <property name="content" type="TextArea">
                 <attribute name="name" value="content"/>
-                <attribute name="prettyName" value="Extension Content"/>
+
+<attribute name="prettyName"
+value="Extension Content"/>
                 <attribute name="unmodifiable" value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="size" value="40"/>
