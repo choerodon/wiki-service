@@ -540,7 +540,6 @@
                     overflow: hidden;&#13;
                     }&#13;
                     &#13;
-                    //&#13;
                     .activity-icon-add {&#13;
                     background: #1AB16F;&#13;
                     }&#13;
@@ -642,11 +641,14 @@
         <objectSummary xsi:type="Object"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.UIExtensionClass</className>
             <number>0</number>
-            
+
+
 <headline></headline>
 <property name="content" type="TextArea">
             <attribute name="name" value="content"/>
-            <attribute name="prettyName" value="Extension Content"/>
+
+<attribute name="prettyName"
+value="Extension Content"/>
                 <attribute name="unmodifiable" value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="size" value="40"/>
