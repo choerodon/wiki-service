@@ -167,28 +167,28 @@
                     var delete_attachment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
                     var litleIcon = document.getElementsByClassName("activityActionAvatar");&#13;
                     for(var i=0; i&lt;litleIcon.length; i++){&#13;
-                    if(litleIcon[i].alt == "edited the page"){&#13;
+                    if(litleIcon[i].alt == "编辑页面"){&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', edit_doc_icon);&#13;
-                    }else if (litleIcon[i].alt == "created the page") {&#13;
+                    }else if (litleIcon[i].alt == "创建页面") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', create_doc_icon);&#13;
-                    } else if(litleIcon[i].alt == "deleted the page") {&#13;
+                    } else if(litleIcon[i].alt == "删除页面") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', delete_doc_icon);&#13;
-                    } else if (litleIcon[i].alt == "added a comment") {&#13;
+                    } else if (litleIcon[i].alt == "添加评论") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', add_comment_icon);&#13;
-                    } else if (litleIcon[i].alt == "edited a comment") {&#13;
+                    } else if (litleIcon[i].alt == "编辑评论") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', edit_comment_icon);&#13;
-                    } else if (litleIcon[i].alt == "deleted a comment") {&#13;
+                    } else if (litleIcon[i].alt == "删除评论") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', delete_comment_icon);&#13;
-                    } else if (litleIcon[i].alt == "added an attachment") {&#13;
+                    } else if (litleIcon[i].alt == "添加附件") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', add_attachment_icon);&#13;
-                    } else if (litleIcon[i].alt == "deleted an attachment") {&#13;
+                    } else if (litleIcon[i].alt == "删除附件") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', delete_attachment_icon);&#13;
                     }&#13;
@@ -540,7 +540,6 @@
                     overflow: hidden;&#13;
                     }&#13;
                     &#13;
-                    //&#13;
                     .activity-icon-add {&#13;
                     background: #1AB16F;&#13;
                     }&#13;
@@ -642,11 +641,14 @@
         <objectSummary xsi:type="Object"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.UIExtensionClass</className>
             <number>0</number>
-            
+
+
 <headline></headline>
 <property name="content" type="TextArea">
             <attribute name="name" value="content"/>
-            <attribute name="prettyName" value="Extension Content"/>
+
+<attribute name="prettyName"
+value="Extension Content"/>
                 <attribute name="unmodifiable" value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="size" value="40"/>
