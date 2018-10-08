@@ -5,7 +5,7 @@ package io.choerodon.wiki.infra.common;
  */
 public abstract class BaseStage {
 
-    private BaseStage(){
+    private BaseStage() {
 
     }
 

@@ -188,7 +188,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
             InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
             String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
-            iWikiSpaceWebHomeService.createSpace1WebHome(p.getId(),p.getPath(), orgXmlParam, BaseStage.USERNAME);
+            iWikiSpaceWebHomeService.createSpace1WebHome(p.getId(), p.getPath(), orgXmlParam, BaseStage.USERNAME);
 
             List<WikiSpaceE> orgUnderList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
                     WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
@@ -204,7 +204,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
                 InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                 String xmlParam = FileUtil.replaceReturnString(inputStream, orgUnderParams);
-                iWikiSpaceWebHomeService.createSpace2WebHome(p.getId(),path[0], path[1], xmlParam, BaseStage.USERNAME);
+                iWikiSpaceWebHomeService.createSpace2WebHome(p.getId(), path[0], path[1], xmlParam, BaseStage.USERNAME);
             });
         });
     }
@@ -224,7 +224,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
             InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
             String xmlParam = FileUtil.replaceReturnString(inputStream, projectParams);
-            iWikiSpaceWebHomeService.createSpace2WebHome(p.getId(),projectPath[0], projectPath[1], xmlParam, BaseStage.USERNAME);
+            iWikiSpaceWebHomeService.createSpace2WebHome(p.getId(), projectPath[0], projectPath[1], xmlParam, BaseStage.USERNAME);
 
             List<WikiSpaceE> projectUnderlist = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
                     WikiSpaceResourceType.PROJECT_S.getResourceType());
@@ -241,7 +241,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
                 InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
                 String xml = FileUtil.replaceReturnString(is, projectUnderParams);
-                iWikiSpaceWebHomeService.createSpace3WebHome(p.getId(),projectUnderPath[0], projectUnderPath[1], projectUnderPath[2], xml, BaseStage.USERNAME);
+                iWikiSpaceWebHomeService.createSpace3WebHome(p.getId(), projectUnderPath[0], projectUnderPath[1], projectUnderPath[2], xml, BaseStage.USERNAME);
             });
         });
     }

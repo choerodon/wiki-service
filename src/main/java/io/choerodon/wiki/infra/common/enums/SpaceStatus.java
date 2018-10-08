@@ -28,21 +28,6 @@ public enum SpaceStatus {
         this.value = value;
     }
 
-    public static SpaceStatus forString(String value) {
-        switch (value) {
-            case "operating":
-                return SpaceStatus.OPERATIING;
-            case "success":
-                return SpaceStatus.SUCCESS;
-            case "deleted":
-                return SpaceStatus.DELETED;
-            case "failed":
-                return SpaceStatus.FAILED;
-            default:
-                return null;
-        }
-    }
-
     public String getSpaceStatus() {
         return value;
     }

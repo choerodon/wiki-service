@@ -13,7 +13,7 @@ import io.choerodon.wiki.infra.dataobject.iam.*;
 import io.choerodon.wiki.infra.feign.IamServiceClient;
 
 /**
- * Created by younger on 2018/3/29.
+ * Created by Zenger on 2018/3/29.
  */
 @Component
 public class IamServiceClientFallback implements IamServiceClient {
