@@ -628,7 +628,8 @@
             <property name="use" type="StaticList">
                 <attribute name="name" value="use"/>
                 <attribute name="prettyName" value="Use this extension"/>
-                <attribute name="unmodifiable" value="0"/>
+<attribute name="unmodifiable"
+value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="relationalStorage" value="0"/>
                 <attribute name="displayType" value="select"/>
