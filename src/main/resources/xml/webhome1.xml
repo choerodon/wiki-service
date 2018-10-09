@@ -640,7 +640,9 @@ value="0"/>
                 <attribute name="separators" value="|, "/>
                 <attribute name="number" value="3"/>
                 <attribute name="values" value="currentPage|onDemand|always"/>
-                <attribute name="allowedValues" value="currentPage,onDemand,always"/>
+
+<attribute name="allowedValues"
+value="currentPage,onDemand,always"/>
                 <value>currentPage</value>
             </property>
         </objectSummary>
