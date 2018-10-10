@@ -35,6 +35,9 @@ class WikiScanningServiceImplSpec extends Specification {
     @Shared
     def UserE userE
 
+    @Shared
+    def List<WikiSpaceE> wikiSpaceEList
+
     void setup() {
         iamRepository = Mock(IamRepository)
         wikiSpaceRepository = Mock(WikiSpaceRepository)
@@ -68,6 +71,81 @@ class WikiScanningServiceImplSpec extends Specification {
         userE.setRealName("毕冉")
         userE.setPhone("110")
         userE.setOrganization(organizationE)
+
+        WikiSpaceE wikiSpaceE = new WikiSpaceE()
+        wikiSpaceE.setId(1L)
+        wikiSpaceE.setStatus("success")
+        wikiSpaceEList = new ArrayList<>()
+        wikiSpaceEList.add(wikiSpaceE)
+    }
+
+    def 'scanning'() {
+        given: '定义请求数据格式'
+        OrganizationE organization = new OrganizationE()
+        organization.setId(1)
+        organization.setCode("org")
+        organization.setName("测试组织")
+        organization.setEnabled(true)
+        organization.setProjectCount(2)
+
+        Page<OrganizationE> pageByOrganization = new Page<>()
+        pageByOrganization.setTotalPages(2)
+        pageByOrganization.setContent(Arrays.asList(organization))
+
+        Page<ProjectE> page = new Page<>()
+        page.setTotalPages(0)
+        page.setContent(Arrays.asList(projectE))
+
+        and: 'Mock'
+        2 * iamRepository.pageByOrganization(*_) >> pageByOrganization
+        4 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceEList
+        2 * iamRepository.pageByProject(*_) >> page
+
+        when: '模拟发送消息'
+        service.scanning()
+
+        then: ''
+    }
+
+    def 'syncOrgAndProject'() {
+        given: '定义请求数据格式'
+        def orgId = 1L
+        Page<ProjectE> projectEPage = new Page<>()
+        projectEPage.setTotalPages(2)
+        projectEPage.setContent(Arrays.asList(projectE))
+
+        RoleE roleE = new RoleE()
+        roleE.setId(1L)
+        Page<RoleE> rolePage = new Page<>()
+        rolePage.setContent(Arrays.asList(roleE))
+
+        Page<UserE> userEPage = new Page<>()
+        userEPage.setTotalPages(2)
+        userEPage.setContent(Arrays.asList(userE))
+
+        WikiSpaceE wikiSpaceE = new WikiSpaceE()
+        wikiSpaceE.setId(1L)
+        wikiSpaceE.setStatus("failed")
+        List<WikiSpaceE> wikiSpaceEList1 = new ArrayList<>()
+        wikiSpaceEList1.add(wikiSpaceE)
+
+        and: 'Mock'
+        1 * iamRepository.queryOrganizationById(_) >> organizationE
+        1 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceEList
+        1 * wikiSpaceRepository.getWikiSpaceList(*_) >> null
+        1 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceEList1
+        2 * wikiSpaceService.create(*_)
+        4 * wikiGroupService.create(*_)
+        2 * iamRepository.pageByProject(*_) >> projectEPage
+        4 * iamRepository.roleList(*_) >> rolePage
+        8 * iamRepository.pagingQueryUsersByRoleIdOnProjectLevel(*_) >> userEPage
+        8 * wikiGroupService.setUserToGroup(*_)
+        2 * wikiGroupService.disableProjectGroup(*_)
+
+        when: '模拟发送消息'
+        service.syncOrgAndProject(orgId)
+
+        then: ''
     }
 
     def 'syncOrg'() {
@@ -109,33 +187,29 @@ class WikiScanningServiceImplSpec extends Specification {
         then: ''
     }
 
-    def 'scanning'() {
+    def 'syncProject'() {
         given: '定义请求数据格式'
-        OrganizationE organization = new OrganizationE()
-        organization.setId(1)
-        organization.setCode("org")
-        organization.setName("测试组织")
-        organization.setEnabled(true)
-        organization.setProjectCount(2)
-        Page<OrganizationE> pageByOrganization = new Page<>()
-        pageByOrganization.setTotalPages(2)
-        pageByOrganization.setContent(Arrays.asList(organization))
+        def projectId = 1L
+
+        List<WikiSpaceE> wikiSpaceList = new ArrayList<>()
+        WikiSpaceE wikiSpaceE = new WikiSpaceE()
+        wikiSpaceE.setId(1)
+        wikiSpaceE.setStatus("failed")
+        wikiSpaceList.add(wikiSpaceE)
 
         Page<ProjectE> page = new Page<>()
-        page.setTotalPages(1)
+        page.setTotalPages(0)
         page.setContent(Arrays.asList(projectE))
 
-        WikiSpaceE wikiSpaceE = new WikiSpaceE()
-        wikiSpaceE.setId(1L)
-        List<WikiSpaceE> wikiSpaceEList = new ArrayList<>()
-        wikiSpaceEList.add(wikiSpaceE)
-
         and: 'Mock'
-        2 * iamRepository.pageByOrganization(*_) >> pageByOrganization
+        1 * iamRepository.queryIamProject(*_) >> projectE
+        1 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceList
         2 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceEList
+        1 * iamRepository.queryOrganizationById(_) >> organizationE
+        1 * iamRepository.pageByProject(*_) >> page
 
         when: '模拟发送消息'
-        service.scanning()
+        service.syncProject(projectId)
 
         then: ''
     }

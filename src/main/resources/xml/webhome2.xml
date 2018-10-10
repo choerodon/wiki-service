@@ -163,6 +163,7 @@
                     var edit_comment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-textsms activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var add_comment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_comment activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var delete_comment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_commet activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var edit_attachment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-border_color activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var add_attachment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var delete_attachment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
                     var litleIcon = document.getElementsByClassName("activityActionAvatar");&#13;
@@ -188,6 +189,9 @@
                     } else if (litleIcon[i].alt == "添加附件") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', add_attachment_icon);&#13;
+                    } else if (litleIcon[i].alt == "编辑附件") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', edit_attachment_icon);&#13;
                     } else if (litleIcon[i].alt == "删除附件") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', delete_attachment_icon);&#13;

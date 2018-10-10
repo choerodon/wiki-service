@@ -56,7 +56,10 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
 
     @Override
     public WikiSpaceE insertIfNotExist(WikiSpaceE wikiSpaceE) {
-        WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
+        WikiSpaceDO wikiSpaceDO = new WikiSpaceDO();
+        wikiSpaceDO.setResourceId(wikiSpaceE.getResourceId());
+        wikiSpaceDO.setResourceType(wikiSpaceE.getResourceType());
+        wikiSpaceDO.setName(wikiSpaceE.getName());
         WikiSpaceDO wikiSpaceDOCheck2 = wikiSpaceMapper.selectOne(wikiSpaceDO);
         if (wikiSpaceDOCheck2 != null) {
             if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDOCheck2) != 1) {
@@ -64,10 +67,11 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
             }
             return ConvertHelper.convert(wikiSpaceDOCheck2, WikiSpaceE.class);
         } else {
-            if (wikiSpaceMapper.insert(wikiSpaceDO) != 1) {
+            WikiSpaceDO wikiSpaceDO1 = ConvertHelper.convert(wikiSpaceE,WikiSpaceDO.class);
+            if (wikiSpaceMapper.insert(wikiSpaceDO1) != 1) {
                 throw new CommonException("error.space.insert");
             }
-            return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
+            return ConvertHelper.convert(wikiSpaceDO1, WikiSpaceE.class);
         }
     }
 
