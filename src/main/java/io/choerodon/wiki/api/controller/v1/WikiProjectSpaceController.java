@@ -162,7 +162,7 @@ public class WikiProjectSpaceController {
      * 同步项目下的单个空间
      *
      * @param projectId 项目id
-     * @param id 空间id
+     * @param id        空间id
      * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.PROJECT,
@@ -186,7 +186,9 @@ public class WikiProjectSpaceController {
      * @param id        空间ID
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "删除项目下的空间")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity delete(@ApiParam(value = "项目ID", required = true)

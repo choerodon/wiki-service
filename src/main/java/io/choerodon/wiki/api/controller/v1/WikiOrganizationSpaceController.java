@@ -162,7 +162,7 @@ public class WikiOrganizationSpaceController {
      * 同步组织下的单个空间
      *
      * @param organizationId 组织id
-     * @param id 空间id
+     * @param id             空间id
      * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
@@ -186,7 +186,7 @@ public class WikiOrganizationSpaceController {
      * @param id             空间ID
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "删除组织下的空间")
