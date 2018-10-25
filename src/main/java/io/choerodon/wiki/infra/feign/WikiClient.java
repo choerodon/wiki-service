@@ -365,4 +365,16 @@ public interface WikiClient {
             @Path("param2") String param2,
             @Path("param3") String param3,
             @Path("name") String name);
+
+    //修改wiki的logo
+    @Headers({"Content-Type:application/xml;charset=UTF-8"})
+    @PUT("/rest/wikis/{wikiName}/spaces/{spaceName}/pages/{pageName}/objects/{className}/{objectNumber}")
+    Call<ResponseBody> updateObject(
+            @Header("username") String username,
+            @Path("wikiName") String wikiName,
+            @Path("spaceName") String spaceName,
+            @Path("pageName") String pageName,
+            @Path("className") String className,
+            @Path("objectNumber") Integer objectNumber,
+            @Body RequestBody xmlParam);
 }
