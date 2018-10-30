@@ -1,20 +1,21 @@
 package io.choerodon.wiki.api.eventhandler;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import io.choerodon.wiki.app.service.WikiLogoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.List;
 
 import io.choerodon.asgard.saga.SagaDefinition;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.wiki.api.dto.*;
 import io.choerodon.wiki.app.service.WikiGroupService;
+import io.choerodon.wiki.app.service.WikiLogoService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
 import io.choerodon.wiki.domain.application.event.ProjectEvent;
@@ -104,7 +105,7 @@ public class WikiEventHandler {
         //创建组
         WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
         String adminGroupName = BaseStage.P + projectEvent.getOrganizationCode() + BaseStage.LINE + projectEvent.getProjectCode() + BaseStage.ADMIN_GROUP;
-        String userGroupName = BaseStage.P + projectEvent.getOrganizationCode() +  BaseStage.LINE + projectEvent.getProjectCode() + BaseStage.USER_GROUP;
+        String userGroupName = BaseStage.P + projectEvent.getOrganizationCode() + BaseStage.LINE + projectEvent.getProjectCode() + BaseStage.USER_GROUP;
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setProjectCode(projectEvent.getProjectCode());
         wikiGroupDTO.setProjectName(projectEvent.getProjectName());
@@ -246,8 +247,9 @@ public class WikiEventHandler {
             seq = 10)
     public String handleLogoUpdateEvent(String data) throws IOException {
         loggerInfo(data);
-        WikiLogoDTO wikiLogoDTO = objectMapper.readValue(data,WikiLogoDTO.class);
-        wikiLogoService.updateLogo(wikiLogoDTO,BaseStage.USERNAME);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        WikiLogoDTO wikiLogoDTO = objectMapper.readValue(data, WikiLogoDTO.class);
+        wikiLogoService.updateLogo(wikiLogoDTO, BaseStage.USERNAME);
         return data;
     }
 
