@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.choerodon.wiki.app.service.WikiLogoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -34,11 +35,14 @@ public class WikiEventHandler {
 
     private WikiSpaceService wikiSpaceService;
     private WikiGroupService wikiGroupService;
+    private WikiLogoService wikiLogoService;
 
     public WikiEventHandler(WikiSpaceService wikiSpaceService,
-                            WikiGroupService wikiGroupService) {
+                            WikiGroupService wikiGroupService,
+                            WikiLogoService wikiLogoService) {
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
+        this.wikiLogoService = wikiLogoService;
     }
 
     private void loggerInfo(Object o) {
@@ -233,4 +237,19 @@ public class WikiEventHandler {
         wikiGroupService.enableProjectGroup(projectDTO.getProjectId(), BaseStage.USERNAME);
         return data;
     }
+
+    @SagaTask(code = "wikiUpdateLogo",
+            description = "wiki服务的Logo修改监听",
+            sagaCode = "iam-update-system-setting",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 10)
+    public String handleLogoUpdateEvent(String data) throws IOException {
+        loggerInfo(data);
+        WikiLogoDTO wikiLogoDTO = objectMapper.readValue(data,WikiLogoDTO.class);
+        wikiLogoService.updateLogo(wikiLogoDTO,BaseStage.USERNAME);
+        return data;
+    }
+
+
 }
