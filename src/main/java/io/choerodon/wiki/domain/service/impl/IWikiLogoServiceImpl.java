@@ -28,6 +28,10 @@ import java.util.Map;
 @Service
 public class IWikiLogoServiceImpl implements IWikiLogoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(IWikiLogoServiceImpl.class);
+    private static final String SPACE_NAME = "ChoerodonConfig";
+    private static final String PAGE_NAME = "ChoerodonTheme";
+    private static final Integer OBJECT_NUMBER = 0;
+    private static final String CLASS_NAME = "FlamingoThemesCode.ThemeClass";
 
     @Value("${wiki.client}")
     private String client;
@@ -42,12 +46,8 @@ public class IWikiLogoServiceImpl implements IWikiLogoService {
     public Boolean updateLogo(String username,String xmlParam) {
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);
-            String spaceName = "ChoerodonConfig";
-            String pageName = "ChoerodonTheme";
-            Integer objectNumber = 0;
-            String className = "FlamingoThemesCode.ThemeClass";
-            Call<ResponseBody> call = wikiClient.updateObject(username, client, spaceName, pageName,
-                    className, objectNumber, requestBody);
+            Call<ResponseBody> call = wikiClient.updateObject(username, client, SPACE_NAME, PAGE_NAME,
+                    CLASS_NAME, OBJECT_NUMBER, requestBody);
             Response response = call.execute();
             if ( response.code() == BaseStage.ACCEPTED) {
                 return true;

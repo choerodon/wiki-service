@@ -38,9 +38,11 @@ public class WikiEventHandler {
     private WikiLogoService wikiLogoService;
 
     public WikiEventHandler(WikiSpaceService wikiSpaceService,
-                            WikiGroupService wikiGroupService) {
+                            WikiGroupService wikiGroupService,
+                            WikiLogoService wikiLogoService) {
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
+        this.wikiLogoService = wikiLogoService;
     }
 
     private void loggerInfo(Object o) {
@@ -238,7 +240,7 @@ public class WikiEventHandler {
 
     @SagaTask(code = "wikiUpdateLogo",
             description = "wiki服务的Logo修改监听",
-            sagaCode = "",
+            sagaCode = "iam-update-system-setting",
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)

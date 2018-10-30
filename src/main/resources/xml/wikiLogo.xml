@@ -25,7 +25,6 @@
     </property>
 
     <property name="simpleName" type="String">
-        <link href="http://localhost:8080/rest/wikis/xwiki/spaces/ChoerodonConfig/pages/ChoerodonTheme/objects/FlamingoThemesCode.ThemeClass/0/properties/simpleName" rel="self"/>
         <attribute name="name" value="simpleName"/>
         <attribute name="prettyName" value="simpleName"/>
         <attribute name="unmodifiable" value="0"/>
@@ -38,6 +37,21 @@
         <attribute name="validationMessage" value=""/>
         <attribute name="validationRegExp" value=""/>
         <value>{{ SIMPLE_NAME }}</value>
+    </property>
+
+    <property name="favicon" type="String">
+        <attribute name="name" value="favicon"/>
+        <attribute name="prettyName" value="favicon"/>
+        <attribute name="unmodifiable" value="0"/>
+        <attribute name="disabled" value="0"/>
+        <attribute name="size" value="30"/>
+        <attribute name="customDisplay" value=""/>
+        <attribute name="hint" value=""/>
+        <attribute name="number" value="64"/>
+        <attribute name="picker" value="1"/>
+        <attribute name="validationMessage" value=""/>
+        <attribute name="validationRegExp" value=""/>
+        <value>{{ FAVICON }}</value>
     </property>
 
 </object>

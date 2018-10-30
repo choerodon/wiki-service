@@ -6,6 +6,7 @@ package io.choerodon.wiki.domain.application.entity;
 public class WikiLogoE {
     private String logo;
     private String simpleName;
+    private String favicon;
 
     public String getLogo() {
         return logo;
@@ -21,5 +22,13 @@ public class WikiLogoE {
 
     public void setSimpleName(String simpleName) {
         this.simpleName = simpleName;
+    }
+
+    public String getFavicon() {
+        return favicon;
+    }
+
+    public void setFavicon(String favicon) {
+        this.favicon = favicon;
     }
 }

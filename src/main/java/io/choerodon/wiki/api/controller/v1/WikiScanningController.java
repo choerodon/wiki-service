@@ -1,7 +1,9 @@
 package io.choerodon.wiki.api.controller.v1;
 
+import io.choerodon.wiki.api.eventhandler.WikiEventHandler;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,8 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.app.service.WikiScanningService;
 import io.choerodon.wiki.infra.common.BaseStage;
+
+import java.io.IOException;
 
 /**
  * Created by Zenger on 2018/7/18.
