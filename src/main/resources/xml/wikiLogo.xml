@@ -21,7 +21,7 @@
         <attribute name="picker" value="0"/>
         <attribute name="validationMessage" value=""/>
         <attribute name="validationRegExp" value=""/>
-        <value>{{LOGO_URL}}</value>
+        <value>{{ LOGO }}</value>
     </property>
 
     <property name="simpleName" type="String">
@@ -37,7 +37,7 @@
         <attribute name="picker" value="1"/>
         <attribute name="validationMessage" value=""/>
         <attribute name="validationRegExp" value=""/>
-        <value>{{SIMPLE_NAME}}</value>
+        <value>{{ SIMPLE_NAME }}</value>
     </property>
 
 </object>
