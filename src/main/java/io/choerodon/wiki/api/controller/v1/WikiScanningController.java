@@ -107,4 +107,24 @@ public class WikiScanningController {
         wikiScanningService.updateWikiPage();
         return new ResponseEntity(HttpStatus.CREATED);
     }
+
+    @Autowired
+    private WikiEventHandler wikiEventHandler;
+
+    @GetMapping("/test")
+    public void teest(){
+        try {
+            String data = "{\n" +
+                    "  \"favicon\": null,\n" +
+                    "  \"systemLogo\": null,\n" +
+                    "  \"systemTitle\": null,\n" +
+                    "  \"systemName\": null,\n" +
+                    "  \"defaultPassword\": null,\n" +
+                    "  \"defaultLanguage\": null\n" +
+                    "}";
+            wikiEventHandler.handleLogoUpdateEvent(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

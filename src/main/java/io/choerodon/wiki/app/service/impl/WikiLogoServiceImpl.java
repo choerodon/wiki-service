@@ -1,10 +1,8 @@
 package io.choerodon.wiki.app.service.impl;
 
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.api.dto.WikiLogoDTO;
 import io.choerodon.wiki.app.service.WikiLogoService;
-import io.choerodon.wiki.domain.application.convertor.ProjectConverter;
 import io.choerodon.wiki.domain.application.entity.WikiLogoE;
 import io.choerodon.wiki.domain.service.IWikiLogoService;
 import io.choerodon.wiki.infra.common.FileUtil;
@@ -12,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,9 +35,12 @@ public class WikiLogoServiceImpl implements WikiLogoService {
     private String getWikiLogoXml(WikiLogoE wikiLogoE) {
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/wikiLogo.xml");
         Map<String, String> params = new HashMap<>(16);
-        params.put("{{ LOGO }}", wikiLogoE.getLogo());
-        params.put("{{ SIMPLE_NAME }}", wikiLogoE.getSimpleName());
-        params.put("{{ FAVICON }}", wikiLogoE.getFavicon());
+        String logo = wikiLogoE.getLogo() == null ? "" : wikiLogoE.getLogo();
+        String simpleName = wikiLogoE.getSimpleName() == null ? "" : wikiLogoE.getSimpleName();
+        String facicon = wikiLogoE.getFavicon() == null ? "" : wikiLogoE.getFavicon();
+        params.put("{{ LOGO }}", logo);
+        params.put("{{ SIMPLE_NAME }}", simpleName);
+        params.put("{{ FAVICON }}", facicon);
         return FileUtil.replaceReturnString(inputStream, params);
     }
 }
