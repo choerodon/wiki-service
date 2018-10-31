@@ -1,10 +1,8 @@
 package io.choerodon.wiki.domain.service.impl;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.wiki.domain.application.entity.WikiLogoE;
 import io.choerodon.wiki.domain.service.IWikiLogoService;
 import io.choerodon.wiki.infra.common.BaseStage;
-import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.exception.NetworkRequestStatusCodeException;
 import io.choerodon.wiki.infra.feign.WikiClient;
 import okhttp3.MediaType;
@@ -18,9 +16,6 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * create xingyu 2018/10/25
@@ -43,13 +38,13 @@ public class IWikiLogoServiceImpl implements IWikiLogoService {
     }
 
     @Override
-    public Boolean updateLogo(String username,String xmlParam) {
+    public Boolean updateLogo(String username, String xmlParam) {
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);
             Call<ResponseBody> call = wikiClient.updateObject(username, client, SPACE_NAME, PAGE_NAME,
                     CLASS_NAME, OBJECT_NUMBER, requestBody);
             Response response = call.execute();
-            if ( response.code() == BaseStage.ACCEPTED) {
+            if (response.code() == BaseStage.ACCEPTED) {
                 return true;
             } else {
                 throw new NetworkRequestStatusCodeException("error update logo return status code: " + response.code());
