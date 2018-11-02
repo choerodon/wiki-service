@@ -1,5 +1,6 @@
 package io.choerodon.wiki.api.controller.v1;
 
+import java.util.List;
 import javax.validation.Valid;
 
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +39,7 @@ public class WikiProjectSpaceController {
     /**
      * 检查项目下空间名唯一性
      *
-     * @param projectId 项目ID
+     * @param projectId 项目id
      * @param name      空间名
      * @return Boolean
      */
@@ -62,7 +63,7 @@ public class WikiProjectSpaceController {
     /**
      * 项目下创建wiki空间
      *
-     * @param projectId    组织id
+     * @param projectId    项目id
      * @param wikiSpaceDTO 空间信息
      * @return ResponseEntity
      */
@@ -113,9 +114,29 @@ public class WikiProjectSpaceController {
     }
 
     /**
+     * 查询项目下的wiki空间
+     *
+     * @param projectId 项目id
+     * @return list of wikiSpaceResponseDTO
+     */
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
+    @ApiOperation(value = "查询项目下的wiki空间")
+    @GetMapping(value = "/under")
+    public ResponseEntity<List<WikiSpaceResponseDTO>> underProject(
+            @ApiParam(value = "项目ID", required = true)
+            @PathVariable(value = "project_id") Long projectId) {
+        return new ResponseEntity<>(wikiSpaceService.underProject(
+                projectId,
+                WikiSpaceResourceType.PROJECT_S.getResourceType()),
+                HttpStatus.OK);
+    }
+
+    /**
      * 查询项目下单个wiki空间
      *
-     * @param projectId 组织id
+     * @param projectId 项目id
      * @param id        空间id
      * @return WikiSpaceResponseDTO
      */

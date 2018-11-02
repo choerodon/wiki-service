@@ -1,5 +1,6 @@
 package io.choerodon.wiki.api.controller.v1;
 
+import java.util.List;
 import javax.validation.Valid;
 
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +39,7 @@ public class WikiOrganizationSpaceController {
     /**
      * 检查组织下空间名唯一性
      *
-     * @param organizationId 组织ID
+     * @param organizationId 组织id
      * @param name           空间名
      * @return Boolean
      */
@@ -110,6 +111,26 @@ public class WikiOrganizationSpaceController {
                 pageRequest,
                 searchParam),
                 HttpStatus.CREATED);
+    }
+
+    /**
+     * 查询组织下的wiki空间
+     *
+     * @param organizationId 组织id
+     * @return  list of wikiSpaceResponseDTO
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION,
+            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
+                    BaseStage.ORGANIZATION_MEMBER})
+    @ApiOperation(value = "查询组织下的wiki空间")
+    @GetMapping(value = "/under")
+    public ResponseEntity<List<WikiSpaceResponseDTO>> underOrganization(
+            @ApiParam(value = "组织ID", required = true)
+            @PathVariable(value = "organization_id") Long organizationId) {
+        return new ResponseEntity<>(wikiSpaceService.underOrganization(
+                organizationId,
+                WikiSpaceResourceType.ORGANIZATION_S.getResourceType()),
+                HttpStatus.OK);
     }
 
     /**

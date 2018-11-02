@@ -1,5 +1,7 @@
 package io.choerodon.wiki.app.service;
 
+import java.util.List;
+
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
@@ -15,6 +17,10 @@ public interface WikiSpaceService {
 
     Page<WikiSpaceListTreeDTO> listTreeWikiSpaceByPage(Long resourceId, String type,
                                                        PageRequest pageRequest, String searchParam);
+
+    List<WikiSpaceResponseDTO> underOrganization(Long organizationId,String type);
+
+    List<WikiSpaceResponseDTO> underProject(Long projectId,String type);
 
     WikiSpaceResponseDTO query(Long id);
 
