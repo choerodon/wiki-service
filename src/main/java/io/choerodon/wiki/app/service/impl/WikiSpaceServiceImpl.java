@@ -131,6 +131,16 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
+    public List<WikiSpaceResponseDTO> underOrganization(Long organizationId, String type) {
+        return ConvertHelper.convertList(wikiSpaceRepository.getWikiSpaceList(organizationId,type),WikiSpaceResponseDTO.class);
+    }
+
+    @Override
+    public List<WikiSpaceResponseDTO> underProject(Long projectId, String type) {
+        return ConvertHelper.convertList(wikiSpaceRepository.getWikiSpaceList(projectId,type),WikiSpaceResponseDTO.class);
+    }
+
+    @Override
     public WikiSpaceResponseDTO query(Long id) {
         return ConvertHelper.convert(wikiSpaceRepository.selectById(id), WikiSpaceResponseDTO.class);
     }

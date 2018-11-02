@@ -1,5 +1,8 @@
 package io.choerodon.wiki.api.eventhandler;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -7,9 +10,6 @@ import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.List;
 
 import io.choerodon.asgard.saga.SagaDefinition;
 import io.choerodon.asgard.saga.annotation.SagaTask;
@@ -51,7 +51,7 @@ public class WikiEventHandler {
     }
 
     /**
-     * 创建组织事件
+     * wiki服务的创建组织监听
      */
     @SagaTask(code = "wikiCreateOrganization",
             description = "wiki服务的创建组织监听",
@@ -86,7 +86,7 @@ public class WikiEventHandler {
     }
 
     /**
-     * 创建项目事件
+     * wiki服务的创建项目监听
      */
     @SagaTask(code = "wikiCreateProject",
             description = "wiki服务的创建项目监听",
@@ -121,7 +121,7 @@ public class WikiEventHandler {
 
 
     /**
-     * 角色分配
+     * wiki服务的角色分配监听
      */
     @SagaTask(code = "wikiUpdateMemberRole",
             description = "wiki服务的角色分配监听",
@@ -140,7 +140,7 @@ public class WikiEventHandler {
     }
 
     /**
-     * 角色同步事件,去除角色
+     * wiki服务的去除角色监听
      */
     @SagaTask(code = "wikiDeleteMemberRole",
             description = "wiki服务的去除角色监听",
@@ -158,7 +158,7 @@ public class WikiEventHandler {
     }
 
     /**
-     * 用户创建
+     * wiki服务的用户创建监听
      */
     @SagaTask(code = "wikiCreateUser",
             description = "wiki服务的用户创建监听",
@@ -176,7 +176,7 @@ public class WikiEventHandler {
     }
 
     /**
-     * 组织禁用
+     * wiki服务的组织禁用监听
      */
     @SagaTask(code = "wikiDisableOrganization",
             description = "wiki服务的组织禁用监听",
@@ -192,7 +192,7 @@ public class WikiEventHandler {
     }
 
     /**
-     * 项目禁用
+     * wiki服务的项目禁用监听
      */
     @SagaTask(code = "wikiDisableProject",
             description = "wiki服务的项目禁用监听",
@@ -208,7 +208,7 @@ public class WikiEventHandler {
     }
 
     /**
-     * 组织启用
+     * wiki服务的组织启用监听
      */
     @SagaTask(code = "wikiEnableOrganization",
             description = "wiki服务的组织启用监听",
@@ -224,7 +224,7 @@ public class WikiEventHandler {
     }
 
     /**
-     * 项目启用
+     * wiki服务的项目启用监听
      */
     @SagaTask(code = "wikiEnableOrganization",
             description = "wiki服务的项目启用监听",
@@ -239,6 +239,9 @@ public class WikiEventHandler {
         return data;
     }
 
+    /**
+     * wiki服务的Logo修改监听
+     */
     @SagaTask(code = "wikiUpdateLogo",
             description = "wiki服务的Logo修改监听",
             sagaCode = "iam-update-system-setting",
