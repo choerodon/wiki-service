@@ -117,7 +117,7 @@ public class WikiOrganizationSpaceController {
      * 查询组织下的wiki空间
      *
      * @param organizationId 组织id
-     * @return  list of wikiSpaceResponseDTO
+     * @return list of wikiSpaceResponseDTO
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
