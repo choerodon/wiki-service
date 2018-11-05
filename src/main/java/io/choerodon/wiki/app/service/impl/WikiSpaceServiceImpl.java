@@ -132,12 +132,12 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
 
     @Override
     public List<WikiSpaceResponseDTO> underOrganization(Long organizationId, String type) {
-        return ConvertHelper.convertList(wikiSpaceRepository.getWikiSpaceList(organizationId,type),WikiSpaceResponseDTO.class);
+        return getWikiSpaceByResourceIdAndResourceType(organizationId, type);
     }
 
     @Override
     public List<WikiSpaceResponseDTO> underProject(Long projectId, String type) {
-        return ConvertHelper.convertList(wikiSpaceRepository.getWikiSpaceList(projectId,type),WikiSpaceResponseDTO.class);
+        return getWikiSpaceByResourceIdAndResourceType(projectId, type);
     }
 
     @Override
@@ -165,26 +165,26 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                     case ORGANIZATION:
                         InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
                         String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
-                        iWikiSpaceWebHomeService.createSpace1WebHome(id,path[0], orgXmlParam, username);
+                        iWikiSpaceWebHomeService.createSpace1WebHome(id, path[0], orgXmlParam, username);
                         break;
                     case PROJECT:
                         params.put("{{ SPACE_PARENT }}", path[0]);
                         InputStream projectIs = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                         String projectXmlParam = FileUtil.replaceReturnString(projectIs, params);
-                        iWikiSpaceWebHomeService.createSpace2WebHome(id,path[0], path[1], projectXmlParam, username);
+                        iWikiSpaceWebHomeService.createSpace2WebHome(id, path[0], path[1], projectXmlParam, username);
                         break;
                     case ORGANIZATION_S:
                         params.put("{{ SPACE_PARENT }}", path[0]);
                         InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                         String xmlParam = FileUtil.replaceReturnString(inputStream, params);
-                        iWikiSpaceWebHomeService.createSpace2WebHome(id,path[0], path[1], xmlParam, username);
+                        iWikiSpaceWebHomeService.createSpace2WebHome(id, path[0], path[1], xmlParam, username);
                         break;
                     case PROJECT_S:
                         params.put("{{ SPACE_ROOT }}", path[0]);
                         params.put("{{ SPACE_PARENT }}", path[1]);
                         InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
                         String xml = FileUtil.replaceReturnString(is, params);
-                        iWikiSpaceWebHomeService.createSpace3WebHome(id,path[0], path[1], path[2], xml, username);
+                        iWikiSpaceWebHomeService.createSpace3WebHome(id, path[0], path[1], path[2], xml, username);
                         break;
                     default:
                         break;
@@ -508,5 +508,19 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                                          WikiSpaceE projectUnderSpace,
                                          String username) {
         wikiSpaceAsynService.createProjectUnderSpace(param1, param2, projectUnderName, projectUnderSpace, username);
+    }
+
+    public List<WikiSpaceResponseDTO> getWikiSpaceByResourceIdAndResourceType(Long resourceId, String resourceType) {
+        String urlSlash = wikiUrl.endsWith("/") ? "" : "/";
+        List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(resourceId, resourceType);
+        List<WikiSpaceE> list = new ArrayList<>();
+        wikiSpaceEList.stream()
+                .filter(ws -> ws.getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus()))
+                .forEach(ws -> {
+                    ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
+                    list.add(ws);
+                });
+
+        return ConvertHelper.convertList(list, WikiSpaceResponseDTO.class);
     }
 }
