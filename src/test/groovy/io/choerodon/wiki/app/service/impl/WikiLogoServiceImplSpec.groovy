@@ -1,9 +1,7 @@
 package io.choerodon.wiki.app.service.impl
 
+import io.choerodon.wiki.IntegrationTestConfiguration
 import io.choerodon.wiki.api.dto.WikiLogoDTO
-import io.choerodon.wiki.app.service.WikiLogoService
-import io.choerodon.wiki.domain.service.IWikiLogoService
-import io.choerodon.wiki.domain.service.impl.IWikiClassServiceImpl
 import io.choerodon.wiki.domain.service.impl.IWikiLogoServiceImpl
 import io.choerodon.wiki.infra.feign.WikiClient
 import okhttp3.Headers
@@ -12,11 +10,17 @@ import okhttp3.ResponseBody
 import okhttp3.internal.http.RealResponseBody
 import okio.BufferedSource
 import okio.Okio
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import spock.lang.Specification
 
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@Import(IntegrationTestConfiguration)
 class WikiLogoServiceImplSpec extends Specification {
 
     WikiClient wikiClient;
@@ -32,8 +36,8 @@ class WikiLogoServiceImplSpec extends Specification {
     def 'updateLogo'() {
         given: '自定义数据'
         WikiLogoDTO wikiLogoDTO = new WikiLogoDTO()
-        wikiLogoDTO.setLogo("http://iam.choerodon.staging.saas.hand-china.com/assets/choerodon_logo_picture.52a5292b.svg");
-        wikiLogoDTO.setSimpleName("xingyu");
+        wikiLogoDTO.setSystemLogo("http://iam.choerodon.staging.saas.hand-china.com/assets/choerodon_logo_picture.52a5292b.svg");
+        wikiLogoDTO.setSystemName("xingyu");
 
         when: ''
         wikiLogoService.updateLogo(wikiLogoDTO, "testName");

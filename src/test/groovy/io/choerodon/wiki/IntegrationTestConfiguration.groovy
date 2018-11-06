@@ -86,6 +86,12 @@ class IntegrationTestConfiguration {
         detachedMockFactory.Mock(IWikiClassService.class);
     }
 
+    @Bean
+    @Primary
+    IWikiLogoService iWikiLogoService() {
+        detachedMockFactory.Mock(IWikiLogoService.class);
+    }
+
     @PostConstruct
     void init() {
         liquibaseExecutor.execute()
