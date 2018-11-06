@@ -45,7 +45,7 @@ wiki:
   url: http://xwiki.staging.saas.hand-china.com
   token: Choerodon
   default-group: XWikiAllGroup
-  isSync: false #是否服务启动之后自动同步组织和项目
+  sync: false #是否服务启动之后自动同步组织和项目
 feign:
   hystrix:
     shareSecurityContext: true
