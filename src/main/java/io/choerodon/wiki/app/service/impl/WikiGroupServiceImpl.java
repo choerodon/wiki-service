@@ -161,16 +161,16 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         String groupName = BaseStage.O + orgCode + BaseStage.USER_GROUP;
 
                         //如果用户不存在则新建
-                        Boolean flag = checkDocExsist(username, loginName.replace(".", "\\."));
+                        Boolean flag = checkDocExsist(username, loginName);
                         if (!flag) {
                             WikiUserE wikiUserE = new WikiUserE();
-                            wikiUserE.setFirstName(user.getLoginName().replace(".", "\\."));
-                            wikiUserE.setLastName(user.getRealName().replace(".", "\\."));
+                            wikiUserE.setFirstName(user.getLoginName());
+                            wikiUserE.setLastName(user.getRealName());
                             wikiUserE.setPhone(user.getPhone());
                             wikiUserE.setEmail(user.getEmail());
 
                             String xmlParam = getUserXml(wikiUserE);
-                            iWikiUserService.createUser(loginName.replace(".", "\\."), xmlParam, username);
+                            iWikiUserService.createUser(loginName, xmlParam, username);
                         }
 
                         //通过groupName给组添加成员
