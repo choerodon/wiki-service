@@ -19,12 +19,12 @@ public class WikiApplicationRunner implements ApplicationRunner {
     @Autowired
     private WikiScanningService wikiScanningService;
 
-    @Value("${wiki.isSync}")
-    private Boolean isSync;
+    @Value("${wiki.sync}")
+    private Boolean sync;
 
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
-        if (isSync) {
+        if (sync) {
             wikiScanningService.scanning();
         }
     }
