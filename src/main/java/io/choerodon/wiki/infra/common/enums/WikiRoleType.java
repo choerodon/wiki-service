@@ -3,7 +3,12 @@ package io.choerodon.wiki.infra.common.enums;
 /**
  * Created by Zenger on 2018/7/2.
  */
-public enum OrganizationSpaceType {
+public enum WikiRoleType {
+
+    /**
+     * wiki平台管理员
+     */
+    SITE_WIKI_ADMIN("site.wiki.admin"),
 
     /**
      * wiki项目管理员
@@ -28,7 +33,7 @@ public enum OrganizationSpaceType {
 
     private String type;
 
-    OrganizationSpaceType(String type) {
+    WikiRoleType(String type) {
         this.type = type;
     }
 

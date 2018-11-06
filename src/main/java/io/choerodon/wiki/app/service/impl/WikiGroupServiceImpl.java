@@ -28,7 +28,7 @@ import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.FileUtil;
-import io.choerodon.wiki.infra.common.enums.OrganizationSpaceType;
+import io.choerodon.wiki.infra.common.enums.WikiRoleType;
 
 /**
  * Created by Ernst on 2018/7/4.
@@ -36,7 +36,6 @@ import io.choerodon.wiki.infra.common.enums.OrganizationSpaceType;
 @Service
 public class WikiGroupServiceImpl implements WikiGroupService {
 
-    private static final String SITE = "site";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiGroupServiceImpl.class);
 
     private IWikiGroupService iWikiGroupService;
@@ -104,7 +103,6 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void createWikiGroupUsers(List<GroupMemberDTO> groupMemberDTOList, String username) {
         groupMemberDTOList.stream()
-                .filter(groupMember -> !groupMember.getResourceType().equals(SITE))
                 .forEach(groupMember -> {
                     //将用户分配到组
                     String groupName = getGroupName(groupMember, username);
@@ -131,16 +129,21 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void deleteWikiGroupUsers(List<GroupMemberDTO> groupMemberDTOList, String username) {
         groupMemberDTOList.stream()
-                .filter(groupMember -> !groupMember.getResourceType().equals(SITE))
                 .forEach(groupMember -> {
                     List<String> roleLabels = groupMember.getRoleLabels();
-                    if (roleLabels == null || roleLabels.isEmpty()) {
-                        String adminGroupName = getGroupNameBuffer(groupMember, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
-                        String userGroupName = getGroupNameBuffer(groupMember, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
-                        deletePageClass(adminGroupName, username, groupMember.getUsername());
-                        deletePageClass(userGroupName, username, groupMember.getUsername());
+                    if (groupMember.getResourceType().equals(ResourceLevel.SITE.value())) {
+                        if (!roleLabels.contains(WikiRoleType.SITE_WIKI_ADMIN.getResourceType())) {
+                            deletePageClass(BaseStage.XWIKI_ADMIN_GROUP, username, groupMember.getUsername());
+                        }
                     } else {
-                        deleteGroupMember(roleLabels, groupMember, username);
+                        if (roleLabels == null || roleLabels.isEmpty()) {
+                            String adminGroupName = getGroupNameBuffer(groupMember, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
+                            String userGroupName = getGroupNameBuffer(groupMember, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
+                            deletePageClass(adminGroupName, username, groupMember.getUsername());
+                            deletePageClass(userGroupName, username, groupMember.getUsername());
+                        } else {
+                            deleteGroupMember(roleLabels, groupMember, username);
+                        }
                     }
                 });
     }
@@ -259,10 +262,12 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     private String getGroupName(GroupMemberDTO groupMemberDTO, String username) {
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
-        if (roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) || roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType())) {
+        if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) || roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType())) {
             return getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
-        } else if (roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) || roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType())) {
+        } else if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType()) || roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
             return getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
+        } else if (ResourceLevel.SITE.value().equals(groupMemberDTO.getResourceType()) && roleLabels.contains(WikiRoleType.SITE_WIKI_ADMIN.getResourceType())) {
+            return BaseStage.XWIKI_ADMIN_GROUP;
         } else {
             return "";
         }
@@ -284,7 +289,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             ProjectE projectE = iamRepository.queryIamProject(resourceId);
             OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
             if (iWikiUserService.checkDocExsist(username, BaseStage.P + organizationE.getCode() + BaseStage.LINE + projectE.getCode() + type)) {
-                groupName.append(organizationE.getCode() +  BaseStage.LINE + projectE.getCode());
+                groupName.append(organizationE.getCode() + BaseStage.LINE + projectE.getCode());
             } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectE.getCode() + type)) {
                 groupName.append(projectE.getCode());
             }
@@ -371,19 +376,19 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     }
 
     public void deleteGroupMember(List<String> roleLabels, GroupMemberDTO groupMember, String username) {
-        if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_ADMIN.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
+        if (!roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
             String adminGroupName = getGroupNameBuffer(groupMember, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
             deletePageClass(adminGroupName, username, groupMember.getUsername());
         }
-        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
+        if (!roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
             String adminGroupName = getGroupNameBuffer(groupMember, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
             deletePageClass(adminGroupName, username, groupMember.getUsername());
         }
-        if (!roleLabels.contains(OrganizationSpaceType.PROJECT_WIKI_USER.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
+        if (!roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
             String userGroupName = getGroupNameBuffer(groupMember, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
             deletePageClass(userGroupName, username, groupMember.getUsername());
         }
-        if (!roleLabels.contains(OrganizationSpaceType.ORGANIZATION_WIKI_USER.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
+        if (!roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType()) && ResourceLevel.ORGANIZATION.value().equals(groupMember.getResourceType())) {
             String userGroupName = getGroupNameBuffer(groupMember, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
             deletePageClass(userGroupName, username, groupMember.getUsername());
         }
