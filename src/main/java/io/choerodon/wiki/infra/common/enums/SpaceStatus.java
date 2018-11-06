@@ -18,7 +18,7 @@ public enum SpaceStatus {
      */
     DELETED("deleted"),
     /**
-     * 删除
+     * 失败
      */
     FAILED("failed");
 
