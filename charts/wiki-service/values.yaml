@@ -46,6 +46,8 @@ env:
     WIKI_URL: http://xwiki-alpha.saas.hand-china.com
     WIKI_TOKEN: Choerodon
     WIKI_DEFAULT_GROUP: XWikiAllGroup
+    WIKI_SYNC: false
+    JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
 
 metrics:
   path: /prometheus
