@@ -8,7 +8,7 @@ public enum WikiRoleType {
     /**
      * wiki平台管理员
      */
-    SITE_WIKI_ADMIN("site.wiki.admin"),
+    SITE_ADMIN("site.admin"),
 
     /**
      * wiki项目管理员

@@ -132,7 +132,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 .forEach(groupMember -> {
                     List<String> roleLabels = groupMember.getRoleLabels();
                     if (groupMember.getResourceType().equals(ResourceLevel.SITE.value())) {
-                        if (!roleLabels.contains(WikiRoleType.SITE_WIKI_ADMIN.getResourceType())) {
+                        if (roleLabels == null || (roleLabels != null && !roleLabels.contains(WikiRoleType.SITE_ADMIN.getResourceType()))) {
                             deletePageClass(BaseStage.XWIKI_ADMIN_GROUP, username, groupMember.getUsername());
                         }
                     } else {
@@ -266,7 +266,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             return getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
         } else if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType()) || roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
             return getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
-        } else if (ResourceLevel.SITE.value().equals(groupMemberDTO.getResourceType()) && roleLabels.contains(WikiRoleType.SITE_WIKI_ADMIN.getResourceType())) {
+        } else if (ResourceLevel.SITE.value().equals(groupMemberDTO.getResourceType()) && roleLabels.contains(WikiRoleType.SITE_ADMIN.getResourceType())) {
             return BaseStage.XWIKI_ADMIN_GROUP;
         } else {
             return "";
