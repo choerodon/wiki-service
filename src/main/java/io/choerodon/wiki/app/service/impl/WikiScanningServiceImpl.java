@@ -21,16 +21,20 @@ import io.choerodon.wiki.app.service.WikiScanningService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
+import io.choerodon.wiki.domain.application.entity.iam.LabelE;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.entity.iam.RoleE;
 import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
+import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.enums.SpaceStatus;
+import io.choerodon.wiki.infra.common.enums.WikiRoleType;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
+import io.choerodon.wiki.infra.dataobject.iam.UserWithRoleDO;
 
 /**
  * Created by Zenger on 2018/7/18.
@@ -48,17 +52,20 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     private WikiSpaceService wikiSpaceService;
     private WikiGroupService wikiGroupService;
     private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
+    private IWikiGroupService iWikiGroupService;
 
     public WikiScanningServiceImpl(IamRepository iamRepository,
                                    WikiSpaceRepository wikiSpaceRepository,
                                    WikiSpaceService wikiSpaceService,
                                    WikiGroupService wikiGroupService,
-                                   IWikiSpaceWebHomeService iWikiSpaceWebHomeService) {
+                                   IWikiSpaceWebHomeService iWikiSpaceWebHomeService,
+                                   IWikiGroupService iWikiGroupService) {
         this.iamRepository = iamRepository;
         this.wikiSpaceRepository = wikiSpaceRepository;
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
         this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
+        this.iWikiGroupService = iWikiGroupService;
     }
 
     @Override
@@ -177,6 +184,26 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     public void updateWikiPage() {
         updateWikiOrgHomePage();
         updateWikiProjectHomePage();
+    }
+
+
+    @Override
+    @Async("org-pro-sync")
+    public void syncOrganizationUserGroup() {
+        List<OrganizationE> organizationEList = new ArrayList<>();
+        Page<OrganizationE> pageByOrganization = iamRepository.pageByOrganization(0, 400);
+        int page = pageByOrganization.getTotalPages();
+        organizationEList.addAll(pageByOrganization.getContent());
+        if (page > 1) {
+            for (int i = 1; i < page; i++) {
+                Page<OrganizationE> list = iamRepository.pageByOrganization(i, 400);
+                organizationEList.addAll(list.getContent());
+            }
+        }
+
+        for (OrganizationE organizationE : organizationEList) {
+            getProjectInfo(organizationE);
+        }
     }
 
     public void updateWikiOrgHomePage() {
@@ -328,6 +355,48 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                     LOGGER.info("sync project again");
                     createWikiProjectSpace(organizationE, projectE, false);
                 }
+            } catch (CommonException e) {
+                LOGGER.error(String.valueOf(e));
+                continue;
+            }
+        }
+    }
+
+    public void getProjectInfo(OrganizationE organizationE) {
+        LOGGER.info("get project information, organizationE: {}", organizationE.toString());
+        List<ProjectE> projectEList = new ArrayList<>();
+        Page<ProjectE> projectEPage = iamRepository.pageByProject(organizationE.getId(), 0, 400);
+        int projectPage = projectEPage.getTotalPages();
+        projectEList.addAll(projectEPage.getContent());
+        if (projectPage > 1) {
+            for (int i = 1; i < projectPage; i++) {
+                Page<ProjectE> list = iamRepository.pageByProject(organizationE.getId(), i, 400);
+                projectEList.addAll(list.getContent());
+            }
+        }
+
+        for (ProjectE projectE : projectEList) {
+            try {
+                Page<UserWithRoleDO> userWithRoleDOPage = iamRepository.pagingQueryUsersWithProjectLevelRoles(projectE.getId());
+                userWithRoleDOPage.getContent().stream().forEach(u -> {
+                    u.getRoles().stream().forEach(r -> {
+                        RoleE roleE = iamRepository.queryWithPermissionsAndLabels(r.getId());
+                        if (roleE.getLabels() != null) {
+                            List<LabelE> labelEList = roleE.getLabels();
+                            for (LabelE label:labelEList) {
+                                if (label.getName().equals(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    stringBuilder.append(BaseStage.O).append(organizationE.getCode()).append(BaseStage.USER_GROUP);
+                                    List<Integer> list = wikiGroupService.getGroupsObjectNumber(stringBuilder.toString(), BaseStage.USERNAME, u.getLoginName());
+                                    if (list == null || list.isEmpty()) {
+                                        iWikiGroupService.createGroupUsers(stringBuilder.toString(), u.getLoginName(), BaseStage.USERNAME);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
             } catch (CommonException e) {
                 LOGGER.error(String.valueOf(e));
                 continue;

@@ -1,5 +1,7 @@
 package io.choerodon.wiki.infra.dataobject.iam;
 
+import java.util.List;
+
 /**
  * Created by Zenger on 2018/7/19.
  */
@@ -11,6 +13,7 @@ public class RoleDO {
     private String description;
     private String level;
     private Boolean enabled;
+    private List<LabelDO> labels;
 
     public Long getId() {
         return id;
@@ -58,5 +61,13 @@ public class RoleDO {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public List<LabelDO> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<LabelDO> labels) {
+        this.labels = labels;
     }
 }

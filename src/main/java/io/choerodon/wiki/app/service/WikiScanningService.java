@@ -14,4 +14,6 @@ public interface WikiScanningService {
     void syncOrg(Long organizationId);
 
     void syncProject(Long projectId);
+
+    void syncOrganizationUserGroup();
 }

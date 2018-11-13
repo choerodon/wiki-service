@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.exception.FeignException;
 import io.choerodon.wiki.domain.application.valueobject.RoleAssignmentSearch;
 import io.choerodon.wiki.infra.dataobject.iam.*;
@@ -74,5 +75,17 @@ public class IamServiceClientFallback implements IamServiceClient {
                                                                                     int size,
                                                                                     @RequestBody RoleAssignmentSearch roleAssignmentSearch) {
         throw new FeignException("error.user.get");
+    }
+
+    @Override
+    public ResponseEntity<Page<UserWithRoleDO>> pagingQueryUsersWithProjectLevelRoles(Long sourceId,
+                                                                                      RoleAssignmentSearch roleAssignmentSearchDTO,
+                                                                                      boolean doPage) {
+        throw new CommonException("error.user.and.role.get");
+    }
+
+    @Override
+    public ResponseEntity<RoleDO> queryWithPermissionsAndLabels(Long id) {
+        throw new CommonException("error.role.get");
     }
 }

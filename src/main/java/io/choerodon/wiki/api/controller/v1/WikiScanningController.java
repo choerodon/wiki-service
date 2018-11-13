@@ -2,7 +2,6 @@ package io.choerodon.wiki.api.controller.v1;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
-import io.choerodon.wiki.api.eventhandler.WikiEventHandler;
 import io.choerodon.wiki.app.service.WikiScanningService;
 import io.choerodon.wiki.infra.common.BaseStage;
 
@@ -22,8 +20,6 @@ import io.choerodon.wiki.infra.common.BaseStage;
 public class WikiScanningController {
 
     private WikiScanningService wikiScanningService;
-    @Autowired
-    private WikiEventHandler wikiEventHandler;
 
     public WikiScanningController(WikiScanningService wikiScanningService) {
         this.wikiScanningService = wikiScanningService;
@@ -32,7 +28,7 @@ public class WikiScanningController {
     /**
      * 同步组织和项目
      *
-     * @return DevopsServiceDTO
+     * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
@@ -97,6 +93,8 @@ public class WikiScanningController {
 
     /**
      * 更新wiki系统主页
+     *
+     * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
@@ -108,5 +106,18 @@ public class WikiScanningController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-
+    /**
+     * 同步项目下的成员到wiki系统的组织成员组里面
+     *
+     * @return ResponseEntity
+     */
+    @Permission(level = ResourceLevel.PROJECT,
+            roles = {InitRoleCode.PROJECT_OWNER,
+                    InitRoleCode.PROJECT_MEMBER})
+    @ApiOperation(value = "同步项目下的成员到wiki系统的组织成员组里面")
+    @PostMapping(value = "/wiki/organization_user_group")
+    public ResponseEntity syncOrganizationUserGroup() {
+        wikiScanningService.syncOrganizationUserGroup();
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

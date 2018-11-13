@@ -142,4 +142,22 @@ public class IamRepositoryImpl implements IamRepository {
         Page<UserDO> userDOPage = responseEntity.getBody();
         return ConvertPageHelper.convertPage(userDOPage, UserE.class);
     }
+
+    @Override
+    public Page<UserWithRoleDO> pagingQueryUsersWithProjectLevelRoles(Long projectId) {
+        ResponseEntity<Page<UserWithRoleDO>> responseEntity = iamServiceClient.pagingQueryUsersWithProjectLevelRoles(projectId,new RoleAssignmentSearch(),false);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.user.and.role.get");
+        }
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public RoleE queryWithPermissionsAndLabels(Long id) {
+        ResponseEntity<RoleDO> responseEntity = iamServiceClient.queryWithPermissionsAndLabels(id);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.role.get");
+        }
+        return ConvertHelper.convert(responseEntity.getBody(), RoleE.class);
+    }
 }
