@@ -50,6 +50,27 @@ public class WikiEventHandler {
         LOGGER.info("request data: {}", o);
     }
 
+
+    /**
+     * wiki注册组织监听
+     */
+    @SagaTask(code = "wikiRegisterOrganization",
+            description = "wiki注册组织监听",
+            sagaCode = "org-register",
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 10)
+    public String handleRegisterOrganizationCreateEvent(String data) {
+        RegisterOrganizationDTO registerOrganizationDTO = gson.fromJson(data, RegisterOrganizationDTO.class);
+        loggerInfo(registerOrganizationDTO);
+
+        createOrganization(registerOrganizationDTO.getOrganizationId(),
+                registerOrganizationDTO.getOrganizationCode(),
+                registerOrganizationDTO.getOrganizationName(),
+                registerOrganizationDTO.getUserId());
+        return data;
+    }
+
     /**
      * wiki服务的创建组织监听
      */
@@ -62,25 +83,10 @@ public class WikiEventHandler {
     public String handleOrganizationCreateEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationEventPayload organizationEventPayload = objectMapper.readValue(data, OrganizationEventPayload.class);
-        WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
-        wikiSpaceDTO.setName(organizationEventPayload.getName());
-        wikiSpaceDTO.setIcon(ORG_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, organizationEventPayload.getId(), BaseStage.USERNAME,
-                WikiSpaceResourceType.ORGANIZATION.getResourceType(), true);
-
-        String adminGroupName = BaseStage.O + organizationEventPayload.getCode() + BaseStage.ADMIN_GROUP;
-        String userGroupName = BaseStage.O + organizationEventPayload.getCode() + BaseStage.USER_GROUP;
-
-        WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
-        wikiGroupDTO.setGroupName(adminGroupName);
-        wikiGroupDTO.setOrganizationCode(organizationEventPayload.getCode());
-        wikiGroupDTO.setOrganizationName(organizationEventPayload.getName());
-        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, true);
-
-        wikiGroupService.setUserToGroup(adminGroupName, organizationEventPayload.getUserId(), BaseStage.USERNAME);
-
-        wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, true);
+        createOrganization(organizationEventPayload.getId(),
+                organizationEventPayload.getCode(),
+                organizationEventPayload.getName(),
+                organizationEventPayload.getUserId());
 
         return data;
     }
@@ -256,5 +262,25 @@ public class WikiEventHandler {
         return data;
     }
 
+    public void createOrganization(Long orgId,String orgCode,String orgName,Long userId) {
+        WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
+        wikiSpaceDTO.setName(orgName);
+        wikiSpaceDTO.setIcon(ORG_ICON);
+        wikiSpaceService.create(wikiSpaceDTO, orgId, BaseStage.USERNAME,
+                WikiSpaceResourceType.ORGANIZATION.getResourceType(), true);
 
+        String adminGroupName = BaseStage.O + orgCode + BaseStage.ADMIN_GROUP;
+        String userGroupName = BaseStage.O + orgCode + BaseStage.USER_GROUP;
+
+        WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
+        wikiGroupDTO.setGroupName(adminGroupName);
+        wikiGroupDTO.setOrganizationCode(orgCode);
+        wikiGroupDTO.setOrganizationName(orgName);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, true);
+
+        wikiGroupService.setUserToGroup(adminGroupName, userId, BaseStage.USERNAME);
+
+        wikiGroupDTO.setGroupName(userGroupName);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, true);
+    }
 }
