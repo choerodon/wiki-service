@@ -3,7 +3,9 @@ package io.choerodon.wiki.domain.application.convertor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertorI;
+import io.choerodon.wiki.domain.application.entity.iam.LabelE;
 import io.choerodon.wiki.domain.application.entity.iam.RoleE;
 import io.choerodon.wiki.infra.dataobject.iam.RoleDO;
 
@@ -17,6 +19,7 @@ public class RoleConverter implements ConvertorI<RoleE, RoleDO, Object> {
     public RoleE doToEntity(RoleDO dataObject) {
         RoleE roleE = new RoleE();
         BeanUtils.copyProperties(dataObject, roleE);
+        roleE.setLabels(ConvertHelper.convertList(dataObject.getLabels(),LabelE.class));
         return roleE;
     }
 

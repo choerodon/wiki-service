@@ -103,6 +103,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void createWikiGroupUsers(List<GroupMemberDTO> groupMemberDTOList, String username) {
         groupMemberDTOList.stream()
+                .filter(groupMember -> groupMember.getRoleLabels() != null)
                 .forEach(groupMember -> {
                     //将用户分配到组
                     String groupName = getGroupName(groupMember, username);
@@ -121,7 +122,22 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                             iWikiUserService.createUser(user.getLoginName(), xmlParam, username);
                         }
 
-                        iWikiGroupService.createGroupUsers(groupName, user.getLoginName(), username);
+                        List<Integer> list = getGroupsObjectNumber(groupName, username, user.getLoginName());
+                        if (list == null || list.isEmpty()) {
+                            iWikiGroupService.createGroupUsers(groupName, user.getLoginName(), username);
+                        }
+
+                        if (ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())
+                                && groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                            ProjectE projectE = iamRepository.queryIamProject(groupMember.getResourceId());
+                            OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
+                            StringBuilder stringBuilder = new StringBuilder();
+                            stringBuilder.append(BaseStage.O).append(organizationE.getCode()).append(BaseStage.USER_GROUP);
+                            List<Integer> list1 = getGroupsObjectNumber(stringBuilder.toString(), username, user.getLoginName());
+                            if (list1 == null || list1.isEmpty()) {
+                                iWikiGroupService.createGroupUsers(stringBuilder.toString(), user.getLoginName(), username);
+                            }
+                        }
                     }
                 });
     }
@@ -308,7 +324,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         return FileUtil.replaceReturnString(inputStream, params);
     }
 
-    private List<Integer> getGroupsObjectNumber(String groupName, String username, String loginName) {
+    @Override
+    public List<Integer> getGroupsObjectNumber(String groupName, String username, String loginName) {
         List<Integer> list = new ArrayList<>();
         try {
             String page = iWikiClassService.getPageClassResource(BaseStage.SPACE, groupName, BaseStage.XWIKIGROUPS, username);

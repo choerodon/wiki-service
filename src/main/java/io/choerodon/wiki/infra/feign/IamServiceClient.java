@@ -58,4 +58,13 @@ public interface IamServiceClient {
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestBody RoleAssignmentSearch roleAssignmentSearch);
+
+    @PostMapping(value = "/v1/projects/{project_id}/role_members/users/roles")
+    public ResponseEntity<Page<UserWithRoleDO>> pagingQueryUsersWithProjectLevelRoles(
+            @PathVariable(name = "project_id") Long sourceId,
+            @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO,
+            @RequestParam(name = "doPage") boolean doPage);
+
+    @GetMapping(value = "/v1/roles/{id}")
+    public ResponseEntity<RoleDO> queryWithPermissionsAndLabels(@PathVariable(name = "id") Long id);
 }
