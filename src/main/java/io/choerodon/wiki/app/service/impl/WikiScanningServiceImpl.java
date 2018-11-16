@@ -101,9 +101,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         setOrganization(organizationE, true, true);
                     }
                 }
-            } catch (CommonException e) {
+            } catch (Exception e) {
                 LOGGER.error(String.valueOf(e));
-                continue;
             }
         }
     }
@@ -351,15 +350,14 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 if (wikiSpaceES == null || wikiSpaceES.isEmpty()) {
                     LOGGER.info("the first sync project");
                     createWikiProjectSpace(organizationE, projectE, true);
-                } else if (wikiSpaceES != null && !wikiSpaceES.isEmpty()
+                } else if (!wikiSpaceES.isEmpty()
                         && (SpaceStatus.OPERATIING.getSpaceStatus().equals(wikiSpaceES.get(0).getStatus())
                         || SpaceStatus.FAILED.getSpaceStatus().equals(wikiSpaceES.get(0).getStatus()))) {
                     LOGGER.info("sync project again");
                     createWikiProjectSpace(organizationE, projectE, false);
                 }
-            } catch (CommonException e) {
+            } catch (Exception e) {
                 LOGGER.error(String.valueOf(e));
-                continue;
             }
         }
     }
@@ -400,9 +398,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         }
                     });
                 });
-            } catch (CommonException e) {
+            } catch (Exception e) {
                 LOGGER.error(String.valueOf(e));
-                continue;
             }
         }
     }
