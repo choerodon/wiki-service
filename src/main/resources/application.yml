@@ -38,15 +38,15 @@ wiki:
   token: Choerodon
   default-group: XWikiAllGroup
   sync: false #是否服务启动之后自动同步组织和项目
-#feign:
-#  hystrix:
-#    shareSecurityContext: true
-#    command:
-#      default:
-#        execution:
-#          isolation:
-#            thread:
-#              timeoutInMilliseconds: 10000
+feign:
+  hystrix:
+    shareSecurityContext: true
+    command:
+      default:
+        execution:
+          isolation:
+            thread:
+              timeoutInMilliseconds: 10000
 ribbon:
   ConnectTimeout: 5000
   ReadTimeout: 5000
