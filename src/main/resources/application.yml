@@ -10,6 +10,8 @@ spring:
           brokers: 127.0.0.1:9092
           zkNodes: 127.0.0.1:2181
       default-binder: kafka
+    bus:
+      enabled: true
   sleuth:
     integration:
       enabled: false
@@ -26,16 +28,6 @@ choerodon:
       max-poll-size: 200 # 每次拉取消息最大数量
       enabled: true # 启动消费端
       poll-interval-ms: 1000 # 拉取间隔，默认1000毫秒
-  event:
-    consumer:
-      enabled: true # 是否开启，不设置默认开启
-      queue-type: kafka # 消息队列类型
-      enable-duplicate-remove: true # 是否开启去重
-      failed-strategy: nothin # 失败策略。支持nothing(什么都不做), send_back_event_store(回传到event store)两种
-      retry:
-        enabled: true # 是否开启重试功能
-      kafka:
-        bootstrap-servers: localhost:9092 # kafka地址
 mybatis:
   mapperLocations: classpath*:/mapper/*.xml
   configuration: # 数据库下划线转驼峰配置
@@ -46,15 +38,15 @@ wiki:
   token: Choerodon
   default-group: XWikiAllGroup
   sync: false #是否服务启动之后自动同步组织和项目
-feign:
-  hystrix:
-    shareSecurityContext: true
-    command:
-      default:
-        execution:
-          isolation:
-            thread:
-              timeoutInMilliseconds: 10000
+#feign:
+#  hystrix:
+#    shareSecurityContext: true
+#    command:
+#      default:
+#        execution:
+#          isolation:
+#            thread:
+#              timeoutInMilliseconds: 10000
 ribbon:
   ConnectTimeout: 5000
   ReadTimeout: 5000
