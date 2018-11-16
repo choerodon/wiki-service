@@ -202,7 +202,9 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         }
 
         for (OrganizationE organizationE : organizationEList) {
-            getProjectInfo(organizationE);
+            if (organizationE.getProjectCount() > 0) {
+                getProjectInfo(organizationE);
+            }
         }
     }
 

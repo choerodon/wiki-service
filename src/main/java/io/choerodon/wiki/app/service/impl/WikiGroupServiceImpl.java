@@ -128,7 +128,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         }
 
                         if (ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())
-                                && groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                                && (groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())
+                                || groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()))) {
                             ProjectE projectE = iamRepository.queryIamProject(groupMember.getResourceId());
                             OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
                             StringBuilder stringBuilder = new StringBuilder();
