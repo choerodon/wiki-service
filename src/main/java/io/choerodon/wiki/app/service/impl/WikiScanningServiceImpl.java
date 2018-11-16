@@ -386,7 +386,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         if (roleE.getLabels() != null) {
                             List<LabelE> labelEList = roleE.getLabels();
                             for (LabelE label:labelEList) {
-                                if (label.getName().equals(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                                if (label.getName().equals(WikiRoleType.PROJECT_WIKI_USER.getResourceType())
+                                        || label.getName().equals(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType())) {
                                     StringBuilder stringBuilder = new StringBuilder();
                                     stringBuilder.append(BaseStage.O).append(organizationE.getCode()).append(BaseStage.USER_GROUP);
                                     List<Integer> list = wikiGroupService.getGroupsObjectNumber(stringBuilder.toString(), BaseStage.USERNAME, u.getLoginName());
