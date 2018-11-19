@@ -216,6 +216,7 @@ class WikiProjectSpaceControllerSpec extends Specification {
 
         when: '向接口发请求'
         def entity = restTemplate.postForEntity(path, wikiSpaceDTO, null, projectId)
+        Thread.sleep(2000)
 
         then: '状态码为201'
         Assert.assertEquals(201, entity.statusCodeValue)

@@ -101,9 +101,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         setOrganization(organizationE, true, true);
                     }
                 }
-            } catch (CommonException e) {
+            } catch (Exception e) {
                 LOGGER.error(String.valueOf(e));
-                continue;
             }
         }
     }
@@ -202,7 +201,9 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         }
 
         for (OrganizationE organizationE : organizationEList) {
-            getProjectInfo(organizationE);
+            if (organizationE.getProjectCount() > 0) {
+                getProjectInfo(organizationE);
+            }
         }
     }
 
@@ -349,15 +350,14 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 if (wikiSpaceES == null || wikiSpaceES.isEmpty()) {
                     LOGGER.info("the first sync project");
                     createWikiProjectSpace(organizationE, projectE, true);
-                } else if (wikiSpaceES != null && !wikiSpaceES.isEmpty()
+                } else if (!wikiSpaceES.isEmpty()
                         && (SpaceStatus.OPERATIING.getSpaceStatus().equals(wikiSpaceES.get(0).getStatus())
                         || SpaceStatus.FAILED.getSpaceStatus().equals(wikiSpaceES.get(0).getStatus()))) {
                     LOGGER.info("sync project again");
                     createWikiProjectSpace(organizationE, projectE, false);
                 }
-            } catch (CommonException e) {
+            } catch (Exception e) {
                 LOGGER.error(String.valueOf(e));
-                continue;
             }
         }
     }
@@ -384,7 +384,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         if (roleE.getLabels() != null) {
                             List<LabelE> labelEList = roleE.getLabels();
                             for (LabelE label:labelEList) {
-                                if (label.getName().equals(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                                if (label.getName().equals(WikiRoleType.PROJECT_WIKI_USER.getResourceType())
+                                        || label.getName().equals(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType())) {
                                     StringBuilder stringBuilder = new StringBuilder();
                                     stringBuilder.append(BaseStage.O).append(organizationE.getCode()).append(BaseStage.USER_GROUP);
                                     List<Integer> list = wikiGroupService.getGroupsObjectNumber(stringBuilder.toString(), BaseStage.USERNAME, u.getLoginName());
@@ -397,9 +398,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         }
                     });
                 });
-            } catch (CommonException e) {
+            } catch (Exception e) {
                 LOGGER.error(String.valueOf(e));
-                continue;
             }
         }
     }

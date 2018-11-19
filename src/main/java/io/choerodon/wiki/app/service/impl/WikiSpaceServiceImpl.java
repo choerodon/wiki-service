@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import io.choerodon.core.convertor.ConvertHelper;
@@ -206,7 +205,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             if (wikiSpaceE.getStatus().equals(SpaceStatus.FAILED.getSpaceStatus())) {
                 wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
                 wikiSpaceE = wikiSpaceRepository.update(wikiSpaceE);
-                this.createOrgUnderSpace(wikiSpaceE.getPath().split("/")[0],
+                wikiSpaceAsynService.createOrgUnderSpace(wikiSpaceE.getPath().split("/")[0],
                         wikiSpaceE.getPath().split("/")[1],
                         wikiSpaceE,
                         BaseStage.USERNAME);
@@ -226,7 +225,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             if (wikiSpaceE.getStatus().equals(SpaceStatus.FAILED.getSpaceStatus())) {
                 wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
                 wikiSpaceE = wikiSpaceRepository.update(wikiSpaceE);
-                this.createProjectUnderSpace(wikiSpaceE.getPath().split("/")[0],
+                wikiSpaceAsynService.createProjectUnderSpace(wikiSpaceE.getPath().split("/")[0],
                         wikiSpaceE.getPath().split("/")[0],
                         wikiSpaceE.getPath().split("/")[0],
                         wikiSpaceE,
@@ -304,7 +303,6 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         }
     }
 
-    @Async
     public void deleteProjectUnderPage(WikiSpaceE wikiSpaceE) {
         LOGGER.info("delete the page under the project,wikiSpaceE:{}", wikiSpaceE.toString());
         String[] param = wikiSpaceE.getPath().split("/");
@@ -325,7 +323,6 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         checkCodeDelete(webHome, wikiSpaceE.getId());
     }
 
-    @Async
     public void deleteOrgUnderPage(WikiSpaceE wikiSpaceE) {
         LOGGER.info("delete the page under the organization,wikiSpaceE:{}", wikiSpaceE.toString());
         String[] param = wikiSpaceE.getPath().split("/");
@@ -344,7 +341,6 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         checkCodeDelete(webHome, wikiSpaceE.getId());
     }
 
-    @Async
     public void deleteOrgPage(Long resourceId, Long id) {
         OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
         String adminGroupName = BaseStage.O + organization.getCode() + BaseStage.ADMIN_GROUP;
@@ -372,7 +368,6 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         checkCodeDelete(webHome, id);
     }
 
-    @Async
     public void deleteProjectPage(Long resourceId, Long id) {
         ProjectE projectE = iamRepository.queryIamProject(resourceId);
         if (projectE != null) {
@@ -474,11 +469,6 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             selectOneSpace.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
             orgUnderSpace = wikiSpaceRepository.update(selectOneSpace);
         }
-        this.createOrgUnderSpace(path, orgUnderName, orgUnderSpace, username);
-    }
-
-    @Async
-    private void createOrgUnderSpace(String path, String orgUnderName, WikiSpaceE orgUnderSpace, String username) {
         wikiSpaceAsynService.createOrgUnderSpace(path, orgUnderName, orgUnderSpace, username);
     }
 
@@ -498,16 +488,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             selectOneSpace.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
             projectUnderSpace = wikiSpaceRepository.update(selectOneSpace);
         }
-        this.createProjectUnderSpace(param[0], param[1], projectUnderName, projectUnderSpace, username);
-    }
-
-    @Async
-    private void createProjectUnderSpace(String param1,
-                                         String param2,
-                                         String projectUnderName,
-                                         WikiSpaceE projectUnderSpace,
-                                         String username) {
-        wikiSpaceAsynService.createProjectUnderSpace(param1, param2, projectUnderName, projectUnderSpace, username);
+        wikiSpaceAsynService.createProjectUnderSpace(param[0], param[1], projectUnderName, projectUnderSpace, username);
     }
 
     public List<WikiSpaceResponseDTO> getWikiSpaceByResourceIdAndResourceType(Long resourceId, String resourceType) {

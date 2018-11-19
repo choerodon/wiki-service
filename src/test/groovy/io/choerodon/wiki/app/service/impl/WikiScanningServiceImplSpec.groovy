@@ -10,6 +10,7 @@ import io.choerodon.wiki.domain.application.entity.iam.RoleE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository
+import io.choerodon.wiki.domain.service.IWikiGroupService
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService
 import spock.lang.Shared
 import spock.lang.Specification
@@ -24,6 +25,7 @@ class WikiScanningServiceImplSpec extends Specification {
     WikiSpaceService wikiSpaceService;
     WikiGroupService wikiGroupService;
     IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
+    IWikiGroupService iWikiGroupService;
     WikiScanningServiceImpl service
 
     @Shared
@@ -44,11 +46,13 @@ class WikiScanningServiceImplSpec extends Specification {
         wikiSpaceService = Mock(WikiSpaceService)
         wikiGroupService = Mock(WikiGroupService)
         iWikiSpaceWebHomeService = Mock(IWikiSpaceWebHomeService)
+        iWikiGroupService = Mock(IWikiGroupService)
         service = new WikiScanningServiceImpl(iamRepository,
                 wikiSpaceRepository,
                 wikiSpaceService,
                 wikiGroupService,
-                iWikiSpaceWebHomeService)
+                iWikiSpaceWebHomeService,
+                iWikiGroupService)
 
         organizationE = new OrganizationE()
         organizationE.setId(1)

@@ -30,11 +30,9 @@ public class WikiScanningController {
      *
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
-            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    BaseStage.ORGANIZATION_MEMBER})
+    @Permission(level = ResourceLevel.SITE)
     @ApiOperation(value = "同步组织和项目")
-    @GetMapping(value = "/scan")
+    @GetMapping(value = "/site/scan")
     public ResponseEntity scanning() {
         wikiScanningService.scanning();
         return new ResponseEntity(HttpStatus.OK);
@@ -96,11 +94,9 @@ public class WikiScanningController {
      *
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
-            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    BaseStage.ORGANIZATION_MEMBER})
+    @Permission(level = ResourceLevel.SITE)
     @ApiOperation(value = "更新wiki系统主页")
-    @PostMapping(value = "/wiki/page")
+    @PostMapping(value = "/site/main_page")
     public ResponseEntity update() {
         wikiScanningService.updateWikiPage();
         return new ResponseEntity(HttpStatus.CREATED);
@@ -111,11 +107,9 @@ public class WikiScanningController {
      *
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT,
-            roles = {InitRoleCode.PROJECT_OWNER,
-                    InitRoleCode.PROJECT_MEMBER})
+    @Permission(level = ResourceLevel.SITE)
     @ApiOperation(value = "同步项目下的成员到wiki系统的组织成员组里面")
-    @PostMapping(value = "/wiki/organization_user_group")
+    @PostMapping(value = "/site/organization_user_group")
     public ResponseEntity syncOrganizationUserGroup() {
         wikiScanningService.syncOrganizationUserGroup();
         return new ResponseEntity(HttpStatus.OK);
