@@ -47,7 +47,11 @@ env:
     WIKI_TOKEN: Choerodon
     WIKI_DEFAULT_GROUP: XWikiAllGroup
     WIKI_SYNC: false
-    JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+    SKYWALKING_OPTS: >-
+          -javaagent:/agent/skywalking-agent.jar
+          -Dskywalking.agent.application_code=${service_name}
+          -Dskywalking.agent.sample_n_per_3_secs=-1
+          -Dskywalking.collector.backend_service=oap.skywalking:11800
 
 metrics:
   path: /prometheus

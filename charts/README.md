@@ -82,3 +82,5 @@ env.open.WIKI_CLIENT|默认的wiki名称
 env.open.WIKI_URL|wiki系统的地址
 env.open.WIKI_TOKEN|wiki请求认证的token
 env.open.WIKI_DEFAULT_GROUP|wiki默认的所有用户组
+env.open.WIKI_SYNC|是否服务启动之后自动同步组织和项目
+env.open.SKYWALKING_OPTS|skywalking代理端配置
