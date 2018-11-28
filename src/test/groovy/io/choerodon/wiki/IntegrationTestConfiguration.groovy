@@ -23,7 +23,6 @@ import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
-import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.security.jwt.JwtHelper
 import org.springframework.security.jwt.crypto.sign.MacSigner
 import org.springframework.security.jwt.crypto.sign.Signer
@@ -50,12 +49,7 @@ class IntegrationTestConfiguration {
     LiquibaseExecutor liquibaseExecutor
 
     final ObjectMapper objectMapper = new ObjectMapper()
-
-    @Bean
-    KafkaTemplate kafkaTemplate() {
-        detachedMockFactory.Mock(KafkaTemplate)
-    }
-
+    
     @Bean(name = "mockiWikiSpaceWebHomeService")
     @Primary
     IWikiSpaceWebHomeService iWikiSpaceWebHomeService() {

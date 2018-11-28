@@ -76,8 +76,6 @@ env.open.SPRING_DATASOURCE_PASSWORD|数据库密码
 env.open.SPRING_CLOUD_CONFIG_ENABLED|启用配置中心
 env.open.SPRING_CLOUD_CONFIG_URI|配置中心地址
 env.open.EUREKA_CLIENT_SERVICEURL_DEFAULTZONE|注册服务地址
-env.open.SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS|kafk地址
-env.open.SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES|zookeeper地址
 env.open.WIKI_CLIENT|默认的wiki名称
 env.open.WIKI_URL|wiki系统的地址
 env.open.WIKI_TOKEN|wiki请求认证的token
