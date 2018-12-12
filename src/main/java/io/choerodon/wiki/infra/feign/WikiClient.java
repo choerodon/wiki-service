@@ -266,6 +266,21 @@ public interface WikiClient {
             @Path("client") String client,
             @Path("param1") String param1);
 
+    @GET("/rest/wikis/{client}/spaces/{param1}/pages/{page}?objects=true")
+    Call<ResponseBody> checkOrgSpaceExsist(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("page") String page);
+
+    @GET("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/pages/{page}?objects=true")
+    Call<ResponseBody> checkProjectSpaceExsist(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("param2") String param2,
+            @Path("page") String page);
+
     @Headers({"Content-Type:application/xml;charset=UTF-8"})
     @PUT("/rest/wikis/{client}/spaces/XWiki/pages/{groupName}?objects=true")
     Call<ResponseBody> createGroup(

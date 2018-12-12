@@ -208,17 +208,16 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     }
 
     @Override
-    public void enableOrganizationGroup(Long orgId, String username) {
-        OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+    public void enableOrganizationGroup(OrganizationE organization, String username) {
         if (organization != null) {
-            LOGGER.info("enable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
+            LOGGER.info("enable organization group,orgId: {} and organization: {} ", organization.getId(), organization.toString());
             List<Integer> list = getGlobalRightsObjectNumber(BaseStage.O + organization.getName(), null, username);
             for (Integer i : list) {
                 //删除角色
                 iWikiClassService.deletePageClass(username, BaseStage.O + organization.getName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, i);
             }
         } else {
-            throw new CommonException("error.query.organization");
+            throw new CommonException("error.get.organization.infor");
         }
     }
 
@@ -236,22 +235,15 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     }
 
     @Override
-    public void enableProjectGroup(Long projectId, String username) {
-        ProjectE projectE = iamRepository.queryIamProject(projectId);
-        if (projectE != null) {
-            LOGGER.info("enable project group,projectId: {} and project: {} ", projectId, projectE.toString());
-            Long orgId = projectE.getOrganization().getId();
-            OrganizationE organization = iamRepository.queryOrganizationById(orgId);
-            if (organization != null) {
-                List<Integer> list = getGlobalRightsObjectNumber(BaseStage.O + organization.getName(),
-                        BaseStage.P + projectE.getName(), username);
-                for (Integer i : list) {
-                    //删除角色
-                    iWikiClassService.deleteProjectPageClass(username, BaseStage.O + organization.getName(), BaseStage.P + projectE.getName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, i);
-                }
+    public void enableProjectGroup(OrganizationE organization, ProjectE projectE, String username) {
+        LOGGER.info("enable project group,projectId: {} and project: {} ", projectE.getId(), projectE.toString());
+        if (organization != null) {
+            List<Integer> list = getGlobalRightsObjectNumber(BaseStage.O + organization.getName(),
+                    BaseStage.P + projectE.getName(), username);
+            for (Integer i : list) {
+                //删除角色
+                iWikiClassService.deleteProjectPageClass(username, BaseStage.O + organization.getName(), BaseStage.P + projectE.getName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, i);
             }
-        } else {
-            throw new CommonException("error.query.project");
         }
     }
 

@@ -5,6 +5,8 @@ import java.util.List;
 import io.choerodon.wiki.api.dto.GroupMemberDTO;
 import io.choerodon.wiki.api.dto.UserDTO;
 import io.choerodon.wiki.api.dto.WikiGroupDTO;
+import io.choerodon.wiki.domain.application.entity.ProjectE;
+import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 
 /**
  * Created by Ernst on 2018/7/6.
@@ -21,11 +23,11 @@ public interface WikiGroupService {
 
     void disableOrganizationGroup(Long orgId, String username);
 
-    void enableOrganizationGroup(Long orgId, String username);
+    void enableOrganizationGroup(OrganizationE organization, String username);
 
     void disableProjectGroup(Long projectId, String username);
 
-    void enableProjectGroup(Long projectId, String username);
+    void enableProjectGroup(OrganizationE organization, ProjectE projectE, String username);
 
     void setUserToGroup(String groupName, Long userId, String username);
 

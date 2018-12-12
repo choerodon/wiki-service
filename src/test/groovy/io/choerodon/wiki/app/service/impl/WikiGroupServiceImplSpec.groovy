@@ -52,20 +52,10 @@ class WikiGroupServiceImplSpec extends Specification {
 
     def "enableOrganizationGroup"() {
         when:
-        wikiGroupService.enableOrganizationGroup(1L, "testUserName")
+        wikiGroupService.enableOrganizationGroup(null, "testUserName")
         then:
-        1 * iamRepository.queryOrganizationById(_) >> null
         def e = thrown(CommonException)
-        e.message == "error.query.organization"
-    }
-
-    def "enableProjectGroup"() {
-        when:
-        wikiGroupService.enableProjectGroup(1L, "testUserName")
-        then:
-        1 * iamRepository.queryIamProject(_) >> null
-        def e = thrown(CommonException)
-        e.message == "error.query.project"
+        e.message == "error.get.organization.infor"
     }
 
     def "setUserToGroup"() {
