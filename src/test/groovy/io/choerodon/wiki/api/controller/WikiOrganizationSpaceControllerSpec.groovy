@@ -10,6 +10,7 @@ import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
 import io.choerodon.wiki.domain.service.*
+import io.choerodon.wiki.infra.common.BaseStage
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
 import io.choerodon.wiki.infra.dataobject.iam.ProjectDO
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
@@ -293,6 +294,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         1 * iamServiceClient.queryOrganizationById(_) >> organization
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> page
         1 * iWikiClassService.deletePageClass(_, _, _, _, _)
+        1 * iWikiSpaceWebHomeService.checkOrgSpaceExsist(*_) >> true
 
         when: '模拟发送消息'
         def entity = wikiEventHandler.handleOrganizationEnableEvent(payload)

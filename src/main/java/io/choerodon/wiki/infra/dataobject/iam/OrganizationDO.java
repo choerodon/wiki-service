@@ -11,6 +11,7 @@ public class OrganizationDO {
     private String code;
     private Boolean enabled;
     private Long projectCount;
+    private Long userId;
 
     public Long getId() {
         return id;
@@ -50,5 +51,13 @@ public class OrganizationDO {
 
     public void setProjectCount(Long projectCount) {
         this.projectCount = projectCount;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

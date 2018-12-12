@@ -10,6 +10,7 @@ public class OrganizationE {
     private String code;
     private Boolean enabled;
     private Long projectCount;
+    private Long userId;
 
     public OrganizationE() {
     }
@@ -56,6 +57,14 @@ public class OrganizationE {
 
     public void setProjectCount(Long projectCount) {
         this.projectCount = projectCount;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override

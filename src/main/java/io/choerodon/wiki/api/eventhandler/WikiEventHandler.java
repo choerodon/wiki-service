@@ -13,12 +13,17 @@ import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.SagaDefinition;
 import io.choerodon.asgard.saga.annotation.SagaTask;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.api.dto.*;
 import io.choerodon.wiki.app.service.WikiGroupService;
 import io.choerodon.wiki.app.service.WikiLogoService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
+import io.choerodon.wiki.domain.application.entity.ProjectE;
+import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
 import io.choerodon.wiki.domain.application.event.ProjectEvent;
+import io.choerodon.wiki.domain.application.repository.IamRepository;
+import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
@@ -37,13 +42,19 @@ public class WikiEventHandler {
     private WikiSpaceService wikiSpaceService;
     private WikiGroupService wikiGroupService;
     private WikiLogoService wikiLogoService;
+    private IamRepository iamRepository;
+    private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
 
     public WikiEventHandler(WikiSpaceService wikiSpaceService,
                             WikiGroupService wikiGroupService,
-                            WikiLogoService wikiLogoService) {
+                            WikiLogoService wikiLogoService,
+                            IamRepository iamRepository,
+                            IWikiSpaceWebHomeService iWikiSpaceWebHomeService) {
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
         this.wikiLogoService = wikiLogoService;
+        this.iamRepository = iamRepository;
+        this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
     }
 
     private void loggerInfo(Object o) {
@@ -57,6 +68,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiRegisterOrganization",
             description = "wiki注册组织监听",
             sagaCode = "org-register",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -77,6 +89,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiCreateOrganization",
             description = "wiki服务的创建组织监听",
             sagaCode = "org-create-organization",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -97,30 +110,19 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiCreateProject",
             description = "wiki服务的创建项目监听",
             sagaCode = "iam-create-project",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleProjectCreateEvent(String data) throws IOException {
         loggerInfo(data);
         ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
-        WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
-        wikiSpaceDTO.setName(projectEvent.getOrganizationName() + "/" + projectEvent.getProjectName());
-        wikiSpaceDTO.setIcon(PROJECT_ICON);
-        wikiSpaceService.create(wikiSpaceDTO, projectEvent.getProjectId(), BaseStage.USERNAME,
-                WikiSpaceResourceType.PROJECT.getResourceType(), true);
-        //创建组
-        WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
-        String adminGroupName = BaseStage.P + projectEvent.getOrganizationCode() + BaseStage.LINE + projectEvent.getProjectCode() + BaseStage.ADMIN_GROUP;
-        String userGroupName = BaseStage.P + projectEvent.getOrganizationCode() + BaseStage.LINE + projectEvent.getProjectCode() + BaseStage.USER_GROUP;
-        wikiGroupDTO.setGroupName(adminGroupName);
-        wikiGroupDTO.setProjectCode(projectEvent.getProjectCode());
-        wikiGroupDTO.setProjectName(projectEvent.getProjectName());
-        wikiGroupDTO.setOrganizationName(projectEvent.getOrganizationName());
-        wikiGroupDTO.setOrganizationCode(projectEvent.getOrganizationCode());
-        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, false);
-        wikiGroupService.setUserToGroup(adminGroupName, projectEvent.getUserId(), BaseStage.USERNAME);
-        wikiGroupDTO.setGroupName(userGroupName);
-        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, false);
+        createProject(projectEvent.getOrganizationCode(),
+                projectEvent.getProjectCode(),
+                projectEvent.getOrganizationName(),
+                projectEvent.getProjectName(),
+                projectEvent.getProjectId(),
+                projectEvent.getUserId());
 
         return data;
     }
@@ -132,6 +134,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiUpdateMemberRole",
             description = "wiki服务的角色分配监听",
             sagaCode = "iam-update-memberRole",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
@@ -151,6 +154,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiDeleteMemberRole",
             description = "wiki服务的去除角色监听",
             sagaCode = "iam-delete-memberRole",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
@@ -169,6 +173,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiCreateUser",
             description = "wiki服务的用户创建监听",
             sagaCode = "iam-create-user",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
@@ -187,6 +192,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiDisableOrganization",
             description = "wiki服务的组织禁用监听",
             sagaCode = "iam-disable-organization",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -203,6 +209,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiDisableProject",
             description = "wiki服务的项目禁用监听",
             sagaCode = "iam-disable-project",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -219,13 +226,22 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiEnableOrganization",
             description = "wiki服务的组织启用监听",
             sagaCode = "iam-enable-organization",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleOrganizationEnableEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
-        wikiGroupService.enableOrganizationGroup(organizationDTO.getOrganizationId(), BaseStage.USERNAME);
+        OrganizationE organization = iamRepository.queryOrganizationById(organizationDTO.getOrganizationId());
+        if (!iWikiSpaceWebHomeService.checkOrgSpaceExsist(BaseStage.O + organization.getName(), BaseStage.USERNAME)) {
+            createOrganization(organization.getId(),
+                    organization.getCode(),
+                    organization.getName(),
+                    organization.getUserId());
+        } else {
+            wikiGroupService.enableOrganizationGroup(organization, BaseStage.USERNAME);
+        }
         return data;
     }
 
@@ -235,13 +251,31 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiEnableOrganization",
             description = "wiki服务的项目启用监听",
             sagaCode = "iam-enable-project",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
     public String handleProjectEnableEvent(String data) throws IOException {
         loggerInfo(data);
         ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
-        wikiGroupService.enableProjectGroup(projectDTO.getProjectId(), BaseStage.USERNAME);
+        ProjectE projectE = iamRepository.queryIamProject(projectDTO.getProjectId());
+        if (projectE != null) {
+            OrganizationE organization = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
+            if (!iWikiSpaceWebHomeService.checkProjectSpaceExsist(BaseStage.O + organization.getName(),
+                    BaseStage.P + projectE.getName(), BaseStage.USERNAME)) {
+                createProject(organization.getCode(),
+                        projectE.getCode(),
+                        organization.getName(),
+                        projectE.getName(),
+                        projectE.getId(),
+                        organization.getUserId());
+            } else {
+                wikiGroupService.enableProjectGroup(organization, projectE, BaseStage.USERNAME);
+            }
+        } else {
+            throw new CommonException("error.query.project");
+        }
+
         return data;
     }
 
@@ -251,6 +285,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiUpdateLogo",
             description = "wiki服务的Logo修改监听",
             sagaCode = "iam-update-system-setting",
+            maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -262,7 +297,7 @@ public class WikiEventHandler {
         return data;
     }
 
-    public void createOrganization(Long orgId,String orgCode,String orgName,Long userId) {
+    private void createOrganization(Long orgId, String orgCode, String orgName, Long userId) {
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(orgName);
         wikiSpaceDTO.setIcon(ORG_ICON);
@@ -282,5 +317,26 @@ public class WikiEventHandler {
 
         wikiGroupDTO.setGroupName(userGroupName);
         wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, true);
+    }
+
+    private void createProject(String orgCode, String projectCode, String orgName, String projectName, Long projectId, Long userId) {
+        WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
+        wikiSpaceDTO.setName(orgName + "/" + projectName);
+        wikiSpaceDTO.setIcon(PROJECT_ICON);
+        wikiSpaceService.create(wikiSpaceDTO, projectId, BaseStage.USERNAME,
+                WikiSpaceResourceType.PROJECT.getResourceType(), true);
+        //创建组
+        WikiGroupDTO wikiGroupDTO = new WikiGroupDTO();
+        String adminGroupName = BaseStage.P + orgCode + BaseStage.LINE + projectCode + BaseStage.ADMIN_GROUP;
+        String userGroupName = BaseStage.P + orgCode + BaseStage.LINE + projectCode + BaseStage.USER_GROUP;
+        wikiGroupDTO.setGroupName(adminGroupName);
+        wikiGroupDTO.setProjectCode(projectCode);
+        wikiGroupDTO.setProjectName(projectName);
+        wikiGroupDTO.setOrganizationName(orgName);
+        wikiGroupDTO.setOrganizationCode(orgCode);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, false);
+        wikiGroupService.setUserToGroup(adminGroupName, userId, BaseStage.USERNAME);
+        wikiGroupDTO.setGroupName(userGroupName);
+        wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, false);
     }
 }

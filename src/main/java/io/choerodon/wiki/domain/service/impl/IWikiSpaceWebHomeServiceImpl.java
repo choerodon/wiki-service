@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import retrofit2.Call;
 import retrofit2.Response;
 
 import io.choerodon.core.exception.CommonException;
@@ -17,6 +18,7 @@ import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.enums.SpaceStatus;
+import io.choerodon.wiki.infra.common.exception.NetworkRequestStatusCodeException;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -136,6 +138,46 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
         }
 
         return response.code();
+    }
+
+    @Override
+    public Boolean checkOrgSpaceExsist(String space, String username) {
+        LOGGER.info("Check if the organization space exists in the wiki: {}", space);
+        Call<ResponseBody> call = wikiClient.checkOrgSpaceExsist(username,
+                client, space, BaseStage.WEBHOME);
+        try {
+            Response response = call.execute();
+            LOGGER.info("Check if the organization space exists in the wiki return code: {}", response.code());
+            if (response.code() == BaseStage.OK) {
+                return true;
+            } else if (response.code() == BaseStage.NOT_FOUND) {
+                return false;
+            } else {
+                throw new NetworkRequestStatusCodeException("Check that the organization space has returned error code in the wiki: " + response.code());
+            }
+        } catch (IOException e) {
+            throw new CommonException("error.wiki.organization.space.check", e);
+        }
+    }
+
+    @Override
+    public Boolean checkProjectSpaceExsist(String orgSpace, String projectSpace, String username) {
+        LOGGER.info("Check if the project space exists in the wiki: {}/{}", orgSpace, projectSpace);
+        Call<ResponseBody> call = wikiClient.checkProjectSpaceExsist(username,
+                client, orgSpace, projectSpace, BaseStage.WEBHOME);
+        try {
+            Response response = call.execute();
+            LOGGER.info("Check if the project space exists in the wiki return code: {}", response.code());
+            if (response.code() == BaseStage.OK) {
+                return true;
+            } else if (response.code() == BaseStage.NOT_FOUND) {
+                return false;
+            } else {
+                throw new NetworkRequestStatusCodeException("Check that the project space has returned error code in the wiki: " + response.code());
+            }
+        } catch (IOException e) {
+            throw new CommonException("error.wiki.project.space.check", e);
+        }
     }
 
     public void updateWikiSpaceStatus(Long id) {
