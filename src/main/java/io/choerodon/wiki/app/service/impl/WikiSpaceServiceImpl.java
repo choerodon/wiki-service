@@ -157,7 +157,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             if (!params.isEmpty()) {
                 params.put("{{ SPACE_TITLE }}", wikiSpaceE.getName());
                 params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
-                params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName());
+                params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".", "\\."));
                 String[] path = wikiSpaceE.getPath().split("/");
                 WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(wikiSpaceE.getResourceType());
                 switch (wikiSpaceResourceType) {
@@ -167,20 +167,20 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                         iWikiSpaceWebHomeService.createSpace1WebHome(id, path[0], orgXmlParam, username);
                         break;
                     case PROJECT:
-                        params.put("{{ SPACE_PARENT }}", path[0]);
+                        params.put("{{ SPACE_PARENT }}", path[0].replace(".", "\\."));
                         InputStream projectIs = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                         String projectXmlParam = FileUtil.replaceReturnString(projectIs, params);
                         iWikiSpaceWebHomeService.createSpace2WebHome(id, path[0], path[1], projectXmlParam, username);
                         break;
                     case ORGANIZATION_S:
-                        params.put("{{ SPACE_PARENT }}", path[0]);
+                        params.put("{{ SPACE_PARENT }}", path[0].replace(".", "\\."));
                         InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                         String xmlParam = FileUtil.replaceReturnString(inputStream, params);
                         iWikiSpaceWebHomeService.createSpace2WebHome(id, path[0], path[1], xmlParam, username);
                         break;
                     case PROJECT_S:
-                        params.put("{{ SPACE_ROOT }}", path[0]);
-                        params.put("{{ SPACE_PARENT }}", path[1]);
+                        params.put("{{ SPACE_ROOT }}", path[0].replace(".", "\\."));
+                        params.put("{{ SPACE_PARENT }}", path[1].replace(".", "\\."));
                         InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
                         String xml = FileUtil.replaceReturnString(is, params);
                         iWikiSpaceWebHomeService.createSpace3WebHome(id, path[0], path[1], path[2], xml, username);
