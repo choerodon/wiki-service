@@ -32,5 +32,7 @@ public interface IamRepository {
 
     Page<UserWithRoleDO> pagingQueryUsersWithProjectLevelRoles(Long projectId);
 
+    Page<UserWithRoleDO> pagingQueryUsersWithSiteLevelRoles(int page, int size);
+
     RoleE queryWithPermissionsAndLabels(Long id);
 }

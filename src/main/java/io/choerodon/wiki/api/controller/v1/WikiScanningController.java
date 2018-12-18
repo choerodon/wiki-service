@@ -103,15 +103,28 @@ public class WikiScanningController {
     }
 
     /**
-     * 同步项目下的成员到wiki系统的组织成员组里面
+     * 同步项目下的成员到wiki系统的组织成员组
      *
      * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.SITE)
-    @ApiOperation(value = "同步项目下的成员到wiki系统的组织成员组里面")
+    @ApiOperation(value = "同步项目下的成员到wiki系统的组织成员组")
     @PostMapping(value = "/site/organization_user_group")
     public ResponseEntity syncOrganizationUserGroup() {
         wikiScanningService.syncOrganizationUserGroup();
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /**
+     * 同步平台管理员到wiki的系统管理员
+     *
+     * @return ResponseEntity
+     */
+    @Permission(level = ResourceLevel.SITE)
+    @ApiOperation(value = "同步平台管理员到wiki的系统管理员组")
+    @PostMapping(value = "/site/sync_xwiki_admin_group")
+    public ResponseEntity syncXWikiAdminGroup() {
+        wikiScanningService.syncXWikiAdminGroup();
         return new ResponseEntity(HttpStatus.OK);
     }
 }

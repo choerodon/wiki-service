@@ -21,6 +21,7 @@ import io.choerodon.wiki.app.service.WikiScanningService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
+import io.choerodon.wiki.domain.application.entity.WikiUserE;
 import io.choerodon.wiki.domain.application.entity.iam.LabelE;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.entity.iam.RoleE;
@@ -29,11 +30,13 @@ import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
+import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.FileUtil;
 import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.common.enums.WikiRoleType;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
+import io.choerodon.wiki.infra.dataobject.iam.RoleDO;
 import io.choerodon.wiki.infra.dataobject.iam.UserWithRoleDO;
 
 /**
@@ -53,19 +56,22 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     private WikiGroupService wikiGroupService;
     private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
     private IWikiGroupService iWikiGroupService;
+    private IWikiUserService iWikiUserService;
 
     public WikiScanningServiceImpl(IamRepository iamRepository,
                                    WikiSpaceRepository wikiSpaceRepository,
                                    WikiSpaceService wikiSpaceService,
                                    WikiGroupService wikiGroupService,
                                    IWikiSpaceWebHomeService iWikiSpaceWebHomeService,
-                                   IWikiGroupService iWikiGroupService) {
+                                   IWikiGroupService iWikiGroupService,
+                                   IWikiUserService iWikiUserService) {
         this.iamRepository = iamRepository;
         this.wikiSpaceRepository = wikiSpaceRepository;
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
         this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
         this.iWikiGroupService = iWikiGroupService;
+        this.iWikiUserService = iWikiUserService;
     }
 
     @Override
@@ -205,6 +211,53 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 getProjectInfo(organizationE);
             }
         }
+    }
+
+    @Override
+    @Async("org-pro-sync")
+    public void syncXWikiAdminGroup() {
+        List<UserWithRoleDO> userWithRoleDOList = new ArrayList<>();
+        Page<UserWithRoleDO> userWithRoleDOPage = iamRepository.pagingQueryUsersWithSiteLevelRoles(0, 400);
+        int page = userWithRoleDOPage.getTotalPages();
+        userWithRoleDOList.addAll(userWithRoleDOPage.getContent());
+        if (page > 1) {
+            for (int i = 1; i < page; i++) {
+                Page<UserWithRoleDO> list = iamRepository.pagingQueryUsersWithSiteLevelRoles(i, 400);
+                userWithRoleDOList.addAll(list.getContent());
+            }
+        }
+
+        for (UserWithRoleDO ur : userWithRoleDOList) {
+            List<RoleDO> roles = ur.getRoles();
+            for (RoleDO role:roles) {
+               if (role.getCode().equals(BaseStage.SITE_ADMINISTRATOR)) {
+                   if (!iWikiUserService.checkDocExsist(BaseStage.USERNAME, ur.getLoginName())) {
+                       WikiUserE wikiUserE = new WikiUserE();
+                       wikiUserE.setLastName(ur.getRealName());
+                       wikiUserE.setFirstName(ur.getLoginName());
+                       wikiUserE.setEmail(ur.getEmail());
+                       wikiUserE.setPhone(ur.getPhone());
+                       String xmlParam = getUserXml(wikiUserE);
+                       iWikiUserService.createUser(ur.getLoginName(), xmlParam, BaseStage.USERNAME);
+                   }
+                   List<Integer> list = wikiGroupService.getGroupsObjectNumber(BaseStage.XWIKI_ADMIN_GROUP, BaseStage.USERNAME, ur.getLoginName());
+                   if (list == null || list.isEmpty()) {
+                       iWikiGroupService.createGroupUsers(BaseStage.XWIKI_ADMIN_GROUP, ur.getLoginName(), BaseStage.USERNAME);
+                   }
+                   break;
+               }
+            }
+        }
+    }
+
+    private String getUserXml(WikiUserE wikiUserE) {
+        InputStream inputStream = this.getClass().getResourceAsStream("/xml/user.xml");
+        Map<String, String> params = new HashMap<>(16);
+        params.put("{{ LAST_NAME }}", wikiUserE.getLastName());
+        params.put("{{ FIRST_NAME }}", wikiUserE.getFirstName());
+        params.put("{{ USER_EMAIL }}", wikiUserE.getEmail());
+        params.put("{{ PHONE }}", wikiUserE.getPhone());
+        return FileUtil.replaceReturnString(inputStream, params);
     }
 
     public void updateWikiOrgHomePage() {
@@ -383,7 +436,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         RoleE roleE = iamRepository.queryWithPermissionsAndLabels(r.getId());
                         if (roleE.getLabels() != null) {
                             List<LabelE> labelEList = roleE.getLabels();
-                            for (LabelE label:labelEList) {
+                            for (LabelE label : labelEList) {
                                 if (label.getName().equals(WikiRoleType.PROJECT_WIKI_USER.getResourceType())
                                         || label.getName().equals(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType())) {
                                     StringBuilder stringBuilder = new StringBuilder();

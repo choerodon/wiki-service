@@ -147,7 +147,16 @@ public class IamRepositoryImpl implements IamRepository {
     public Page<UserWithRoleDO> pagingQueryUsersWithProjectLevelRoles(Long projectId) {
         ResponseEntity<Page<UserWithRoleDO>> responseEntity = iamServiceClient.pagingQueryUsersWithProjectLevelRoles(projectId,new RoleAssignmentSearch(),false);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-            throw new CommonException("error.user.and.role.get");
+            throw new CommonException("error.project.user.and.role.get");
+        }
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public Page<UserWithRoleDO> pagingQueryUsersWithSiteLevelRoles(int page, int size) {
+        ResponseEntity<Page<UserWithRoleDO>> responseEntity = iamServiceClient.pagingQueryUsersWithSiteLevelRoles(page, size, new RoleAssignmentSearch());
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new CommonException("error.site.user.and.role.get");
         }
         return responseEntity.getBody();
     }

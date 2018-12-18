@@ -2,11 +2,17 @@ package io.choerodon.wiki.infra.feign;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.wiki.domain.application.valueobject.RoleAssignmentSearch;
 import io.choerodon.wiki.infra.dataobject.iam.*;
 import io.choerodon.wiki.infra.feign.fallback.IamServiceClientFallback;
@@ -67,4 +73,10 @@ public interface IamServiceClient {
 
     @GetMapping(value = "/v1/roles/{id}")
     public ResponseEntity<RoleDO> queryWithPermissionsAndLabels(@PathVariable(name = "id") Long id);
+
+    @PostMapping(value = "/v1/site/role_members/users/roles")
+    public ResponseEntity<Page<UserWithRoleDO>> pagingQueryUsersWithSiteLevelRoles(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestBody RoleAssignmentSearch roleAssignmentSearchDTO);
 }

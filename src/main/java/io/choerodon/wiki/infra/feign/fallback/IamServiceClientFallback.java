@@ -81,11 +81,16 @@ public class IamServiceClientFallback implements IamServiceClient {
     public ResponseEntity<Page<UserWithRoleDO>> pagingQueryUsersWithProjectLevelRoles(Long sourceId,
                                                                                       RoleAssignmentSearch roleAssignmentSearchDTO,
                                                                                       boolean doPage) {
-        throw new CommonException("error.user.and.role.get");
+        throw new CommonException("error.project.user.and.role.get");
     }
 
     @Override
     public ResponseEntity<RoleDO> queryWithPermissionsAndLabels(Long id) {
         throw new CommonException("error.role.get");
+    }
+
+    @Override
+    public ResponseEntity<Page<UserWithRoleDO>> pagingQueryUsersWithSiteLevelRoles(int page, int size, RoleAssignmentSearch roleAssignmentSearchDTO) {
+        throw new CommonException("error.site.user.and.role.get");
     }
 }
