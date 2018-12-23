@@ -208,8 +208,7 @@ public class WikiProjectSpaceController {
      * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.PROJECT,
-            roles = {InitRoleCode.PROJECT_OWNER,
-                    InitRoleCode.PROJECT_MEMBER})
+            roles = {InitRoleCode.PROJECT_OWNER})
     @ApiOperation(value = "删除项目下的空间")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity delete(@ApiParam(value = "项目ID", required = true)
