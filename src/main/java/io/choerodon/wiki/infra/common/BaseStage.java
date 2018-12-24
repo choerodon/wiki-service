@@ -11,8 +11,11 @@ public abstract class BaseStage {
 
     public static final String APPXML = "Content-Type, application/xml";
     public static final String ERROR_QUERY_GROUP = "error.query.group";
+    public static final String ORG_ICON = "domain";
+    public static final String PROJECT_ICON = "project";
     public static final String USER_GROUP = "UserGroup";
     public static final String ADMIN_GROUP = "AdminGroup";
+    public static final String XWIKI_ALL_GROUP = "XWikiAllGroup";
     public static final String XWIKI_ADMIN_GROUP = "XWikiAdminGroup";
     public static final String SITE_ADMINISTRATOR = "role/site/default/administrator";
     public static final String ORGANIZATION_MEMBER = "role/organization/default/organization-member";

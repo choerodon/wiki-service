@@ -47,9 +47,6 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiScanningServiceImpl.class);
 
-    private static final String ORG_ICON = "domain";
-    private static final String PROJECT_ICON = "project";
-
     private IamRepository iamRepository;
     private WikiSpaceRepository wikiSpaceRepository;
     private WikiSpaceService wikiSpaceService;
@@ -229,23 +226,23 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
         for (UserWithRoleDO ur : userWithRoleDOList) {
             List<RoleDO> roles = ur.getRoles();
-            for (RoleDO role:roles) {
-               if (role.getCode().equals(BaseStage.SITE_ADMINISTRATOR)) {
-                   if (!iWikiUserService.checkDocExsist(BaseStage.USERNAME, ur.getLoginName())) {
-                       WikiUserE wikiUserE = new WikiUserE();
-                       wikiUserE.setLastName(ur.getRealName());
-                       wikiUserE.setFirstName(ur.getLoginName());
-                       wikiUserE.setEmail(ur.getEmail());
-                       wikiUserE.setPhone(ur.getPhone());
-                       String xmlParam = getUserXml(wikiUserE);
-                       iWikiUserService.createUser(ur.getLoginName(), xmlParam, BaseStage.USERNAME);
-                   }
-                   List<Integer> list = wikiGroupService.getGroupsObjectNumber(BaseStage.XWIKI_ADMIN_GROUP, BaseStage.USERNAME, ur.getLoginName());
-                   if (list == null || list.isEmpty()) {
-                       iWikiGroupService.createGroupUsers(BaseStage.XWIKI_ADMIN_GROUP, ur.getLoginName(), BaseStage.USERNAME);
-                   }
-                   break;
-               }
+            for (RoleDO role : roles) {
+                if (role.getCode().equals(BaseStage.SITE_ADMINISTRATOR)) {
+                    if (!iWikiUserService.checkDocExsist(BaseStage.USERNAME, ur.getLoginName())) {
+                        WikiUserE wikiUserE = new WikiUserE();
+                        wikiUserE.setLastName(ur.getRealName());
+                        wikiUserE.setFirstName(ur.getLoginName());
+                        wikiUserE.setEmail(ur.getEmail());
+                        wikiUserE.setPhone(ur.getPhone());
+                        String xmlParam = getUserXml(wikiUserE);
+                        iWikiUserService.createUser(ur.getLoginName(), xmlParam, BaseStage.USERNAME);
+                    }
+                    List<Integer> list = wikiGroupService.getGroupsObjectNumber(BaseStage.XWIKI_ADMIN_GROUP, BaseStage.USERNAME, ur.getLoginName());
+                    if (list == null || list.isEmpty()) {
+                        iWikiGroupService.createGroupUsers(BaseStage.XWIKI_ADMIN_GROUP, ur.getLoginName(), BaseStage.USERNAME);
+                    }
+                    break;
+                }
             }
         }
     }
@@ -357,7 +354,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         //创建组织
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationE.getName());
-        wikiSpaceDTO.setIcon(ORG_ICON);
+        wikiSpaceDTO.setIcon(BaseStage.ORG_ICON);
         wikiSpaceService.create(wikiSpaceDTO, organizationE.getId(), BaseStage.USERNAME,
                 WikiSpaceResourceType.ORGANIZATION.getResourceType(), flag);
 
@@ -461,7 +458,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         LOGGER.info("sync project: {}", projectE.getName());
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(organizationE.getName() + "/" + projectE.getName());
-        wikiSpaceDTO.setIcon(PROJECT_ICON);
+        wikiSpaceDTO.setIcon(BaseStage.PROJECT_ICON);
         wikiSpaceService.create(wikiSpaceDTO, projectE.getId(), BaseStage.USERNAME,
                 WikiSpaceResourceType.PROJECT.getResourceType(), flag);
 
