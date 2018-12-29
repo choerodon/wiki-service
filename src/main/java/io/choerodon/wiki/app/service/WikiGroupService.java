@@ -32,4 +32,6 @@ public interface WikiGroupService {
     void setUserToGroup(String groupName, Long userId, String username);
 
     List<Integer> getGroupsObjectNumber(String groupName, String username, String loginName);
+
+    List<String> getGroupsUsers(String groupName, String username);
 }

@@ -2,6 +2,8 @@ package io.choerodon.wiki.app.service.impl;
 
 import java.io.InputStream;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
@@ -197,7 +199,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         }
 
                         //通过groupName给组添加成员
-                        iWikiGroupService.createGroupUsers(groupName, loginName.replace(".", "\\."), username);
+                        iWikiGroupService.createGroupUsers(groupName, loginName, username);
                     }
                 });
     }
@@ -275,6 +277,70 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         }
     }
 
+    @Override
+    public List<String> getGroupsUsers(String groupName, String username) {
+        List<String> list = new ArrayList<>();
+        List<String> alluser = new ArrayList<>();
+        try {
+            String page = iWikiClassService.getPageClassResource(BaseStage.SPACE, groupName, BaseStage.XWIKIGROUPS, username);
+            if (!StringUtils.isEmpty(page)) {
+                Document doc = DocumentHelper.parseText(page);
+                Element rootElt = doc.getRootElement();
+                Iterator iter = rootElt.elementIterator("objectSummary");
+                while (iter.hasNext()) {
+                    Element recordEle = (Element) iter.next();
+                    String pageName = recordEle.elementTextTrim("pageName");
+                    if (groupName.equals(pageName)) {
+                        String headline = recordEle.elementTextTrim("headline");
+                        if (!StringUtils.isEmpty(headline)) {
+                            String user = headline.substring(6);
+                            alluser.add(user);
+                            if (user.contains(".") && !user.contains("\\.")) {
+                                list.add(user);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (DocumentException e) {
+            throw new CommonException("error.document.get", e);
+        }
+
+        //获取组中重复数据
+        List<String> repeat = new ArrayList<>();
+        Map<String, Long> collect = alluser.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        for (Map.Entry<String, Long> entry : collect.entrySet()) {
+            if (entry.getValue() >= 2) {
+                repeat.add(entry.getKey());
+            }
+        }
+
+        //删除组中重复数据
+        for (String rep : repeat) {
+            List<Integer> repeatList = getGroupsObjectNumber(groupName, username, rep);
+            //删除组中多余用户，只保留一个
+            int flag = 0;
+            for (Integer i : repeatList) {
+                if (flag == repeatList.size() - 1) {
+                    break;
+                }
+                //删除角色
+                iWikiClassService.deletePageClass(username, BaseStage.SPACE, groupName, BaseStage.XWIKIGROUPS, i);
+                flag++;
+            }
+        }
+
+        //删除组中带点用户
+        for (String li : list) {
+            List<Integer> repeatList = getGroupsObjectNumber(groupName, username, li);
+            for (Integer i : repeatList) {
+                iWikiClassService.deletePageClass(username, BaseStage.SPACE, groupName, BaseStage.XWIKIGROUPS, i);
+            }
+        }
+
+        return !list.isEmpty() ? list.stream().distinct().collect(Collectors.toList()) : list;
+    }
+
     private String getGroupName(GroupMemberDTO groupMemberDTO, String username) {
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
         if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) || roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType())) {
@@ -337,7 +403,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                     String pageName = recordEle.elementTextTrim("pageName");
                     if (groupName.equals(pageName)) {
                         String headline = recordEle.elementTextTrim("headline");
-                        if (!StringUtils.isEmpty(headline) && loginName.equals(headline.split("\\.")[1])) {
+                        if (!StringUtils.isEmpty(headline) && loginName.equals(headline.substring(6))) {
                             list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
                         }
                     }

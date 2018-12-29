@@ -11,6 +11,8 @@ public interface WikiScanningService {
 
     void updateWikiPage();
 
+    void updateGrpupUsers();
+
     void syncOrg(Long organizationId);
 
     void syncProject(Long projectId);

@@ -79,7 +79,7 @@ public class IWikiGroupServiceImpl implements IWikiGroupService {
                 this.createGroup(groupName, username);
             }
 
-            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + loginName).build();
+            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + loginName.replace(".", "\\.")).build();
             Call<ResponseBody> call = wikiClient.createGroupUsers(username, client, groupName, body);
             Response response = call.execute();
             LOGGER.info("create the code returned by the group user:{}", response.code());

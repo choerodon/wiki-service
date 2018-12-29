@@ -188,7 +188,6 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         updateWikiProjectHomePage();
     }
 
-
     @Override
     @Async("org-pro-sync")
     public void syncOrganizationUserGroup() {
@@ -247,6 +246,42 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         }
     }
 
+    @Override
+    @Async("org-pro-sync")
+    public void updateGrpupUsers() {
+        //更新wiki默认组XWikiAdminGroup
+        updateWikiGroupUsers(BaseStage.XWIKI_ADMIN_GROUP);
+
+        //更新wiki默认组XWikiAllGroup
+        updateWikiGroupUsers(BaseStage.XWIKI_ALL_GROUP);
+
+        //更新组织创建的组
+        List<WikiSpaceE> orgWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
+                WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        for (WikiSpaceE o : orgWikiSpaceEList) {
+            OrganizationE organizationE = iamRepository.queryOrganizationById(o.getResourceId());
+            String adminGroupName = BaseStage.O + organizationE.getCode() + BaseStage.ADMIN_GROUP;
+            String userGroupName = BaseStage.O + organizationE.getCode() + BaseStage.USER_GROUP;
+            updateWikiGroupUsers(adminGroupName);
+            updateWikiGroupUsers(userGroupName);
+        }
+
+        //更新项目创建的组
+        List<WikiSpaceE> projectWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
+                WikiSpaceResourceType.PROJECT.getResourceType());
+        for (WikiSpaceE p : projectWikiSpaceEList) {
+            ProjectE projectE = iamRepository.queryIamProject(p.getResourceId());
+            if (projectE != null) {
+                Long orgId = projectE.getOrganization().getId();
+                OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+                String adminGroupName = BaseStage.P + organization.getCode() + BaseStage.LINE + projectE.getCode() + BaseStage.ADMIN_GROUP;
+                String userGroupName = BaseStage.P + organization.getCode() + BaseStage.LINE + projectE.getCode() + BaseStage.USER_GROUP;
+                updateWikiGroupUsers(adminGroupName);
+                updateWikiGroupUsers(userGroupName);
+            }
+        }
+    }
+
     private String getUserXml(WikiUserE wikiUserE) {
         InputStream inputStream = this.getClass().getResourceAsStream("/xml/user.xml");
         Map<String, String> params = new HashMap<>(16);
@@ -255,6 +290,15 @@ public class WikiScanningServiceImpl implements WikiScanningService {
         params.put("{{ USER_EMAIL }}", wikiUserE.getEmail());
         params.put("{{ PHONE }}", wikiUserE.getPhone());
         return FileUtil.replaceReturnString(inputStream, params);
+    }
+
+    private void updateWikiGroupUsers(String groupName) {
+        List<String> list = wikiGroupService.getGroupsUsers(groupName, BaseStage.USERNAME);
+        for (String s : list) {
+            iWikiGroupService.createGroupUsers(groupName,
+                    s,
+                    BaseStage.USERNAME);
+        }
     }
 
     public void updateWikiOrgHomePage() {
