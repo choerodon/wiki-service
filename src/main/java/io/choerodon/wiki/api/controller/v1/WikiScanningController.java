@@ -130,6 +130,8 @@ public class WikiScanningController {
 
     /**
      * 更新wiki组中重复数据和带点用户
+     *
+     * @return ResponseEntity
      */
     @Permission(level = ResourceLevel.SITE)
     @ApiOperation(value = "更新wiki组中重复数据和带点用户")
