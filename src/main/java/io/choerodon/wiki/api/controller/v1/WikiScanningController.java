@@ -106,10 +106,10 @@ public class WikiScanningController {
 
     /**
      * 更新wiki组中重复数据和带点用户
+     *
+     * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
-            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
-                    BaseStage.ORGANIZATION_MEMBER})
+    @Permission(level = ResourceLevel.SITE)
     @ApiOperation(value = "更新wiki组中重复数据和带点用户")
     @PostMapping(value = "/wiki/group_users")
     public ResponseEntity updateGrpupUsers() {
