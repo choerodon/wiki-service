@@ -220,11 +220,15 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     private void updateWikiGroupUsers(String groupName) {
-        List<String> list = wikiGroupService.getGroupsUsers(groupName, BaseStage.USERNAME);
-        for (String s : list) {
-            iWikiGroupService.createGroupUsers(groupName,
-                    s.replace(".", "\\."),
-                    BaseStage.USERNAME);
+        try {
+            List<String> list = wikiGroupService.getGroupsUsers(groupName, BaseStage.USERNAME);
+            for (String s : list) {
+                iWikiGroupService.createGroupUsers(groupName,
+                        s,
+                        BaseStage.USERNAME);
+            }
+        } catch (Exception e) {
+            LOGGER.error(String.valueOf(e));
         }
     }
 
