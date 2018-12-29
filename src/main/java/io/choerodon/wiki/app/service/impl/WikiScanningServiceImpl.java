@@ -26,6 +26,7 @@ import io.choerodon.wiki.domain.application.entity.iam.RoleE;
 import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
+import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.FileUtil;
@@ -48,17 +49,20 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     private WikiSpaceService wikiSpaceService;
     private WikiGroupService wikiGroupService;
     private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
+    private IWikiGroupService iWikiGroupService;
 
     public WikiScanningServiceImpl(IamRepository iamRepository,
                                    WikiSpaceRepository wikiSpaceRepository,
                                    WikiSpaceService wikiSpaceService,
                                    WikiGroupService wikiGroupService,
-                                   IWikiSpaceWebHomeService iWikiSpaceWebHomeService) {
+                                   IWikiSpaceWebHomeService iWikiSpaceWebHomeService,
+                                   IWikiGroupService iWikiGroupService) {
         this.iamRepository = iamRepository;
         this.wikiSpaceRepository = wikiSpaceRepository;
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
         this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
+        this.iWikiGroupService = iWikiGroupService;
     }
 
     @Override
@@ -177,6 +181,51 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     public void updateWikiPage() {
         updateWikiOrgHomePage();
         updateWikiProjectHomePage();
+    }
+
+    @Override
+    @Async("org-pro-sync")
+    public void updateGrpupUsers() {
+        //更新wiki默认组XWikiAdminGroup
+        updateWikiGroupUsers(BaseStage.XWIKI_ADMIN_GROUP);
+
+        //更新wiki默认组XWikiAllGroup
+        updateWikiGroupUsers(BaseStage.XWIKI_ALL_GROUP);
+
+        //更新组织创建的组
+        List<WikiSpaceE> orgWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
+                WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        for (WikiSpaceE o : orgWikiSpaceEList) {
+            OrganizationE organizationE = iamRepository.queryOrganizationById(o.getResourceId());
+            String adminGroupName = BaseStage.O + organizationE.getCode() + BaseStage.ADMIN_GROUP;
+            String userGroupName = BaseStage.O + organizationE.getCode() + BaseStage.USER_GROUP;
+            updateWikiGroupUsers(adminGroupName);
+            updateWikiGroupUsers(userGroupName);
+        }
+
+        //更新项目创建的组
+        List<WikiSpaceE> projectWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
+                WikiSpaceResourceType.PROJECT.getResourceType());
+        for (WikiSpaceE p : projectWikiSpaceEList) {
+            ProjectE projectE = iamRepository.queryIamProject(p.getResourceId());
+            if (projectE != null) {
+                Long orgId = projectE.getOrganization().getId();
+                OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+                String adminGroupName = BaseStage.P + organization.getCode() + BaseStage.LINE + projectE.getCode() + BaseStage.ADMIN_GROUP;
+                String userGroupName = BaseStage.P + organization.getCode() + BaseStage.LINE + projectE.getCode() + BaseStage.USER_GROUP;
+                updateWikiGroupUsers(adminGroupName);
+                updateWikiGroupUsers(userGroupName);
+            }
+        }
+    }
+
+    private void updateWikiGroupUsers(String groupName) {
+        List<String> list = wikiGroupService.getGroupsUsers(groupName, BaseStage.USERNAME);
+        for (String s : list) {
+            iWikiGroupService.createGroupUsers(groupName,
+                    s.replace(".", "\\."),
+                    BaseStage.USERNAME);
+        }
     }
 
     public void updateWikiOrgHomePage() {

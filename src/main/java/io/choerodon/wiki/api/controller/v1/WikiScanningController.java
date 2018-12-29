@@ -103,4 +103,17 @@ public class WikiScanningController {
         wikiScanningService.updateWikiPage();
         return new ResponseEntity(HttpStatus.CREATED);
     }
+
+    /**
+     * 更新wiki组中重复数据和带点用户
+     */
+    @Permission(level = ResourceLevel.ORGANIZATION,
+            roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
+                    BaseStage.ORGANIZATION_MEMBER})
+    @ApiOperation(value = "更新wiki组中重复数据和带点用户")
+    @PostMapping(value = "/wiki/group_users")
+    public ResponseEntity updateGrpupUsers() {
+        wikiScanningService.updateGrpupUsers();
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
 }

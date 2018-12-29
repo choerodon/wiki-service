@@ -28,4 +28,6 @@ public interface WikiGroupService {
     void enableProjectGroup(Long projectId, String username);
 
     void setUserToGroup(String groupName, Long userId, String username);
+
+    List<String> getGroupsUsers(String groupName, String username);
 }

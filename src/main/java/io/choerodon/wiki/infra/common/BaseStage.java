@@ -13,6 +13,8 @@ public abstract class BaseStage {
     public static final String ERROR_QUERY_GROUP = "error.query.group";
     public static final String USER_GROUP = "UserGroup";
     public static final String ADMIN_GROUP = "AdminGroup";
+    public static final String XWIKI_ALL_GROUP = "XWikiAllGroup";
+    public static final String XWIKI_ADMIN_GROUP = "XWikiAdminGroup";
     public static final String ORGANIZATION_MEMBER = "role/organization/default/organization-member";
     public static final String USERNAME = "admin";
     public static final String SPACE = "XWiki";
