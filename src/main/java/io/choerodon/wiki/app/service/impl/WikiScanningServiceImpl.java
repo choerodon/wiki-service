@@ -340,12 +340,10 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         iWikiSpaceWebHomeService.createSpace2WebHome(p.getId(), path[0], path[1], xmlParam, BaseStage.USERNAME);
                     } catch (CommonException e) {
                         LOGGER.error(String.valueOf(e));
-                        continue;
                     }
                 }
             } catch (CommonException e) {
                 LOGGER.error(String.valueOf(e));
-                continue;
             }
         }
     }
@@ -387,12 +385,10 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         iWikiSpaceWebHomeService.createSpace3WebHome(p.getId(), projectUnderPath[0], projectUnderPath[1], projectUnderPath[2], xml, BaseStage.USERNAME);
                     } catch (CommonException e) {
                         LOGGER.error(String.valueOf(e));
-                        continue;
                     }
                 }
             } catch (CommonException e) {
                 LOGGER.error(String.valueOf(e));
-                continue;
             }
         }
     }
