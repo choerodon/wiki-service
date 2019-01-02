@@ -50,6 +50,7 @@ class WikiScanningServiceImplSpec extends Specification {
         iWikiSpaceWebHomeService = Mock(IWikiSpaceWebHomeService)
         iWikiGroupService = Mock(IWikiGroupService)
         iWikiUserService = Mock(IWikiUserService)
+
         service = new WikiScanningServiceImpl(iamRepository,
                 wikiSpaceRepository,
                 wikiSpaceService,
