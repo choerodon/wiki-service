@@ -3,6 +3,7 @@ package io.choerodon.wiki.api.controller.v1;
 import java.util.List;
 import javax.validation.Valid;
 
+import io.choerodon.wiki.domain.application.event.ProjectEvent;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
@@ -217,5 +218,16 @@ public class WikiProjectSpaceController {
                                  @PathVariable Long id) {
         wikiSpaceService.delete(projectId, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER, InitRoleCode.PROJECT_MEMBER})
+    @ApiOperation(value = "...")
+    @PostMapping(value = "/test")
+    public ResponseEntity test(@ApiParam(value = "项目ID", required = true)
+                               @PathVariable(value = "project_id") Long projectId,
+                               @ApiParam(value = "projectEvent", required = true)
+                               @RequestBody ProjectEvent projectEvent) {
+        wikiSpaceService.updateAndSyncProject(projectEvent);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

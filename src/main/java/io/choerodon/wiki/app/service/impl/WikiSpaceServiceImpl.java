@@ -521,29 +521,20 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             update.setId(wikiSpaceE.getId());
             update.setName("P-" + projectName);
             update.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
-            List<WikiSpaceE> subWikiSpaceEList = wikiSpaceRepository.selectSubSpaces(projectId, "project-s");
             String target = null;
             if (wikiSpaces == null) {
                 update.setPath(paths[0] + "/" + "P-" + projectName);
                 target = "P-" + projectName;
-//                for (WikiSpaceE sub : subWikiSpaceEList) {
-//                    String[] spacePaths = sub.getPath().split("/");
-//                    sub.setPath(spacePaths[0] + "/" + "P-" + projectName + "/" + spacePaths[2]);
-//                }
             } else {
-                update.setPath(paths[0] + "/" + "P-" + projectName + "/" + projectCode);
-                target = "P-" + projectName + "/" + projectCode;
-//                for (WikiSpaceE sub : subWikiSpaceEList) {
-//                    String[] spacePaths = sub.getPath().split("/");
-//                    sub.setPath(spacePaths[0] + "/" + "P-" + projectName + "/" + projectCode + "/" + spacePaths[2]);
-//                }
+                update.setPath(paths[0] + "/" + "P-" + projectName + projectCode);
+                target = "P-" + projectName + projectCode;
             }
 
             WikiSpaceUpdateDTO wikiSpaceUpdateDTO = new WikiSpaceUpdateDTO();
             wikiSpaceUpdateDTO.setName(update.getName());
             wikiSpaceUpdateDTO.setTarget(target);
             updateWiki(wikiSpaceE.getId(), wikiSpaceUpdateDTO, BaseStage.USERNAME);
-            wikiSpaceRepository.update(update);
+            wikiSpaceRepository.updateSelective(update);
         }
     }
 
@@ -551,29 +542,24 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
         if (wikiSpaceE != null && wikiSpaceE.getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
             Map<String, String> params = new HashMap<>(16);
-            if (!params.isEmpty()) {
-                params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
-                params.put("{{ SPACE_TITLE }}", wikiSpaceUpdateDTO.getName());
-                params.put("{{ SPACE_LABEL }}", wikiSpaceUpdateDTO.getName());
-                params.put("{{ SPACE_TARGET }}", wikiSpaceUpdateDTO.getTarget().replace(".", "\\."));
-                String[] path = wikiSpaceE.getPath().split("/");
-                WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(wikiSpaceE.getResourceType());
-                switch (wikiSpaceResourceType) {
-                    case PROJECT:
-                        params.put("{{ SPACE_PARENT }}", path[0].replace(".", "\\."));
-                        InputStream projectIs = this.getClass().getResourceAsStream("/xml/webhome1.xml");
-                        String projectXmlParam = FileUtil.replaceReturnString(projectIs, params);
-                        iWikiSpaceWebHomeService.createSpace2WebHome(id, path[0], wikiSpaceUpdateDTO.getTarget().replace(".", "\\."), projectXmlParam, username);
-                        break;
-                    default:
-                        break;
-                }
-//                return ConvertHelper.convert(wikiSpaceRepository.update(wikiSpaceE), WikiSpaceResponseDTO.class);
+            params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
+            params.put("{{ SPACE_TITLE }}", wikiSpaceUpdateDTO.getName());
+            params.put("{{ SPACE_LABEL }}", wikiSpaceUpdateDTO.getName());
+            params.put("{{ SPACE_TARGET }}", wikiSpaceUpdateDTO.getTarget().replace(".", "\\."));
+            String[] path = wikiSpaceE.getPath().split("/");
+            WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(wikiSpaceE.getResourceType());
+            switch (wikiSpaceResourceType) {
+                case PROJECT:
+                    params.put("{{ SPACE_PARENT }}", path[0].replace(".", "\\."));
+                    InputStream projectIs = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+                    String projectXmlParam = FileUtil.replaceReturnString(projectIs, params);
+                    iWikiSpaceWebHomeService.createSpace2WebHome(id, path[0], wikiSpaceUpdateDTO.getTarget().replace(".", "\\."), projectXmlParam, username);
+                    break;
+                default:
+                    break;
             }
         } else {
             throw new CommonException("error.space.update");
         }
-
-//        return ConvertHelper.convert(wikiSpaceE, WikiSpaceResponseDTO.class);
     }
 }
