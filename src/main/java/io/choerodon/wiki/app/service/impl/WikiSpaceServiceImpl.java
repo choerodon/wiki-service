@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.choerodon.wiki.api.dto.WikiSpaceUpdateDTO;
+import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
 import io.choerodon.wiki.domain.application.event.ProjectEvent;
 import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
 import org.apache.commons.lang.StringUtils;
@@ -512,48 +513,52 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     public void updateAndSyncProject(ProjectEvent projectEvent) {
         Long projectId = projectEvent.getProjectId();
         String projectName = projectEvent.getProjectName();
-        String projectCode = projectEvent.getProjectCode();
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectOrgOrPro(projectId, "project");
-        WikiSpaceE update = new WikiSpaceE();
-        if (!projectName.equals(wikiSpaceE.getName())) {
-            List<WikiSpaceE> wikiSpaces = wikiSpaceRepository.select("project", projectName);
-            String[] paths = wikiSpaceE.getPath().split("/");
-            update.setId(wikiSpaceE.getId());
-            update.setName("P-" + projectName);
-            update.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
-            String target = null;
-            if (wikiSpaces == null) {
-                update.setPath(paths[0] + "/" + "P-" + projectName);
-                target = "P-" + projectName;
-            } else {
-                update.setPath(paths[0] + "/" + "P-" + projectName + projectCode);
-                target = "P-" + projectName + projectCode;
-            }
-
-            WikiSpaceUpdateDTO wikiSpaceUpdateDTO = new WikiSpaceUpdateDTO();
-            wikiSpaceUpdateDTO.setName(update.getName());
-            wikiSpaceUpdateDTO.setTarget(target);
-            updateWiki(wikiSpaceE.getId(), wikiSpaceUpdateDTO, BaseStage.USERNAME);
-            wikiSpaceRepository.updateSelective(update);
+        if (SpaceStatus.SUCCESS.getSpaceStatus().equals(wikiSpaceE.getStatus())) {
+            WikiSpaceE updateSpace = new WikiSpaceE();
+            updateSpace.setId(wikiSpaceE.getId());
+            updateSpace.setName(projectName);
+            updateSpace.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
+            updateWiki(wikiSpaceE, projectName);
+            wikiSpaceRepository.updateSelective(updateSpace);
         }
     }
 
-    public void updateWiki(Long id, WikiSpaceUpdateDTO wikiSpaceUpdateDTO, String username) {
-        WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectById(id);
+    @Override
+    public void updateAndSyncOrganization(OrganizationEventPayload organizationEventPayload) {
+        Long organizationId= organizationEventPayload.getId();
+        String organizationName = organizationEventPayload.getName();
+        WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectOrgOrPro(organizationId, "organization");
+        if (SpaceStatus.SUCCESS.getSpaceStatus().equals(wikiSpaceE.getStatus())) {
+            WikiSpaceE updateSpace = new WikiSpaceE();
+            updateSpace.setId(wikiSpaceE.getId());
+            updateSpace.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
+            updateSpace.setName(organizationName);
+            updateWiki(wikiSpaceE, organizationName);
+            wikiSpaceRepository.updateSelective(updateSpace);
+        }
+    }
+
+    public void updateWiki(WikiSpaceE wikiSpaceE, String updateName) {
         if (wikiSpaceE != null && wikiSpaceE.getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
             Map<String, String> params = new HashMap<>(16);
             params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
-            params.put("{{ SPACE_TITLE }}", wikiSpaceUpdateDTO.getName());
-            params.put("{{ SPACE_LABEL }}", wikiSpaceUpdateDTO.getName());
-            params.put("{{ SPACE_TARGET }}", wikiSpaceUpdateDTO.getTarget().replace(".", "\\."));
+            params.put("{{ SPACE_TITLE }}", updateName);
+            params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
+            params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".", "\\."));
             String[] path = wikiSpaceE.getPath().split("/");
             WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(wikiSpaceE.getResourceType());
             switch (wikiSpaceResourceType) {
+                case ORGANIZATION:
+                    InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
+                    String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
+                    iWikiSpaceWebHomeService.createSpace1WebHome(wikiSpaceE.getId(), path[0], orgXmlParam, BaseStage.USERNAME);
+                    break;
                 case PROJECT:
                     params.put("{{ SPACE_PARENT }}", path[0].replace(".", "\\."));
                     InputStream projectIs = this.getClass().getResourceAsStream("/xml/webhome1.xml");
                     String projectXmlParam = FileUtil.replaceReturnString(projectIs, params);
-                    iWikiSpaceWebHomeService.createSpace2WebHome(id, path[0], wikiSpaceUpdateDTO.getTarget().replace(".", "\\."), projectXmlParam, username);
+                    iWikiSpaceWebHomeService.createSpace2WebHome(wikiSpaceE.getId(), path[0], path[1], projectXmlParam, BaseStage.USERNAME);
                     break;
                 default:
                     break;
@@ -561,5 +566,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         } else {
             throw new CommonException("error.space.update");
         }
+
     }
+
 }

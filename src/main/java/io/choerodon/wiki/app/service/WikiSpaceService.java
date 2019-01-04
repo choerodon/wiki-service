@@ -7,6 +7,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
+import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
 import io.choerodon.wiki.domain.application.event.ProjectEvent;
 
 /**
@@ -36,4 +37,6 @@ public interface WikiSpaceService {
     void delete(Long resourceId,Long id);
 
     void updateAndSyncProject(ProjectEvent projectEvent);
+
+    void updateAndSyncOrganization(OrganizationEventPayload organizationEventPayload);
 }
