@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.choerodon.wiki.api.dto.WikiSpaceUpdateDTO;
+import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
+import io.choerodon.wiki.domain.application.event.ProjectEvent;
+import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -504,4 +508,71 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
 
         return ConvertHelper.convertList(list, WikiSpaceResponseDTO.class);
     }
+
+    @Override
+    public void updateAndSyncProject(ProjectEvent projectEvent) {
+        Long projectId = projectEvent.getProjectId();
+        String projectName = projectEvent.getProjectName();
+        WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectOrgOrPro(projectId, "project");
+        if (SpaceStatus.SUCCESS.getSpaceStatus().equals(wikiSpaceE.getStatus())) {
+            String updateName = BaseStage.P + projectName;
+            if (!updateName.equals(wikiSpaceE.getName())) {
+                WikiSpaceE updateSpace = new WikiSpaceE();
+                updateSpace.setId(wikiSpaceE.getId());
+                updateSpace.setName(updateName);
+                updateSpace.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
+                updateWiki(wikiSpaceE, updateName);
+                wikiSpaceRepository.updateSelective(updateSpace);
+            }
+        }
+    }
+
+    @Override
+    public void updateAndSyncOrganization(OrganizationEventPayload organizationEventPayload) {
+        Long organizationId= organizationEventPayload.getId();
+        String organizationName = organizationEventPayload.getName();
+        WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectOrgOrPro(organizationId, "organization");
+        if (SpaceStatus.SUCCESS.getSpaceStatus().equals(wikiSpaceE.getStatus())) {
+            String updateName = BaseStage.O + organizationName;
+            if (!updateName.equals(wikiSpaceE.getName())) {
+                WikiSpaceE updateSpace = new WikiSpaceE();
+                updateSpace.setId(wikiSpaceE.getId());
+                updateSpace.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
+                updateSpace.setName(updateName);
+                updateWiki(wikiSpaceE, updateName);
+                wikiSpaceRepository.updateSelective(updateSpace);
+            }
+        }
+    }
+
+    public void updateWiki(WikiSpaceE wikiSpaceE, String updateName) {
+        if (wikiSpaceE != null && wikiSpaceE.getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
+            Map<String, String> params = new HashMap<>(16);
+            params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
+            params.put("{{ SPACE_TITLE }}", updateName);
+            params.put("{{ SPACE_LABEL }}", updateName);
+            params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".", "\\."));
+            String[] path = wikiSpaceE.getPath().split("/");
+            WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(wikiSpaceE.getResourceType());
+            switch (wikiSpaceResourceType) {
+                case ORGANIZATION:
+                    InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
+                    String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
+                    iWikiSpaceWebHomeService.createSpace1WebHome(wikiSpaceE.getId(), path[0], orgXmlParam, BaseStage.USERNAME);
+                    break;
+                case PROJECT:
+                    params.put("{{ SPACE_PARENT }}", path[0].replace(".", "\\."));
+                    InputStream projectIs = this.getClass().getResourceAsStream("/xml/webhome1.xml");
+                    String projectXmlParam = FileUtil.replaceReturnString(projectIs, params);
+                    iWikiSpaceWebHomeService.createSpace2WebHome(wikiSpaceE.getId(), path[0], path[1], projectXmlParam, BaseStage.USERNAME);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            throw new CommonException("error.space.update");
+        }
+
+    }
+
 }

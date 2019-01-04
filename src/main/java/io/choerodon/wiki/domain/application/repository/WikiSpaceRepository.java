@@ -26,7 +26,15 @@ public interface WikiSpaceRepository {
 
     WikiSpaceE update(WikiSpaceE wikiSpaceE);
 
+    WikiSpaceE updateSelective(WikiSpaceE wikiSpaceE);
+
     List<WikiSpaceE> getWikiSpaceByType(String resourceType);
 
     WikiSpaceE selectOne(Long resourceId, String name, String type);
+
+    List<WikiSpaceE> select(String resourceType, String name);
+
+    WikiSpaceE selectOrgOrPro(Long resourceId, String type);
+
+    List<WikiSpaceE> selectSubSpaces(Long resourceId, String type);
 }

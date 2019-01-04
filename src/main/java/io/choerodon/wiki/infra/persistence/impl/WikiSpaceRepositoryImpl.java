@@ -126,6 +126,15 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
     }
 
     @Override
+    public WikiSpaceE updateSelective(WikiSpaceE wikiSpaceE) {
+        WikiSpaceDO wikiSpaceDO = ConvertHelper.convert(wikiSpaceE, WikiSpaceDO.class);
+        if (wikiSpaceMapper.updateByPrimaryKeySelective(wikiSpaceDO) != 1) {
+            throw new CommonException("error.space.update");
+        }
+        return ConvertHelper.convert(wikiSpaceDO, WikiSpaceE.class);
+    }
+
+    @Override
     public List<WikiSpaceE> getWikiSpaceByType(String resourceType) {
         WikiSpaceDO wikiSpaceDO = new WikiSpaceDO();
         wikiSpaceDO.setResourceType(resourceType);
@@ -139,5 +148,29 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
         wikiSpaceDO.setResourceType(type);
         wikiSpaceDO.setName(name);
         return ConvertHelper.convert(wikiSpaceMapper.selectOne(wikiSpaceDO), WikiSpaceE.class);
+    }
+
+    @Override
+    public List<WikiSpaceE> select(String resourceType, String name) {
+        WikiSpaceDO wikiSpaceDO = new WikiSpaceDO();
+        wikiSpaceDO.setResourceType(resourceType);
+        wikiSpaceDO.setName(name);
+        return ConvertHelper.convertList(wikiSpaceMapper.select(wikiSpaceDO), WikiSpaceE.class);
+    }
+
+    @Override
+    public WikiSpaceE selectOrgOrPro(Long resourceId, String type) {
+        WikiSpaceDO wikiSpaceDO = new WikiSpaceDO();
+        wikiSpaceDO.setResourceId(resourceId);
+        wikiSpaceDO.setResourceType(type);
+        return ConvertHelper.convert(wikiSpaceMapper.selectOne(wikiSpaceDO), WikiSpaceE.class);
+    }
+
+    @Override
+    public List<WikiSpaceE> selectSubSpaces(Long resourceId, String type) {
+        WikiSpaceDO wikiSpaceDO = new WikiSpaceDO();
+        wikiSpaceDO.setResourceId(resourceId);
+        wikiSpaceDO.setResourceType(type);
+        return ConvertHelper.convertList(wikiSpaceMapper.select(wikiSpaceDO), WikiSpaceE.class);
     }
 }

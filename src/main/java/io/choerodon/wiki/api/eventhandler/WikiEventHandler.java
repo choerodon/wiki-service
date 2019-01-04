@@ -35,6 +35,8 @@ public class WikiEventHandler {
 
     private static final String ORG_ICON = "domain";
     private static final String PROJECT_ICON = "project";
+    public static final String PROJECT_UPDATE = "iam-update-project";
+    public static final String ORG_UPDATE = "iam-update-organization";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiEventHandler.class);
     private static ObjectMapper objectMapper = new ObjectMapper();
     private static Gson gson = new Gson();
@@ -243,6 +245,34 @@ public class WikiEventHandler {
             wikiGroupService.enableOrganizationGroup(organization, BaseStage.USERNAME);
         }
         return data;
+    }
+
+    // 项目修改名称同步
+    @SagaTask(code = "wikiProjectUpdate",
+            description = "项目修改名称同步",
+            sagaCode = PROJECT_UPDATE,
+            maxRetryCount = 3,
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 10)
+    public void dealProjectUpdateSync(String data) throws IOException {
+        loggerInfo(data);
+        ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
+        wikiSpaceService.updateAndSyncProject(projectEvent);
+    }
+
+    // 组织修改名称同步
+    @SagaTask(code = "wikiOrganizationUpdate",
+            description = "组织修改名称同步",
+            sagaCode = ORG_UPDATE,
+            maxRetryCount = 3,
+            concurrentLimitNum = 2,
+            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+            seq = 10)
+    public void dealOrganizationUpdateSync(String data) throws IOException {
+        loggerInfo(data);
+        OrganizationEventPayload organizationEventPayload = objectMapper.readValue(data, OrganizationEventPayload.class);
+        wikiSpaceService.updateAndSyncOrganization(organizationEventPayload);
     }
 
     /**
