@@ -520,6 +520,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             String[] paths = wikiSpaceE.getPath().split("/");
             update.setId(wikiSpaceE.getId());
             update.setName("P-" + projectName);
+            update.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
             List<WikiSpaceE> subWikiSpaceEList = wikiSpaceRepository.selectSubSpaces(projectId, "project-s");
             String target = null;
             if (wikiSpaces == null) {
