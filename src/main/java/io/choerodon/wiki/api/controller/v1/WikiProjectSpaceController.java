@@ -220,14 +220,4 @@ public class WikiProjectSpaceController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER, InitRoleCode.PROJECT_MEMBER})
-    @ApiOperation(value = "...")
-    @PostMapping(value = "/test")
-    public ResponseEntity test(@ApiParam(value = "项目ID", required = true)
-                               @PathVariable(value = "project_id") Long projectId,
-                               @ApiParam(value = "projectEvent", required = true)
-                               @RequestBody ProjectEvent projectEvent) {
-        wikiSpaceService.updateAndSyncProject(projectEvent);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

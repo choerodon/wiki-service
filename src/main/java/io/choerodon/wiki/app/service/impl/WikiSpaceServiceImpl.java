@@ -515,12 +515,15 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         String projectName = projectEvent.getProjectName();
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectOrgOrPro(projectId, "project");
         if (SpaceStatus.SUCCESS.getSpaceStatus().equals(wikiSpaceE.getStatus())) {
-            WikiSpaceE updateSpace = new WikiSpaceE();
-            updateSpace.setId(wikiSpaceE.getId());
-            updateSpace.setName(projectName);
-            updateSpace.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
-            updateWiki(wikiSpaceE, projectName);
-            wikiSpaceRepository.updateSelective(updateSpace);
+            String updateName = BaseStage.P + projectName;
+            if (!updateName.equals(wikiSpaceE.getName())) {
+                WikiSpaceE updateSpace = new WikiSpaceE();
+                updateSpace.setId(wikiSpaceE.getId());
+                updateSpace.setName(updateName);
+                updateSpace.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
+                updateWiki(wikiSpaceE, updateName);
+                wikiSpaceRepository.updateSelective(updateSpace);
+            }
         }
     }
 
@@ -530,12 +533,15 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         String organizationName = organizationEventPayload.getName();
         WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectOrgOrPro(organizationId, "organization");
         if (SpaceStatus.SUCCESS.getSpaceStatus().equals(wikiSpaceE.getStatus())) {
-            WikiSpaceE updateSpace = new WikiSpaceE();
-            updateSpace.setId(wikiSpaceE.getId());
-            updateSpace.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
-            updateSpace.setName(organizationName);
-            updateWiki(wikiSpaceE, organizationName);
-            wikiSpaceRepository.updateSelective(updateSpace);
+            String updateName = BaseStage.O + organizationName;
+            if (!updateName.equals(wikiSpaceE.getName())) {
+                WikiSpaceE updateSpace = new WikiSpaceE();
+                updateSpace.setId(wikiSpaceE.getId());
+                updateSpace.setObjectVersionNumber(wikiSpaceE.getObjectVersionNumber());
+                updateSpace.setName(updateName);
+                updateWiki(wikiSpaceE, updateName);
+                wikiSpaceRepository.updateSelective(updateSpace);
+            }
         }
     }
 
@@ -544,7 +550,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             Map<String, String> params = new HashMap<>(16);
             params.put("{{ SPACE_ICON }}", wikiSpaceE.getIcon());
             params.put("{{ SPACE_TITLE }}", updateName);
-            params.put("{{ SPACE_LABEL }}", wikiSpaceE.getName());
+            params.put("{{ SPACE_LABEL }}", updateName);
             params.put("{{ SPACE_TARGET }}", wikiSpaceE.getName().replace(".", "\\."));
             String[] path = wikiSpaceE.getPath().split("/");
             WikiSpaceResourceType wikiSpaceResourceType = WikiSpaceResourceType.forString(wikiSpaceE.getResourceType());
