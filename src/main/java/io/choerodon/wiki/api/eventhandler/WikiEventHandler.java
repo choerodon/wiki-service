@@ -7,8 +7,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
+import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.SagaDefinition;
@@ -46,6 +49,9 @@ public class WikiEventHandler {
     private WikiLogoService wikiLogoService;
     private IamRepository iamRepository;
     private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
+
+    @Autowired
+    private WikiSpaceMapper wikiSpaceMapper;
 
     public WikiEventHandler(WikiSpaceService wikiSpaceService,
                             WikiGroupService wikiGroupService,
@@ -119,7 +125,12 @@ public class WikiEventHandler {
     public String handleProjectCreateEvent(String data) throws IOException {
         loggerInfo(data);
         ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
-        createProject(projectEvent.getOrganizationCode(),
+        ProjectE projectE = iamRepository.queryIamProject(projectEvent.getProjectId());
+        if (projectE == null) {
+            throw new CommonException("error.project.get");
+        }
+        createProject(projectE.getOrganization().getId(),
+                projectEvent.getOrganizationCode(),
                 projectEvent.getProjectCode(),
                 projectEvent.getOrganizationName(),
                 projectEvent.getProjectName(),
@@ -293,7 +304,8 @@ public class WikiEventHandler {
             OrganizationE organization = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
             if (!iWikiSpaceWebHomeService.checkProjectSpaceExsist(BaseStage.O + organization.getName(),
                     BaseStage.P + projectE.getName(), BaseStage.USERNAME)) {
-                createProject(organization.getCode(),
+                createProject(organization.getId(),
+                        organization.getCode(),
                         projectE.getCode(),
                         organization.getName(),
                         projectE.getName(),
@@ -349,9 +361,19 @@ public class WikiEventHandler {
         wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, true);
     }
 
-    private void createProject(String orgCode, String projectCode, String orgName, String projectName, Long projectId, Long userId) {
+    private String getWikiSpace(Long organizationId) {
+        WikiSpaceDO wikiSpaceDO = new WikiSpaceDO();
+        wikiSpaceDO.setResourceId(organizationId);
+        wikiSpaceDO.setResourceType("organization");
+        WikiSpaceDO result = wikiSpaceMapper.selectOne(wikiSpaceDO);
+        String[] paths = result.getPath().split("/");
+        return paths[0].substring(2);
+    }
+
+    private void createProject(Long organizationId, String orgCode, String projectCode, String orgName, String projectName, Long projectId, Long userId) {
+        String orgNameSelect = getWikiSpace(organizationId);
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
-        wikiSpaceDTO.setName(orgName + "/" + projectName);
+        wikiSpaceDTO.setName(orgNameSelect + "/" + projectName);
         wikiSpaceDTO.setIcon(PROJECT_ICON);
         wikiSpaceService.create(wikiSpaceDTO, projectId, BaseStage.USERNAME,
                 WikiSpaceResourceType.PROJECT.getResourceType(), true);
@@ -362,7 +384,7 @@ public class WikiEventHandler {
         wikiGroupDTO.setGroupName(adminGroupName);
         wikiGroupDTO.setProjectCode(projectCode);
         wikiGroupDTO.setProjectName(projectName);
-        wikiGroupDTO.setOrganizationName(orgName);
+        wikiGroupDTO.setOrganizationName(orgNameSelect);
         wikiGroupDTO.setOrganizationCode(orgCode);
         wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, false);
         wikiGroupService.setUserToGroup(adminGroupName, userId, BaseStage.USERNAME);
