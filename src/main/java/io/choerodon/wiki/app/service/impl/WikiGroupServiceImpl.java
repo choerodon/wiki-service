@@ -218,7 +218,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             LOGGER.info("disable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
             List<WikiSpaceE> wikiSpaceList = wikiSpaceRepository.getWikiSpaceList(organization.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
             if (wikiSpaceList != null && !wikiSpaceList.isEmpty() && wikiSpaceList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
-                iWikiGroupService.disableOrgGroupView(organization.getCode(), wikiSpaceList.get(0).getPath(), username);
+                iWikiGroupService.disableOrgGroupView(organization.getCode(), wikiSpaceList.get(0).getPath().substring(2), username);
             }
         } else {
             throw new CommonException("error.query.organization");
