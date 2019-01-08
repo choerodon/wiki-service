@@ -248,7 +248,7 @@ public class WikiEventHandler {
         OrganizationE organization = iamRepository.queryOrganizationById(organizationDTO.getOrganizationId());
         List<WikiSpaceResponseDTO> wikiSpaceList = wikiSpaceService.getWikiSpaceList(organization.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
         if (wikiSpaceList != null && !wikiSpaceList.isEmpty() && wikiSpaceList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
-            organization.setName(wikiSpaceList.get(0).getPath());
+            organization.setName(wikiSpaceList.get(0).getPath().substring(2));
             wikiGroupService.enableOrganizationGroup(organization, BaseStage.USERNAME);
         } else {
             createOrganization(organization.getId(),
