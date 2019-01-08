@@ -13,6 +13,7 @@ public class ProjectEvent {
     private String organizationName;
     private String userName;
     private Long userId;
+    private String imageUrl;
     private List<String> roleLabels;
 
     public Long getProjectId() {
@@ -77,5 +78,13 @@ public class ProjectEvent {
 
     public void setRoleLabels(List<String> roleLabels) {
         this.roleLabels = roleLabels;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
