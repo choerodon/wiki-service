@@ -84,6 +84,7 @@ class WikiScanningServiceImplSpec extends Specification {
         WikiSpaceE wikiSpaceE = new WikiSpaceE()
         wikiSpaceE.setId(1L)
         wikiSpaceE.setStatus("success")
+        wikiSpaceE.setPath("O-用户测试组织5b3")
         wikiSpaceEList = new ArrayList<>()
         wikiSpaceEList.add(wikiSpaceE)
     }
@@ -135,6 +136,7 @@ class WikiScanningServiceImplSpec extends Specification {
         WikiSpaceE wikiSpaceE = new WikiSpaceE()
         wikiSpaceE.setId(1L)
         wikiSpaceE.setStatus("failed")
+        wikiSpaceE.setPath("O-用户测试组织5b3")
         List<WikiSpaceE> wikiSpaceEList1 = new ArrayList<>()
         wikiSpaceEList1.add(wikiSpaceE)
 
@@ -143,13 +145,13 @@ class WikiScanningServiceImplSpec extends Specification {
         1 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceEList
         1 * wikiSpaceRepository.getWikiSpaceList(*_) >> null
         1 * wikiSpaceRepository.getWikiSpaceList(*_) >> wikiSpaceEList1
-        2 * wikiSpaceService.create(*_)
-        4 * wikiGroupService.create(*_)
+        1 * wikiSpaceService.create(*_)
+        2 * wikiGroupService.create(*_)
         2 * iamRepository.pageByProject(*_) >> projectEPage
-        4 * iamRepository.roleList(*_) >> rolePage
-        8 * iamRepository.pagingQueryUsersByRoleIdOnProjectLevel(*_) >> userEPage
-        8 * wikiGroupService.setUserToGroup(*_)
-        2 * wikiGroupService.disableProjectGroup(*_)
+        2 * iamRepository.roleList(*_) >> rolePage
+        4 * iamRepository.pagingQueryUsersByRoleIdOnProjectLevel(*_) >> userEPage
+        4 * wikiGroupService.setUserToGroup(*_)
+        1 * wikiGroupService.disableProjectGroup(*_)
 
         when: '模拟发送消息'
         service.syncOrgAndProject(orgId)
@@ -178,6 +180,7 @@ class WikiScanningServiceImplSpec extends Specification {
         WikiSpaceE wikiSpaceE = new WikiSpaceE()
         wikiSpaceE.setId(1)
         wikiSpaceE.setStatus("failed")
+        wikiSpaceE.setPath("O-用户测试组织5b3")
         wikiSpaceEList.add(wikiSpaceE)
 
         and: 'Mock'
@@ -204,6 +207,7 @@ class WikiScanningServiceImplSpec extends Specification {
         WikiSpaceE wikiSpaceE = new WikiSpaceE()
         wikiSpaceE.setId(1)
         wikiSpaceE.setStatus("failed")
+        wikiSpaceE.setPath("O-用户测试组织5b3")
         wikiSpaceList.add(wikiSpaceE)
 
         Page<ProjectE> page = new Page<>()

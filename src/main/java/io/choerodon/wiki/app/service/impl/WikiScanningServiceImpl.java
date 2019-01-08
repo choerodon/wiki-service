@@ -121,10 +121,12 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             if (wikiSpaceEList != null && !wikiSpaceEList.isEmpty()) {
                 if (SpaceStatus.SUCCESS.getSpaceStatus().equals(wikiSpaceEList.get(0).getStatus()) && organizationE.getProjectCount() > 0) {
                     LOGGER.info("the organization has synchronized, synchronized projects");
+                    organizationE.setName(wikiSpaceEList.get(0).getPath().substring(2).replace(".", "\\."));
                     setProject(organizationE);
                 } else if (SpaceStatus.OPERATIING.getSpaceStatus().equals(wikiSpaceEList.get(0).getStatus())
                         || SpaceStatus.FAILED.getSpaceStatus().equals(wikiSpaceEList.get(0).getStatus())) {
                     LOGGER.info("start sync organization again");
+                    organizationE.setName(wikiSpaceEList.get(0).getPath().substring(2).replace(".", "\\."));
                     setOrganization(organizationE, false, true);
                 }
             } else {
@@ -145,6 +147,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             if (wikiSpaceEList != null && !wikiSpaceEList.isEmpty() &&
                     SpaceStatus.FAILED.getSpaceStatus().equals(wikiSpaceEList.get(0).getStatus())) {
                 LOGGER.info("only sync organization,start...");
+                organizationE.setName(wikiSpaceEList.get(0).getPath().substring(2).replace(".", "\\."));
                 setOrganization(organizationE, false, false);
             } else {
                 throw new CommonException("error.conditions.sync.organization");
@@ -169,6 +172,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 if (wikiSpaceEList != null && !wikiSpaceEList.isEmpty() &&
                         SpaceStatus.SUCCESS.getSpaceStatus().equals(wikiSpaceEList.get(0).getStatus())) {
                     OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+                    organization.setName(wikiSpaceEList.get(0).getPath().substring(2).replace(".", "\\."));
                     setProject(organization);
                 } else {
                     throw new CommonException("error.organization.space.not.success");
@@ -316,7 +320,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                 params.put("{{ SPACE_ICON }}", p.getIcon());
                 params.put("{{ SPACE_TITLE }}", p.getName());
                 params.put("{{ SPACE_LABEL }}", p.getName());
-                params.put("{{ SPACE_TARGET }}", p.getName().replace(".", "\\."));
+                params.put("{{ SPACE_TARGET }}", p.getPath().replace(".", "\\."));
 
                 InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
                 String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
@@ -448,6 +452,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         && (SpaceStatus.OPERATIING.getSpaceStatus().equals(wikiSpaceES.get(0).getStatus())
                         || SpaceStatus.FAILED.getSpaceStatus().equals(wikiSpaceES.get(0).getStatus()))) {
                     LOGGER.info("sync project again");
+                    String[] path = wikiSpaceES.get(0).getPath().split("/");
+                    projectE.setName(path[1].substring(2).replace(".", "\\."));
                     createWikiProjectSpace(organizationE, projectE, false);
                 }
             } catch (Exception e) {

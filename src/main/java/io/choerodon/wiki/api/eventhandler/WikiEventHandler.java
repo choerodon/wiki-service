@@ -7,11 +7,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
-import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.SagaDefinition;
@@ -28,7 +25,10 @@ import io.choerodon.wiki.domain.application.event.ProjectEvent;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
 import io.choerodon.wiki.domain.service.IWikiSpaceWebHomeService;
 import io.choerodon.wiki.infra.common.BaseStage;
+import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
+import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
+import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
 
 /**
  * Created by Zenger on 2018/7/5.
@@ -49,20 +49,20 @@ public class WikiEventHandler {
     private WikiLogoService wikiLogoService;
     private IamRepository iamRepository;
     private IWikiSpaceWebHomeService iWikiSpaceWebHomeService;
-
-    @Autowired
     private WikiSpaceMapper wikiSpaceMapper;
 
     public WikiEventHandler(WikiSpaceService wikiSpaceService,
                             WikiGroupService wikiGroupService,
                             WikiLogoService wikiLogoService,
                             IamRepository iamRepository,
-                            IWikiSpaceWebHomeService iWikiSpaceWebHomeService) {
+                            IWikiSpaceWebHomeService iWikiSpaceWebHomeService,
+                            WikiSpaceMapper wikiSpaceMapper) {
         this.wikiSpaceService = wikiSpaceService;
         this.wikiGroupService = wikiGroupService;
         this.wikiLogoService = wikiLogoService;
         this.iamRepository = iamRepository;
         this.iWikiSpaceWebHomeService = iWikiSpaceWebHomeService;
+        this.wikiSpaceMapper = wikiSpaceMapper;
     }
 
     private void loggerInfo(Object o) {
@@ -132,7 +132,6 @@ public class WikiEventHandler {
         createProject(projectE.getOrganization().getId(),
                 projectEvent.getOrganizationCode(),
                 projectEvent.getProjectCode(),
-                projectEvent.getOrganizationName(),
                 projectEvent.getProjectName(),
                 projectEvent.getProjectId(),
                 projectEvent.getUserId());
@@ -247,13 +246,15 @@ public class WikiEventHandler {
         loggerInfo(data);
         OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
         OrganizationE organization = iamRepository.queryOrganizationById(organizationDTO.getOrganizationId());
-        if (!iWikiSpaceWebHomeService.checkOrgSpaceExsist(BaseStage.O + organization.getName(), BaseStage.USERNAME)) {
+        List<WikiSpaceResponseDTO> wikiSpaceList = wikiSpaceService.getWikiSpaceList(organization.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        if (wikiSpaceList != null && !wikiSpaceList.isEmpty() && wikiSpaceList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
+            organization.setName(wikiSpaceList.get(0).getPath());
+            wikiGroupService.enableOrganizationGroup(organization, BaseStage.USERNAME);
+        } else {
             createOrganization(organization.getId(),
                     organization.getCode(),
                     organization.getName(),
                     organization.getUserId());
-        } else {
-            wikiGroupService.enableOrganizationGroup(organization, BaseStage.USERNAME);
         }
         return data;
     }
@@ -302,17 +303,19 @@ public class WikiEventHandler {
         ProjectE projectE = iamRepository.queryIamProject(projectDTO.getProjectId());
         if (projectE != null) {
             OrganizationE organization = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
-            if (!iWikiSpaceWebHomeService.checkProjectSpaceExsist(BaseStage.O + organization.getName(),
-                    BaseStage.P + projectE.getName(), BaseStage.USERNAME)) {
+            List<WikiSpaceResponseDTO> wikiSpaceList = wikiSpaceService.getWikiSpaceList(projectE.getId(), WikiSpaceResourceType.PROJECT.getResourceType());
+            if (wikiSpaceList != null && !wikiSpaceList.isEmpty() && wikiSpaceList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
+                String[] param = wikiSpaceList.get(0).getPath().split("/");
+                organization.setName(param[0].substring(2));
+                projectE.setName(param[1].substring(2));
+                wikiGroupService.enableProjectGroup(organization, projectE, BaseStage.USERNAME);
+            } else {
                 createProject(organization.getId(),
                         organization.getCode(),
                         projectE.getCode(),
-                        organization.getName(),
                         projectE.getName(),
                         projectE.getId(),
                         organization.getUserId());
-            } else {
-                wikiGroupService.enableProjectGroup(organization, projectE, BaseStage.USERNAME);
             }
         } else {
             throw new CommonException("error.query.project");
@@ -364,13 +367,13 @@ public class WikiEventHandler {
     private String getWikiSpace(Long organizationId) {
         WikiSpaceDO wikiSpaceDO = new WikiSpaceDO();
         wikiSpaceDO.setResourceId(organizationId);
-        wikiSpaceDO.setResourceType("organization");
+        wikiSpaceDO.setResourceType(WikiSpaceResourceType.ORGANIZATION.getResourceType());
         WikiSpaceDO result = wikiSpaceMapper.selectOne(wikiSpaceDO);
         String[] paths = result.getPath().split("/");
         return paths[0].substring(2);
     }
 
-    private void createProject(Long organizationId, String orgCode, String projectCode, String orgName, String projectName, Long projectId, Long userId) {
+    private void createProject(Long organizationId, String orgCode, String projectCode, String projectName, Long projectId, Long userId) {
         String orgNameSelect = getWikiSpace(organizationId);
         WikiSpaceDTO wikiSpaceDTO = new WikiSpaceDTO();
         wikiSpaceDTO.setName(orgNameSelect + "/" + projectName);

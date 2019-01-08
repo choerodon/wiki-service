@@ -21,16 +21,20 @@ import io.choerodon.wiki.api.dto.UserDTO;
 import io.choerodon.wiki.api.dto.WikiGroupDTO;
 import io.choerodon.wiki.app.service.WikiGroupService;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
+import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
 import io.choerodon.wiki.domain.application.entity.WikiUserE;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
+import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
 import io.choerodon.wiki.domain.service.IWikiClassService;
 import io.choerodon.wiki.domain.service.IWikiGroupService;
 import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.FileUtil;
+import io.choerodon.wiki.infra.common.enums.SpaceStatus;
 import io.choerodon.wiki.infra.common.enums.WikiRoleType;
+import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
  * Created by Ernst on 2018/7/4.
@@ -44,15 +48,18 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     private IWikiUserService iWikiUserService;
     private IamRepository iamRepository;
     private IWikiClassService iWikiClassService;
+    private WikiSpaceRepository wikiSpaceRepository;
 
     public WikiGroupServiceImpl(IWikiGroupService iWikiGroupService,
                                 IWikiUserService iWikiUserService,
                                 IamRepository iamRepository,
-                                IWikiClassService iWikiClassService) {
+                                IWikiClassService iWikiClassService,
+                                WikiSpaceRepository wikiSpaceRepository) {
         this.iWikiGroupService = iWikiGroupService;
         this.iWikiUserService = iWikiUserService;
         this.iamRepository = iamRepository;
         this.iWikiClassService = iWikiClassService;
+        this.wikiSpaceRepository = wikiSpaceRepository;
     }
 
     @Override
@@ -209,7 +216,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         OrganizationE organization = iamRepository.queryOrganizationById(orgId);
         if (organization != null) {
             LOGGER.info("disable organization group,orgId: {} and organization: {} ", orgId, organization.toString());
-            iWikiGroupService.disableOrgGroupView(organization.getCode(), organization.getName(), username);
+            List<WikiSpaceE> wikiSpaceList = wikiSpaceRepository.getWikiSpaceList(organization.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
+            if (wikiSpaceList != null && !wikiSpaceList.isEmpty() && wikiSpaceList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
+                iWikiGroupService.disableOrgGroupView(organization.getCode(), wikiSpaceList.get(0).getPath(), username);
+            }
         } else {
             throw new CommonException("error.query.organization");
         }
@@ -236,7 +246,11 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             LOGGER.info("disable project group,projectId: {} and project: {} ", projectId, projectE.toString());
             Long orgId = projectE.getOrganization().getId();
             OrganizationE organization = iamRepository.queryOrganizationById(orgId);
-            iWikiGroupService.disableProjectGroupView(projectE.getName(), projectE.getCode(), organization.getName(), organization.getCode(), username);
+            List<WikiSpaceE> wikiSpaceList = wikiSpaceRepository.getWikiSpaceList(projectE.getId(), WikiSpaceResourceType.PROJECT.getResourceType());
+            if (wikiSpaceList != null && !wikiSpaceList.isEmpty() && wikiSpaceList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
+                String[] param = wikiSpaceList.get(0).getPath().split("/");
+                iWikiGroupService.disableProjectGroupView(param[1].substring(2), projectE.getCode(), param[0].substring(2), organization.getCode(), username);
+            }
         } else {
             throw new CommonException("error.query.project");
         }
