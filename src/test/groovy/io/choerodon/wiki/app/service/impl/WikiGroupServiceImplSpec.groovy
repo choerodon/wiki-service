@@ -6,6 +6,7 @@ import io.choerodon.wiki.domain.application.entity.ProjectE
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
+import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository
 import io.choerodon.wiki.domain.service.IWikiClassService
 import io.choerodon.wiki.domain.service.IWikiGroupService
 import io.choerodon.wiki.domain.service.IWikiUserService
@@ -18,17 +19,20 @@ class WikiGroupServiceImplSpec extends Specification {
     IamRepository iamRepository;
     IWikiClassService iWikiClassService;
     WikiGroupServiceImpl wikiGroupService;
+    WikiSpaceRepository wikiSpaceRepository;
 
     def setup() {
         iWikiGroupService = Mock(IWikiGroupService);
         iWikiUserService = Mock(IWikiUserService);
         iamRepository = Mock(IamRepository);
         iWikiClassService = Mock(IWikiClassService);
+        wikiSpaceRepository = Mock(WikiSpaceRepository);
         wikiGroupService = new WikiGroupServiceImpl(
                 iWikiGroupService,
                 iWikiUserService,
                 iamRepository,
-                iWikiClassService
+                iWikiClassService,
+                wikiSpaceRepository
         )
     }
 

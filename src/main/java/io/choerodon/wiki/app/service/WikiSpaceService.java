@@ -15,28 +15,30 @@ import io.choerodon.wiki.domain.application.event.ProjectEvent;
  */
 public interface WikiSpaceService {
 
-    void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId,String username, String type, Boolean flag);
+    void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String username, String type, Boolean flag);
 
     Page<WikiSpaceListTreeDTO> listTreeWikiSpaceByPage(Long resourceId, String type,
                                                        PageRequest pageRequest, String searchParam);
 
-    List<WikiSpaceResponseDTO> underOrganization(Long organizationId,String type);
+    List<WikiSpaceResponseDTO> underOrganization(Long organizationId, String type);
 
-    List<WikiSpaceResponseDTO> underProject(Long projectId,String type);
+    List<WikiSpaceResponseDTO> underProject(Long projectId, String type);
 
     WikiSpaceResponseDTO query(Long id);
 
-    WikiSpaceResponseDTO update(Long id,WikiSpaceDTO wikiSpaceDTO,String username);
+    WikiSpaceResponseDTO update(Long id, WikiSpaceDTO wikiSpaceDTO, String username);
 
-    Boolean checkName(Long resourceId,String name,String type);
+    Boolean checkName(Long resourceId, String name, String type);
 
     void syncOrg(Long id);
 
     void syncProject(Long id);
 
-    void delete(Long resourceId,Long id);
+    void delete(Long resourceId, Long id);
 
     void updateAndSyncProject(ProjectEvent projectEvent);
 
     void updateAndSyncOrganization(OrganizationEventPayload organizationEventPayload);
+
+    List<WikiSpaceResponseDTO> getWikiSpaceList(Long resourceId, String resourceType);
 }

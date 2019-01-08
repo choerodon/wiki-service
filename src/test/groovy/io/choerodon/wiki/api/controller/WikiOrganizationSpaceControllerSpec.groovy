@@ -294,7 +294,6 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         1 * iamServiceClient.queryOrganizationById(_) >> organization
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> page
         1 * iWikiClassService.deletePageClass(_, _, _, _, _)
-        1 * iWikiSpaceWebHomeService.checkOrgSpaceExsist(*_) >> true
 
         when: '模拟发送消息'
         def entity = wikiEventHandler.handleOrganizationEnableEvent(payload)

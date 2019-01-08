@@ -14,6 +14,7 @@ public class ProjectDTO {
     private String organizationName;
     private String userName;
     private Long userId;
+    private String imageUrl;
     private List<String> roleLabels;
 
     public Long getProjectId() {
@@ -78,5 +79,13 @@ public class ProjectDTO {
 
     public void setRoleLabels(List<String> roleLabels) {
         this.roleLabels = roleLabels;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

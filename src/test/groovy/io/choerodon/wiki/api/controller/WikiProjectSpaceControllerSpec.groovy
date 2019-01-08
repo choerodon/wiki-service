@@ -11,7 +11,6 @@ import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
 import io.choerodon.wiki.domain.service.*
-import io.choerodon.wiki.infra.common.BaseStage
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
 import io.choerodon.wiki.infra.dataobject.iam.ProjectDO
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
@@ -187,6 +186,7 @@ class WikiProjectSpaceControllerSpec extends Specification {
         ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(list, HttpStatus.OK)
 
         and: 'Mock'
+        1 * iamServiceClient.queryIamProject(_) >> projectDOResponseEntity
         1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_) >> 201
         1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(*_) >> 201
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
@@ -338,7 +338,6 @@ class WikiProjectSpaceControllerSpec extends Specification {
         1 * iamServiceClient.queryOrganizationById(_) >> organization
         1 * iWikiClassService.getProjectPageClassResource(*_) >> page
         1 * iWikiClassService.deleteProjectPageClass(*_)
-        1 * iWikiSpaceWebHomeService.checkProjectSpaceExsist(*_) >> true
 
         when: '模拟发送消息'
         def entity = wikiEventHandler.handleProjectEnableEvent(payload)
