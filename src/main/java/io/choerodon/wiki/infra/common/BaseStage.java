@@ -21,6 +21,7 @@ public abstract class BaseStage {
     public static final String ORGANIZATION_MEMBER = "role/organization/default/organization-member";
     public static final String USERNAME = "admin";
     public static final String SPACE = "XWiki";
+    public static final String XWiki = "XWiki.";
     public static final String WEBHOME = "WebHome";
     public static final String WEBPREFERENCES = "WebPreferences";
     public static final String XWIKIGROUPS = "XWiki.XWikiGroups";
