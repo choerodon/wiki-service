@@ -198,12 +198,6 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
                             String xmlParam = getUserXml(wikiUserE);
                             iWikiUserService.createUser(loginName, xmlParam, username);
-                        } else {
-                            //如果用户存在，判断是否在默认组XWikiAllGroup，不存在加在默认组XWikiAllGroup
-                            List<Integer> list = this.getGroupsObjectNumber(BaseStage.XWIKI_ALL_GROUP, username, loginName);
-                            if (list == null || list.isEmpty()) {
-                                iWikiGroupService.createGroupUsers(BaseStage.XWIKI_ALL_GROUP, loginName, username);
-                            }
                         }
 
                         //通过groupName给组添加成员
