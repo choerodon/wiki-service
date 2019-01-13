@@ -188,6 +188,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
                         //如果用户不存在则新建
                         Boolean flag = checkDocExsist(username, loginName);
+                        LOGGER.info("user:{} exist ? {}", loginName, flag);
                         if (!flag) {
                             WikiUserE wikiUserE = new WikiUserE();
                             wikiUserE.setFirstName(user.getLoginName());
@@ -197,12 +198,6 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
                             String xmlParam = getUserXml(wikiUserE);
                             iWikiUserService.createUser(loginName, xmlParam, username);
-                        } else {
-                            //如果用户存在，判断是否在默认组XWikiAllGroup，不存在加在默认组XWikiAllGroup
-                            List<Integer> list = this.getGroupsObjectNumber(BaseStage.XWIKI_ALL_GROUP, username, loginName);
-                            if (list == null || list.isEmpty()) {
-                                iWikiGroupService.createGroupUsers(BaseStage.XWIKI_ALL_GROUP, loginName, username);
-                            }
                         }
 
                         //通过groupName给组添加成员
@@ -417,7 +412,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                     String pageName = recordEle.elementTextTrim("pageName");
                     if (groupName.equals(pageName)) {
                         String headline = recordEle.elementTextTrim("headline");
-                        if (!StringUtils.isEmpty(headline) && loginName.equals(headline.substring(6))) {
+                        LOGGER.info("loginName: {} get headline: {}", loginName, headline);
+                        if (!StringUtils.isEmpty(headline) && headline.startsWith(BaseStage.XWiki) && loginName.equals(headline.substring(6))) {
+                            list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
+                        } else if (!StringUtils.isEmpty(headline) && !headline.startsWith(BaseStage.XWiki)) {
                             list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
                         }
                     }
