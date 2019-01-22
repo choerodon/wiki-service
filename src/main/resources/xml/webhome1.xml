@@ -146,16 +146,16 @@
                     &#13;
                     var edit_doc_icon = `&lt;div class="activity-opera-div  activity-icon-edit"&gt;&lt;span class="icon icon-mode_edit activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var create_doc_icon = `&lt;div class="activity-opera-div  activity-icon-add"&gt;&lt;span class="icon icon-playlist_add activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_doc_icon = `&lt;div class="activity-opera-div  activity-icon-delete"&gt;&lt;span class="icon icon-delete activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var delete_doc_icon = `&lt;div class="activity-opera-div  activity-icon-delete"&gt;&lt;span class="icon icon-delete activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var edit_comment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-textsms activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var add_comment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_comment activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_comment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_commet activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var delete_comment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_commet activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var edit_attachment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-border_color activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var add_attachment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_attachment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var delete_attachment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var edit_annotation_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var add_annotation_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_annotation_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;;`&#13;
+                    var delete_annotation_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
 
                     var litleIcon = document.getElementsByClassName("activityActionAvatar");&#13;
                     for(var i=0; i&lt;litleIcon.length; i++){&#13;
