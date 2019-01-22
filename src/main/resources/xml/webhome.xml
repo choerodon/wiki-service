@@ -133,19 +133,6 @@
                     }&#13;
                     &#13;
                     &#13;
-                    //增加元素&#13;
-                    /*var strTitle = `&#13;
-                    &lt;span style="font-size: 18px;&#13;
-                    color: #000;&#13;
-                    line-height: 59px;&#13;
-                    margin-bottom: 0;&#13;
-                    padding-left: 14px;&#13;
-                    cursor: pointer;"&gt;主页&lt;/span&gt;&#13;
-                    `;&#13;
-                    &#13;
-                    if(document.getElementsByClassName("xwiki-main-refesh")[0] != null){&#13;
-                    document.getElementsByClassName("xwiki-main-refesh")[0].insertAdjacentHTML('beforeBegin', strTitle);&#13;
-                    }*/&#13;
                     &#13;
                     //最近空间活动&#13;
                     var descIcon = `&lt;span class="icon icon-description" style="&#13;
@@ -159,13 +146,18 @@
                     &#13;
                     var edit_doc_icon = `&lt;div class="activity-opera-div  activity-icon-edit"&gt;&lt;span class="icon icon-mode_edit activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var create_doc_icon = `&lt;div class="activity-opera-div  activity-icon-add"&gt;&lt;span class="icon icon-playlist_add activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_doc_icon = `&lt;div class="activity-opera-div  activity-icon-delete"&gt;&lt;span class="icon icon-delete activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var delete_doc_icon = `&lt;div class="activity-opera-div  activity-icon-delete"&gt;&lt;span class="icon icon-delete activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var edit_comment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-textsms activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var add_comment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_comment activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_comment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_commet activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var delete_comment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_commet activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;;`&#13;
                     var edit_attachment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-border_color activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
                     var add_attachment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_attachment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+                    var delete_attachment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+                    var edit_annotation_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+                    var add_annotation_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+                    var delete_annotation_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;;`&#13;
+
+
                     var litleIcon = document.getElementsByClassName("activityActionAvatar");&#13;
                     for(var i=0; i&lt;litleIcon.length; i++){&#13;
                     if(litleIcon[i].alt == "编辑页面"){&#13;
@@ -195,6 +187,15 @@
                     } else if (litleIcon[i].alt == "删除附件") {&#13;
                     litleIcon[i].style.display = "none";&#13;
                     litleIcon[i].insertAdjacentHTML('afterEnd', delete_attachment_icon);&#13;
+                    } else if (litleIcon[i].alt == "添加注释") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', add_annotation_icon);&#13;
+                    } else if (litleIcon[i].alt == "编辑注释") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', edit_annotation_icon);&#13;
+                    } else if (litleIcon[i].alt == "删除注释") {&#13;
+                    litleIcon[i].style.display = "none";&#13;
+                    litleIcon[i].insertAdjacentHTML('afterEnd', delete_annotation_icon);&#13;
                     }&#13;
                     }&#13;
                     &#13;
