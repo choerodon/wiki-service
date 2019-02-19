@@ -13,7 +13,6 @@ Wiki Service is responsible for establishing communication with [XWiki](https://
 - Java8
 - [Iam Service](https://github.com/choerodon/iam-service)
 - [MySQL](https://www.mysql.com)
-- [Kafka](https://kafka.apache.org)
 
 ## Installation and Getting Started
 1. init database

@@ -37,9 +37,11 @@ public class IWikiClassServiceImpl implements IWikiClassService {
             Response<ResponseBody> response = wikiClient.getPageClassResource(username, client, space, pageName, className).execute();
             LOGGER.info("get page class resource code:{} ", response.code());
             return response.body().string();
-        } catch (IOException | CommonException e) {
-            throw new CommonException("error.page.class.get", e);
+        } catch (Exception e) {
+            LOGGER.error("{} not found", pageName);
         }
+
+        return "";
     }
 
     @Override
@@ -50,9 +52,11 @@ public class IWikiClassServiceImpl implements IWikiClassService {
                     client, org, project, pageName, className).execute();
             LOGGER.info("get page class resource code:{} ", response.code());
             return response.body().string();
-        } catch (IOException | CommonException e) {
-            throw new CommonException("error.page.class.get", e);
+        } catch (Exception e) {
+            LOGGER.error("{} not found", pageName);
         }
+
+        return "";
     }
 
     @Override
