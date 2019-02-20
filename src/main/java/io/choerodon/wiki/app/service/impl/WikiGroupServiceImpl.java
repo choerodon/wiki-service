@@ -367,22 +367,26 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         Long resourceId = groupMemberDTO.getResourceId();
         String resourceType = groupMemberDTO.getResourceType();
         StringBuilder groupName = new StringBuilder();
-        if (ResourceLevel.ORGANIZATION.value().equals(resourceType)) {
-            groupName.append(BaseStage.O);
-            //通过组织id获取组织code
-            OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
-            groupName.append(organization.getCode());
+        try {
+            if (ResourceLevel.ORGANIZATION.value().equals(resourceType)) {
+                groupName.append(BaseStage.O);
+                //通过组织id获取组织code
+                OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
+                groupName.append(organization.getCode());
 
-        } else if (ResourceLevel.PROJECT.value().equals(resourceType)) {
-            groupName.append(BaseStage.P);
-            //通过项目id找到项目code
-            ProjectE projectE = iamRepository.queryIamProject(resourceId);
-            OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
-            if (iWikiUserService.checkDocExsist(username, BaseStage.P + organizationE.getCode() + BaseStage.LINE + projectE.getCode() + type)) {
-                groupName.append(organizationE.getCode() + BaseStage.LINE + projectE.getCode());
-            } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectE.getCode() + type)) {
-                groupName.append(projectE.getCode());
+            } else if (ResourceLevel.PROJECT.value().equals(resourceType)) {
+                groupName.append(BaseStage.P);
+                //通过项目id找到项目code
+                ProjectE projectE = iamRepository.queryIamProject(resourceId);
+                OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
+                if (iWikiUserService.checkDocExsist(username, BaseStage.P + organizationE.getCode() + BaseStage.LINE + projectE.getCode() + type)) {
+                    groupName.append(organizationE.getCode() + BaseStage.LINE + projectE.getCode());
+                } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectE.getCode() + type)) {
+                    groupName.append(projectE.getCode());
+                }
             }
+        } catch (Exception e) {
+            return new StringBuilder();
         }
 
         return groupName;
