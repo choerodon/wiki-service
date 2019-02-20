@@ -140,12 +140,15 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                                 && (groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())
                                 || groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()))) {
                             ProjectE projectE = iamRepository.queryIamProject(groupMember.getResourceId());
-                            OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append(BaseStage.O).append(organizationE.getCode()).append(BaseStage.USER_GROUP);
-                            List<Integer> list1 = getGroupsObjectNumber(stringBuilder.toString(), username, user.getLoginName());
-                            if (list1 == null || list1.isEmpty()) {
-                                iWikiGroupService.createGroupUsers(stringBuilder.toString(), user.getLoginName(), username);
+                            LOGGER.info("projectE : {}",projectE.toString());
+                            if (projectE.getOrganization().getId() != null ) {
+                                OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
+                                StringBuilder stringBuilder = new StringBuilder();
+                                stringBuilder.append(BaseStage.O).append(organizationE.getCode()).append(BaseStage.USER_GROUP);
+                                List<Integer> list1 = getGroupsObjectNumber(stringBuilder.toString(), username, user.getLoginName());
+                                if (list1 == null || list1.isEmpty()) {
+                                    iWikiGroupService.createGroupUsers(stringBuilder.toString(), user.getLoginName(), username);
+                                }
                             }
                         }
                     }
