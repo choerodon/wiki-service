@@ -356,9 +356,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     private String getGroupName(GroupMemberDTO groupMemberDTO, String username) {
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
         if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) || roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType())) {
-            return getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
+            return !StringUtils.isEmpty(getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).toString())?getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString():"";
         } else if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType()) || roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
-            return getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
+            return !StringUtils.isEmpty(getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).toString())?getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString():"";
         } else if (ResourceLevel.SITE.value().equals(groupMemberDTO.getResourceType()) && roleLabels.contains(WikiRoleType.SITE_ADMIN.getResourceType())) {
             return BaseStage.XWIKI_ADMIN_GROUP;
         } else {
@@ -370,26 +370,25 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         Long resourceId = groupMemberDTO.getResourceId();
         String resourceType = groupMemberDTO.getResourceType();
         StringBuilder groupName = new StringBuilder();
-        try {
-            if (ResourceLevel.ORGANIZATION.value().equals(resourceType)) {
-                groupName.append(BaseStage.O);
-                //通过组织id获取组织code
-                OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
-                groupName.append(organization.getCode());
+        if (ResourceLevel.ORGANIZATION.value().equals(resourceType)) {
+            groupName.append(BaseStage.O);
+            //通过组织id获取组织code
+            OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
+            groupName.append(organization.getCode());
 
-            } else if (ResourceLevel.PROJECT.value().equals(resourceType)) {
-                groupName.append(BaseStage.P);
-                //通过项目id找到项目code
-                ProjectE projectE = iamRepository.queryIamProject(resourceId);
-                OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
-                if (iWikiUserService.checkDocExsist(username, BaseStage.P + organizationE.getCode() + BaseStage.LINE + projectE.getCode() + type)) {
-                    groupName.append(organizationE.getCode() + BaseStage.LINE + projectE.getCode());
-                } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectE.getCode() + type)) {
-                    groupName.append(projectE.getCode());
-                }
+        } else if (ResourceLevel.PROJECT.value().equals(resourceType)) {
+            groupName.append(BaseStage.P);
+            //通过项目id找到项目code
+            ProjectE projectE = iamRepository.queryIamProject(resourceId);
+            if (projectE.getOrganization().getId() == null) {
+                return new StringBuilder();
             }
-        } catch (Exception e) {
-            return new StringBuilder();
+            OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
+            if (iWikiUserService.checkDocExsist(username, BaseStage.P + organizationE.getCode() + BaseStage.LINE + projectE.getCode() + type)) {
+                groupName.append(organizationE.getCode() + BaseStage.LINE + projectE.getCode());
+            } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectE.getCode() + type)) {
+                groupName.append(projectE.getCode());
+            }
         }
 
         return groupName;
