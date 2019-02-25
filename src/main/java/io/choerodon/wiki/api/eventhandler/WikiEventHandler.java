@@ -38,8 +38,8 @@ public class WikiEventHandler {
 
     private static final String ORG_ICON = "domain";
     private static final String PROJECT_ICON = "project";
-    public static final String PROJECT_UPDATE = "iam-update-project";
-    public static final String ORG_UPDATE = "iam-update-organization";
+    private static final String PROJECT_UPDATE = "iam-update-project";
+    private static final String ORG_UPDATE = "iam-update-organization";
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiEventHandler.class);
     private static ObjectMapper objectMapper = new ObjectMapper();
     private static Gson gson = new Gson();
@@ -369,6 +369,9 @@ public class WikiEventHandler {
         wikiSpaceDO.setResourceId(organizationId);
         wikiSpaceDO.setResourceType(WikiSpaceResourceType.ORGANIZATION.getResourceType());
         WikiSpaceDO result = wikiSpaceMapper.selectOne(wikiSpaceDO);
+        if (result == null) {
+            throw new CommonException("Failed to get organization information by id:{}", organizationId);
+        }
         String[] paths = result.getPath().split("/");
         return paths[0].substring(2);
     }
