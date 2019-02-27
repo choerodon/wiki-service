@@ -330,15 +330,15 @@ public class WikiEventHandler {
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 70)
-    public String handleWikiRegisterInitOrganizationEvent(String data) {
+    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitOrganizationEvent(String data) throws IOException {
         loggerInfo(data);
-        OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = gson.fromJson(data, OrganizationRegisterEventPayloadDTO.class);
+        OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
 
         createOrganization(organizationRegisterEventPayloadDTO.getOrganization().getId(),
                 organizationRegisterEventPayloadDTO.getOrganization().getCode(),
                 organizationRegisterEventPayloadDTO.getOrganization().getName(),
                 organizationRegisterEventPayloadDTO.getUser().getId());
-        return data;
+        return organizationRegisterEventPayloadDTO;
     }
 
     /**
@@ -351,7 +351,7 @@ public class WikiEventHandler {
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 120)
-    public String handleWikiRegisterInitProjectEvent(String data) throws IOException {
+    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitProjectEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationRegisterEventPayloadDTO projectEvent = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
         createProject(projectEvent.getOrganization().getId(),
@@ -361,7 +361,7 @@ public class WikiEventHandler {
                 projectEvent.getProject().getId(),
                 projectEvent.getUser().getId());
 
-        return data;
+        return projectEvent;
     }
 
     /**
@@ -374,12 +374,12 @@ public class WikiEventHandler {
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 160)
-    public String handleWikiRegisterInitDemoDataEvent(String data) throws IOException {
+    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitDemoDataEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationRegisterEventPayloadDTO wikiDemoData = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
 
         wikiSpaceService.createDemo(wikiDemoData.getOrganization().getId(), BaseStage.USERNAME);
-        return data;
+        return wikiDemoData;
     }
 
     /************************************************************************************
