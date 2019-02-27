@@ -3,6 +3,8 @@ package io.choerodon.wiki.infra.persistence.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,7 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.wiki.api.eventhandler.WikiEventHandler;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.entity.iam.RoleE;
@@ -24,6 +27,8 @@ import io.choerodon.wiki.infra.feign.IamServiceClient;
  */
 @Component
 public class IamRepositoryImpl implements IamRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IamRepositoryImpl.class);
 
     private IamServiceClient iamServiceClient;
 
@@ -63,6 +68,7 @@ public class IamRepositoryImpl implements IamRepository {
 
     @Override
     public UserE queryUserById(Long userId) {
+        LOGGER.info("query user by userId:{}",userId);
         List<Long> userIds = new ArrayList<>();
         userIds.add(userId);
         ResponseEntity<List<UserDO>> responseEntity = iamServiceClient.queryUsersByIds(userIds);
@@ -70,6 +76,7 @@ public class IamRepositoryImpl implements IamRepository {
             throw new CommonException("error.user.get");
         }
         List<UserDO> list = responseEntity.getBody();
+        LOGGER.info("query user info",list.toString());
         if (list != null && list.size() == 1) {
             return ConvertHelper.convert(list.get(0), UserE.class);
         } else {
