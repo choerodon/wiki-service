@@ -41,4 +41,6 @@ public interface WikiSpaceService {
     void updateAndSyncOrganization(OrganizationEventPayload organizationEventPayload);
 
     List<WikiSpaceResponseDTO> getWikiSpaceList(Long resourceId, String resourceType);
+
+    void createDemo(Long id,String username);
 }

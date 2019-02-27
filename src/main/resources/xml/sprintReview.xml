@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<page xmlns="http://www.xwiki.org">
+    <id/>
+    <fullName/>
+    <wiki>xwiki</wiki>
+    <space/>
+    <name>WebHome</name>
+    <title>冲刺会议回顾</title>
+    <parent/>
+    <parentId/>
+    <version>1.1</version>
+    <author>XWiki.Admin</author>
+    <translations/>
+    <syntax>xwiki/2.1</syntax>
+    <language></language>
+    <majorVersion>1</majorVersion>
+    <minorVersion>1</minorVersion>
+    <hidden>false</hidden>
+    <creator>XWiki.Admin</creator>
+    <modifier>XWiki.Admin</modifier>
+    <comment></comment>
+    <content>(% border="1" cellspacing="0" style="border-collapse:collapse" %)
+        |(% colspan="7" style="background-color:#f5f5f5; border-color:#000000; text-align:center; text-decoration:underline" %)客户生态组冲刺回顾会议记录
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)冲刺|(% colspan="2" style="border-color:#000000; width:274px" %)文档更新|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)时间|(% colspan="3" rowspan="1" style="border-color:#000000; width:647px" %)2018年12月27日
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)参会人员|(% colspan="6" style="border-color:#000000; width:966px" %)李刚、王梅梅、张三丰、陈一
+        |(% colspan="7" style="border-color:#000000; text-align:center; vertical-align:middle" %)回顾总结
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)方面|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)序号|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:228px" %)模块|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)序号|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:222px" %) 问题|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:336px" %)提升方式|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:89px" %)落地负责人
+        |(% rowspan="2" style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)(((
+
+
+        官网
+        )))|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)1|(% style="border-color:#000000; width:228px" %)快速入门|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)1|(% style="border-color:#000000; width:222px" %)部分格式混乱|(% style="border-color:#000000; width:336px" %)调整格式|(% style="border-color:#000000; width:89px" %)张三丰
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)2|(% style="border-color:#000000; width:228px" %)用户手册|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)2|(% style="border-color:#000000; width:222px" %)系统配置模块内容不完整|(% style="border-color:#000000; width:336px" %)补充内容|(% style="border-color:#000000; width:89px" %)李刚
+        |(% rowspan="1" style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)(((
+
+
+
+        产品功能
+        )))|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)1|(% style="border-color:#000000; width:228px" %)wiki|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)1|(% style="border-color:#000000; width:222px" %)页面BUG|(% style="border-color:#000000; width:336px" %)修复|(% style="border-color:#000000; width:89px" %)王梅梅
+        |(% rowspan="5" style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)(((
+
+
+
+        敏捷流程
+        )))|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)1|(% style="border-color:#000000; width:228px" %)看板|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)1|(% style="border-color:#000000; width:222px" %)卡片拖动不及时|(% style="border-color:#000000; width:336px" %)每日站会|(% style="border-color:#000000; width:89px" %)陈一
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)2|(% style="border-color:#000000; width:228px" %)问题管理|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)2|(% style="border-color:#000000; width:222px" %)子任务未标明工作时间|(% style="border-color:#000000; width:336px" %)每日站会检查|(% style="border-color:#000000; width:89px" %)陈一
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)3|(% style="border-color:#000000; width:228px" %) |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)3|(% style="border-color:#000000; width:222px" %) |(% style="border-color:#000000; width:336px" %) |(% style="border-color:#000000; width:89px" %)
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)4|(% style="border-color:#000000; width:228px" %) |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)4|(% style="border-color:#000000; width:222px" %) |(% style="border-color:#000000; width:336px" %) |(% style="border-color:#000000; width:89px" %)
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)5|(% style="border-color:#000000; width:228px" %) |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)5|(% style="border-color:#000000; width:222px" %) |(% style="border-color:#000000; width:336px" %) |(% style="border-color:#000000; width:89px" %)
+        |(% rowspan="5" style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)(((
+
+
+
+        需求管理
+        )))|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)1|(% style="border-color:#000000; width:228px" %) |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)1|(% style="border-color:#000000; width:222px" %) |(% style="border-color:#000000; width:336px" %) |(% style="border-color:#000000; width:89px" %)
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)2|(% style="border-color:#000000; width:228px" %) |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)2|(% style="border-color:#000000; width:222px" %) |(% style="border-color:#000000; width:336px" %) |(% style="border-color:#000000; width:89px" %)
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)3|(% style="border-color:#000000; width:228px" %) |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)3|(% style="border-color:#000000; width:222px" %) |(% style="border-color:#000000; width:336px" %) |(% style="border-color:#000000; width:89px" %)
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)4|(% style="border-color:#000000; width:228px" %) |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)4|(% style="border-color:#000000; width:222px" %) |(% style="border-color:#000000; width:336px" %) |(% style="border-color:#000000; width:89px" %)
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)5|(% style="border-color:#000000; width:228px" %) |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)5|(% style="border-color:#000000; width:222px" %) |(% style="border-color:#000000; width:336px" %) |(% style="border-color:#000000; width:89px" %)
+
+    </content>
+</page>

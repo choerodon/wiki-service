@@ -1,10 +1,13 @@
 package io.choerodon.wiki.app.service.impl;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -43,7 +46,7 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 public class WikiSpaceServiceImpl implements WikiSpaceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiSpaceServiceImpl.class);
-    private static final String LOCATION = "bin/view/";
+    private static final List<String> initData = Stream.of("敏捷管理", "版本更新", "猪齿鱼功能介绍").collect(toList());
 
     private WikiSpaceRepository wikiSpaceRepository;
     private WikiSpaceAsynService wikiSpaceAsynService;
@@ -107,7 +110,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                 pageRequest, searchParam);
         String urlSlash = wikiUrl.endsWith("/") ? "" : "/";
         for (WikiSpaceE ws : wikiSpaceES) {
-            ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
+            ws.setPath(wikiUrl + urlSlash + BaseStage.LOCATION + ws.getPath());
         }
         Page<WikiSpaceListTreeDTO> page = ConvertPageHelper.convertPage(wikiSpaceES, WikiSpaceListTreeDTO.class);
         String queryType = type.equals(WikiSpaceResourceType.ORGANIZATION.getResourceType()) ?
@@ -117,7 +120,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             List<WikiSpaceE> list = new ArrayList<>();
             for (WikiSpaceE ws : wikiSpaceEList) {
                 if (!ws.getStatus().equals(SpaceStatus.DELETED.getSpaceStatus())) {
-                    ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
+                    ws.setPath(wikiUrl + urlSlash + BaseStage.LOCATION + ws.getPath());
                     list.add(ws);
                 }
             }
@@ -315,6 +318,39 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                 resourceType), WikiSpaceResponseDTO.class);
     }
 
+    @Override
+    public void createDemo(Long id, String username) {
+        List<WikiSpaceResponseDTO> wikiSpaceList = this.getWikiSpaceList(id, WikiSpaceResourceType.ORGANIZATION.getResourceType());
+        if (wikiSpaceList != null && !wikiSpaceList.isEmpty() && wikiSpaceList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
+            //创建组织下的空间
+            for (String data : initData) {
+                WikiSpaceE wikiSpaceE = wikiSpaceRepository.selectOne(id, data, WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+                String path = wikiSpaceList.get(0).getPath();
+                if (StringUtils.isEmpty(path)) {
+                    throw new CommonException("error.organization.path.empty");
+                }
+                if (wikiSpaceE == null) {
+                    wikiSpaceE = new WikiSpaceE();
+                    wikiSpaceE.setResourceId(id);
+                    wikiSpaceE.setResourceType(WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
+                    wikiSpaceE.setName(data);
+                    wikiSpaceE.setIcon(BaseStage.ORG_ICON);
+                    wikiSpaceE.setPath(path + "/" + data);
+                    wikiSpaceE.setStatus(SpaceStatus.OPERATIING.getSpaceStatus());
+                    LOGGER.info("start creating spaces, path:{} and wikiSpaceE: {} ", wikiSpaceE.getPath(), wikiSpaceE.toString());
+
+                    WikiSpaceE orgUnderSpace = wikiSpaceRepository.insert(wikiSpaceE);
+
+                    wikiSpaceAsynService.createDemoOrgUnderSpace(path, data, orgUnderSpace, username);
+                } else {
+                    if (!SpaceStatus.SUCCESS.getSpaceStatus().equals(wikiSpaceE.getStatus())) {
+                        wikiSpaceAsynService.createDemoOrgUnderSpace(path, data, wikiSpaceE, username);
+                    }
+                }
+            }
+        }
+    }
+
     public void deleteProjectUnderPage(WikiSpaceE wikiSpaceE) {
         LOGGER.info("delete the page under the project,wikiSpaceE:{}", wikiSpaceE.toString());
         String[] param = wikiSpaceE.getPath().split("/");
@@ -510,7 +546,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
         wikiSpaceEList.stream()
                 .filter(ws -> ws.getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus()))
                 .forEach(ws -> {
-                    ws.setPath(wikiUrl + urlSlash + LOCATION + ws.getPath());
+                    ws.setPath(wikiUrl + urlSlash + BaseStage.LOCATION + ws.getPath());
                     list.add(ws);
                 });
 
