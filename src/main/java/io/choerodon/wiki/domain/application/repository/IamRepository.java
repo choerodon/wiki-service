@@ -18,6 +18,8 @@ public interface IamRepository {
 
     ProjectE queryIamProject(Long projectId);
 
+    UserE queryUserByIdss(Long[] ids,Boolean flag);
+
     UserE queryUserById(Long organizationId, Long id);
 
     UserE queryUserById(Long userId);

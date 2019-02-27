@@ -40,6 +40,10 @@ public interface IamServiceClient {
     @GetMapping(value = "/v1/users/ids")
     ResponseEntity<List<UserDO>> queryUsersByIds(@RequestBody List<Long> ids);
 
+    @PostMapping(value = "/v1/users/ids")
+    ResponseEntity<List<UserDO>> listUsersByIdss(@RequestBody Long[] ids,
+                                                @RequestParam(name = "only_enabled") Boolean onlyEnabled);
+
     @GetMapping(value = "/v1/organizations")
     ResponseEntity<Page<OrganizationDO>> pageByOrganization(@RequestParam("page") int page, @RequestParam("size") int size);
 

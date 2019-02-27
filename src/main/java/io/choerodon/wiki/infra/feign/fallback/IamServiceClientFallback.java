@@ -40,6 +40,11 @@ public class IamServiceClientFallback implements IamServiceClient {
     }
 
     @Override
+    public ResponseEntity<List<UserDO>> listUsersByIdss(Long[] ids, Boolean onlyEnabled) {
+        throw new FeignException("error.user.get");
+    }
+
+    @Override
     public ResponseEntity<UserDO> query(Long organizationId, Long id) {
         throw new FeignException("error.user.get");
     }
