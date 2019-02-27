@@ -323,9 +323,9 @@ public class WikiEventHandler {
     /**
      * 初始化组织对应的wiki空间
      */
-    @SagaTask(code = "wikiRegisterInitOrganization",
+    @SagaTask(code = "register-wiki-init-org",
             description = "初始化组织对应的wiki空间",
-            sagaCode = "register-wiki-init-org",
+            sagaCode = "register-org",
             maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
@@ -344,9 +344,9 @@ public class WikiEventHandler {
     /**
      * 初始化项目对应的wiki空间
      */
-    @SagaTask(code = "wikiRegisterInitProject",
+    @SagaTask(code = "register-wiki-init-project",
             description = "初始化项目对应的wiki空间",
-            sagaCode = "register-wiki-init-project",
+            sagaCode = "register-org",
             maxRetryCount = 3,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
@@ -367,9 +367,9 @@ public class WikiEventHandler {
     /**
      * 初始化wiki的demo数据
      */
-    @SagaTask(code = "wikiRegisterInitDemoData",
+    @SagaTask(code = "register-wiki-init-demo-data",
             description = "初始化wiki的demo数据",
-            sagaCode = "register-wiki-init-demo-data",
+            sagaCode = "register-org",
             maxRetryCount = 8,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
