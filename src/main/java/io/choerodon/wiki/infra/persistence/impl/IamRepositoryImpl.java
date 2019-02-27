@@ -76,7 +76,7 @@ public class IamRepositoryImpl implements IamRepository {
             throw new CommonException("error.user.get");
         }
         List<UserDO> list = responseEntity.getBody();
-        LOGGER.info("query user info",list.toString());
+        LOGGER.info("query user info:{}",list.toString());
         if (list != null && list.size() == 1) {
             return ConvertHelper.convert(list.get(0), UserE.class);
         } else {
