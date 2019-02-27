@@ -2,17 +2,11 @@ package io.choerodon.wiki.infra.feign;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.wiki.domain.application.valueobject.RoleAssignmentSearch;
 import io.choerodon.wiki.infra.dataobject.iam.*;
 import io.choerodon.wiki.infra.feign.fallback.IamServiceClientFallback;
@@ -37,11 +31,8 @@ public interface IamServiceClient {
     ResponseEntity<UserDO> query(@PathVariable("organization_id") Long organizationId,
                                  @PathVariable("id") Long id);
 
-    @GetMapping(value = "/v1/users/ids")
-    ResponseEntity<List<UserDO>> queryUsersByIds(@RequestBody List<Long> ids);
-
     @PostMapping(value = "/v1/users/ids")
-    ResponseEntity<List<UserDO>> listUsersByIdss(@RequestBody Long[] ids,
+    ResponseEntity<List<UserDO>> listUsersByIds(@RequestBody Long[] ids,
                                                 @RequestParam(name = "only_enabled") Boolean onlyEnabled);
 
     @GetMapping(value = "/v1/organizations")

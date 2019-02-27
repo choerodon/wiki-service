@@ -20,7 +20,6 @@ import io.choerodon.wiki.app.service.WikiLogoService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
-import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
 import io.choerodon.wiki.domain.application.event.ProjectEvent;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
@@ -327,23 +326,18 @@ public class WikiEventHandler {
     @SagaTask(code = "register-wiki-init-org",
             description = "初始化组织对应的wiki空间",
             sagaCode = "register-org",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 70)
     public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitOrganizationEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
-        UserE userE = iamRepository.queryUserById(organizationRegisterEventPayloadDTO.getOrganization().getId(), organizationRegisterEventPayloadDTO.getUser().getId());
-        Long[] ids = new Long[1];
-        ids[0] = organizationRegisterEventPayloadDTO.getUser().getId();
-        UserE userE1 = iamRepository.queryUserByIdss(ids, false);
-        LOGGER.info(userE.getLoginName()+"============="+userE1.getLoginName());
+
         createOrganization(organizationRegisterEventPayloadDTO.getOrganization().getId(),
                 organizationRegisterEventPayloadDTO.getOrganization().getCode(),
                 organizationRegisterEventPayloadDTO.getOrganization().getName(),
                 organizationRegisterEventPayloadDTO.getUser().getId());
-
 
         return organizationRegisterEventPayloadDTO;
     }
@@ -354,7 +348,7 @@ public class WikiEventHandler {
     @SagaTask(code = "register-wiki-init-project",
             description = "初始化项目对应的wiki空间",
             sagaCode = "register-org",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 120)
@@ -377,7 +371,7 @@ public class WikiEventHandler {
     @SagaTask(code = "register-wiki-init-demo-data",
             description = "初始化wiki的demo数据",
             sagaCode = "register-org",
-            maxRetryCount = 8,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 160)
@@ -444,7 +438,9 @@ public class WikiEventHandler {
         wikiGroupDTO.setOrganizationName(orgNameSelect);
         wikiGroupDTO.setOrganizationCode(orgCode);
         wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, false);
+
         wikiGroupService.setUserToGroup(adminGroupName, userId, BaseStage.USERNAME);
+
         wikiGroupDTO.setGroupName(userGroupName);
         wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, false);
     }

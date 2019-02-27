@@ -1,6 +1,5 @@
 package io.choerodon.wiki.infra.persistence.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,7 +11,6 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.wiki.api.eventhandler.WikiEventHandler;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.entity.iam.RoleE;
@@ -68,34 +66,19 @@ public class IamRepositoryImpl implements IamRepository {
 
     @Override
     public UserE queryUserById(Long organizationId, Long id) {
-        ResponseEntity<UserDO> userDOResponseEntity = iamServiceClient.query(organizationId,id);
-        LOGGER.info("queryUserById user info:{}",userDOResponseEntity.getBody().toString());
+        ResponseEntity<UserDO> userDOResponseEntity = iamServiceClient.query(organizationId, id);
+        LOGGER.info("query user info:{}", userDOResponseEntity.getBody().toString());
         return ConvertHelper.convert(userDOResponseEntity.getBody(), UserE.class);
     }
 
     @Override
-    public UserE queryUserByIdss(Long[] ids, Boolean flag) {
-        ResponseEntity<List<UserDO>> responseEntity = iamServiceClient.listUsersByIdss(ids,flag);
-        List<UserDO> list = responseEntity.getBody();
-        LOGGER.info("11query user info:{}",list.toString());
-        if (list != null && list.size() == 1) {
-            return ConvertHelper.convert(list.get(0), UserE.class);
-        } else {
-            throw new CommonException("error.user.query");
-        }
-    }
-
-    @Override
-    public UserE queryUserById(Long userId) {
-        LOGGER.info("query user by userId:{}",userId);
-        List<Long> userIds = new ArrayList<>();
-        userIds.add(userId);
-        ResponseEntity<List<UserDO>> responseEntity = iamServiceClient.queryUsersByIds(userIds);
+    public UserE queryUserByIds(Long[] ids, Boolean flag) {
+        ResponseEntity<List<UserDO>> responseEntity = iamServiceClient.listUsersByIds(ids, flag);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw new CommonException("error.user.get");
         }
         List<UserDO> list = responseEntity.getBody();
-        LOGGER.info("query user info:{}",list.toString());
+        LOGGER.info("query user info:{}", list.toString());
         if (list != null && list.size() == 1) {
             return ConvertHelper.convert(list.get(0), UserE.class);
         } else {
@@ -161,7 +144,7 @@ public class IamRepositoryImpl implements IamRepository {
     @Override
     public Page<UserE> pagingQueryUsersByRoleIdOnOrganizationLevel(Long roleId, Long organizationId, int page, int size) {
         ResponseEntity<Page<UserDO>> responseEntity =
-                iamServiceClient.pagingQueryUsersByRoleIdOnOrganizationLevel(roleId, organizationId, page, size,new RoleAssignmentSearch());
+                iamServiceClient.pagingQueryUsersByRoleIdOnOrganizationLevel(roleId, organizationId, page, size, new RoleAssignmentSearch());
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw new CommonException("error.organization.get");
         }
@@ -171,7 +154,7 @@ public class IamRepositoryImpl implements IamRepository {
 
     @Override
     public Page<UserWithRoleDO> pagingQueryUsersWithProjectLevelRoles(Long projectId) {
-        ResponseEntity<Page<UserWithRoleDO>> responseEntity = iamServiceClient.pagingQueryUsersWithProjectLevelRoles(projectId,new RoleAssignmentSearch(),false);
+        ResponseEntity<Page<UserWithRoleDO>> responseEntity = iamServiceClient.pagingQueryUsersWithProjectLevelRoles(projectId, new RoleAssignmentSearch(), false);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw new CommonException("error.project.user.and.role.get");
         }
