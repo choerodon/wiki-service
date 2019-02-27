@@ -20,6 +20,7 @@ import io.choerodon.wiki.app.service.WikiLogoService;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.domain.application.entity.ProjectE;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
+import io.choerodon.wiki.domain.application.entity.iam.UserE;
 import io.choerodon.wiki.domain.application.event.OrganizationEventPayload;
 import io.choerodon.wiki.domain.application.event.ProjectEvent;
 import io.choerodon.wiki.domain.application.repository.IamRepository;
@@ -338,6 +339,9 @@ public class WikiEventHandler {
                 organizationRegisterEventPayloadDTO.getOrganization().getCode(),
                 organizationRegisterEventPayloadDTO.getOrganization().getName(),
                 organizationRegisterEventPayloadDTO.getUser().getId());
+
+        UserE userE = iamRepository.queryUserById(organizationRegisterEventPayloadDTO.getOrganization().getId(),organizationRegisterEventPayloadDTO.getUser().getId());
+        LOGGER.info(userE.getLoginName());
         return organizationRegisterEventPayloadDTO;
     }
 

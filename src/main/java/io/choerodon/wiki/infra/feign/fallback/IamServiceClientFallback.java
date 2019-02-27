@@ -40,6 +40,11 @@ public class IamServiceClientFallback implements IamServiceClient {
     }
 
     @Override
+    public ResponseEntity<UserDO> query(Long organizationId, Long id) {
+        throw new FeignException("error.user.get");
+    }
+
+    @Override
     public ResponseEntity<Page<OrganizationDO>> pageByOrganization(int page, int size) {
         throw new FeignException("error.organization.get");
     }

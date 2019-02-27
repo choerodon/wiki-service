@@ -67,6 +67,13 @@ public class IamRepositoryImpl implements IamRepository {
     }
 
     @Override
+    public UserE queryUserById(Long organizationId, Long id) {
+        ResponseEntity<UserDO> userDOResponseEntity = iamServiceClient.query(organizationId,id);
+        LOGGER.info("queryUserById user info:{}",userDOResponseEntity.getBody().toString());
+        return ConvertHelper.convert(userDOResponseEntity.getBody().toString(), UserE.class);
+    }
+
+    @Override
     public UserE queryUserById(Long userId) {
         LOGGER.info("query user by userId:{}",userId);
         List<Long> userIds = new ArrayList<>();

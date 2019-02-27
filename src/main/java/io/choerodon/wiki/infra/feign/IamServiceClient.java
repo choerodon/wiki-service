@@ -33,6 +33,10 @@ public interface IamServiceClient {
     @GetMapping(value = "/v1/projects/{projectId}")
     ResponseEntity<ProjectDO> queryIamProject(@PathVariable("projectId") Long projectId);
 
+    @GetMapping(value = "/v1/organizations/{organization_id}/users/{id}")
+    ResponseEntity<UserDO> query(@PathVariable("organization_id") Long organizationId,
+                                 @PathVariable("id") Long id);
+
     @GetMapping(value = "/v1/users/ids")
     ResponseEntity<List<UserDO>> queryUsersByIds(@RequestBody List<Long> ids);
 
