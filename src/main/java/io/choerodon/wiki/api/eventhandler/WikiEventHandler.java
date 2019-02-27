@@ -334,14 +334,14 @@ public class WikiEventHandler {
     public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitOrganizationEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
-
+        UserE userE = iamRepository.queryUserById(organizationRegisterEventPayloadDTO.getOrganization().getId(),organizationRegisterEventPayloadDTO.getUser().getId());
+        LOGGER.info(userE.getLoginName());
         createOrganization(organizationRegisterEventPayloadDTO.getOrganization().getId(),
                 organizationRegisterEventPayloadDTO.getOrganization().getCode(),
                 organizationRegisterEventPayloadDTO.getOrganization().getName(),
                 organizationRegisterEventPayloadDTO.getUser().getId());
 
-        UserE userE = iamRepository.queryUserById(organizationRegisterEventPayloadDTO.getOrganization().getId(),organizationRegisterEventPayloadDTO.getUser().getId());
-        LOGGER.info(userE.getLoginName());
+
         return organizationRegisterEventPayloadDTO;
     }
 
