@@ -76,7 +76,32 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
         checkCodeSuccess(webHomeCode, webPreferencesCode, wikiSpaceE);
     }
 
-    public void checkCodeSuccess(int webHomeCode, int webPreferencesCode, WikiSpaceE wikiSpaceE) {
+    @Override
+    @Async("org-pro-sync")
+    public void createDemoOrgUnderSpace(String param1, String param2, WikiSpaceE orgUnderSpace, String username) {
+        int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(orgUnderSpace.getId(), param1, param2, getWebHome2XmlStr(param1, orgUnderSpace), username);
+        int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(orgUnderSpace.getId(), param1, param2, getWebPreferencesXmlStr(orgUnderSpace), username);
+        LOGGER.info("create space under the organization,path: {}/{}, webHomeCode:{}, webPreferencesCode:{}", param1, param2, webHomeCode, webPreferencesCode);
+
+        Boolean isSuccess = (webHomeCode == BaseStage.CREATED || webHomeCode == BaseStage.ACCEPTED)
+                && (webPreferencesCode == BaseStage.CREATED || webPreferencesCode == BaseStage.ACCEPTED);
+
+        if (isSuccess) {
+            checkDemoCodeSuccess(orgUnderSpace, param1, param2, username);
+        } else {
+            WikiSpaceDO wikiSpaceDO = wikiSpaceMapper.selectByPrimaryKey(orgUnderSpace.getId());
+            if (wikiSpaceDO != null) {
+                wikiSpaceDO.setStatus(SpaceStatus.FAILED.getSpaceStatus());
+                if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDO) != 1) {
+                    throw new CommonException("error.wikispace.update");
+                }
+            }
+            throw new CommonException("create space under the organization is error, space:" + param2);
+        }
+
+    }
+
+    private void checkCodeSuccess(int webHomeCode, int webPreferencesCode, WikiSpaceE wikiSpaceE) {
         WikiSpaceDO wikiSpaceDO = wikiSpaceMapper.selectByPrimaryKey(wikiSpaceE.getId());
         Boolean isSuccess = (webHomeCode == BaseStage.CREATED || webHomeCode == BaseStage.ACCEPTED)
                 && (webPreferencesCode == BaseStage.CREATED || webPreferencesCode == BaseStage.ACCEPTED);
@@ -94,6 +119,52 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
                     throw new CommonException("error.wikispace.update");
                 }
             }
+        }
+    }
+
+    private void checkDemoCodeSuccess(WikiSpaceE wikiSpaceE,
+                                      String orgName,
+                                      String orgUnderSpaceName,
+                                      String username) {
+        LOGGER.info("start create wiki demo page...");
+        String pageName = "";
+        String pageXml = "";
+        switch (orgUnderSpaceName) {
+            case BaseStage.AGILEMANAGEMENT:
+                pageName = BaseStage.MEETING;
+                pageXml = FileUtil.inputStreamToString(this.getClass().getResourceAsStream("/xml/sprintReview.xml"));
+                break;
+            case BaseStage.VERSION:
+                pageName = BaseStage.CHANGLOG;
+                pageXml = FileUtil.inputStreamToString(this.getClass().getResourceAsStream("/xml/versionUpdate.xml"));
+                break;
+            case BaseStage.INTRODUCE:
+                pageName = BaseStage.PLATFORM;
+                pageXml = FileUtil.inputStreamToString(this.getClass().getResourceAsStream("/xml/choerodonIntroduce.xml"));
+                break;
+            default:
+                break;
+        }
+        LOGGER.info("create wiki demo page: {}", pageName);
+        int page = iWikiSpaceWebHomeService.createSpace3WebHome(wikiSpaceE.getId(), orgName, orgUnderSpaceName, pageName, pageXml, username);
+        LOGGER.info("complete wiki demo page:{} creation,path: {}/{}/{}, webHomeCode:{}", pageName, orgName, orgUnderSpaceName, pageName, page);
+
+        WikiSpaceDO wikiSpaceDO = wikiSpaceMapper.selectByPrimaryKey(wikiSpaceE.getId());
+        if (page == BaseStage.CREATED || page == BaseStage.ACCEPTED) {
+            if (wikiSpaceDO != null) {
+                wikiSpaceDO.setStatus(SpaceStatus.SUCCESS.getSpaceStatus());
+                if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDO) != 1) {
+                    throw new CommonException("error.wikispace.update");
+                }
+            }
+        } else {
+            if (wikiSpaceDO != null) {
+                wikiSpaceDO.setStatus(SpaceStatus.FAILED.getSpaceStatus());
+                if (wikiSpaceMapper.updateByPrimaryKey(wikiSpaceDO) != 1) {
+                    throw new CommonException("error.wikispace.update");
+                }
+            }
+            throw new CommonException("create wiki demo page is error,return code:" + page);
         }
     }
 

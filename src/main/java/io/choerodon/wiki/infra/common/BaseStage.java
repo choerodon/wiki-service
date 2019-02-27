@@ -26,6 +26,13 @@ public abstract class BaseStage {
     public static final String WEBPREFERENCES = "WebPreferences";
     public static final String XWIKIGROUPS = "XWiki.XWikiGroups";
     public static final String XWIKIGLOBALRIGHTS = "XWiki.XWikiGlobalRights";
+    public static final String LOCATION = "bin/view/";
+    public static final String AGILEMANAGEMENT = "敏捷管理";
+    public static final String MEETING = "冲刺会议回顾";
+    public static final String VERSION = "版本更新";
+    public static final String CHANGLOG = "0.12版本更新changelog";
+    public static final String INTRODUCE = "猪齿鱼功能介绍";
+    public static final String PLATFORM = "Choerodon猪齿鱼 | 开源企业级数字化服务平台";
     public static final String O = "O-";
     public static final String P = "P-";
     public static final String LINE = "-";

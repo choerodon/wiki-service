@@ -320,7 +320,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         ResponseEntity<UserDO> userDOResponseEntity = new ResponseEntity<>(userDO, HttpStatus.OK)
 
         and: 'Mock'
-        1 * iamServiceClient.queryOrganizationById(_) >> organization
+        2 * iamServiceClient.queryOrganizationById(_) >> organization
         1 * iamServiceClient.queryByLoginName(_) >> userDOResponseEntity
         1 * iWikiUserService.checkDocExsist(_, _) >> false
         1 * iWikiUserService.createUser(_, _, _)

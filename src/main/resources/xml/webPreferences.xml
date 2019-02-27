@@ -72,7 +72,7 @@
                 <attribute name="cache" value="0"/>
                 <attribute name="picker" value="1"/>
                 <attribute name="number" value="3"/>
-                <attribute name="allowedValues" value="XWiki.ernst,XWiki.15616,XWiki.ceshi111,XWiki.wuguokai,XWiki.admin,XWiki.ceshi,XWiki.heiheihei"/>
+                <attribute name="allowedValues" value=""/>
                 <value>xwiki:XWiki.admin</value>
             </property>
         </objectSummary>

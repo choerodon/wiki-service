@@ -44,4 +44,17 @@ public class FileUtil {
             throw new CommonException("error.param.render");
         }
     }
+
+    public static String inputStreamToString(InputStream inputStream) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            byte[] b = new byte[32768];
+            for (int n; (n = inputStream.read(b)) != -1;) {
+                stringBuilder.append(new String(b, 0, n));
+            }
+            return  stringBuilder.toString();
+        } catch (IOException e) {
+            throw new CommonException("error.param.render");
+        }
+    }
 }
