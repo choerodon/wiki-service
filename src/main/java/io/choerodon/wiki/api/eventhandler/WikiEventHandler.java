@@ -323,35 +323,36 @@ public class WikiEventHandler {
     /**
      * 初始化组织对应的wiki空间
      */
-    @SagaTask(code = "wikiRegisterInitOrganization",
+    @SagaTask(code = "register-wiki-init-org",
             description = "初始化组织对应的wiki空间",
-            sagaCode = "register-wiki-init-org",
-            maxRetryCount = 3,
+            sagaCode = "register-org",
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 70)
-    public String handleWikiRegisterInitOrganizationEvent(String data) {
+    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitOrganizationEvent(String data) throws IOException {
         loggerInfo(data);
-        OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = gson.fromJson(data, OrganizationRegisterEventPayloadDTO.class);
+        OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
 
         createOrganization(organizationRegisterEventPayloadDTO.getOrganization().getId(),
                 organizationRegisterEventPayloadDTO.getOrganization().getCode(),
                 organizationRegisterEventPayloadDTO.getOrganization().getName(),
                 organizationRegisterEventPayloadDTO.getUser().getId());
-        return data;
+
+        return organizationRegisterEventPayloadDTO;
     }
 
     /**
      * 初始化项目对应的wiki空间
      */
-    @SagaTask(code = "wikiRegisterInitProject",
+    @SagaTask(code = "register-wiki-init-project",
             description = "初始化项目对应的wiki空间",
-            sagaCode = "register-wiki-init-project",
-            maxRetryCount = 3,
+            sagaCode = "register-org",
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 120)
-    public String handleWikiRegisterInitProjectEvent(String data) throws IOException {
+    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitProjectEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationRegisterEventPayloadDTO projectEvent = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
         createProject(projectEvent.getOrganization().getId(),
@@ -361,25 +362,25 @@ public class WikiEventHandler {
                 projectEvent.getProject().getId(),
                 projectEvent.getUser().getId());
 
-        return data;
+        return projectEvent;
     }
 
     /**
      * 初始化wiki的demo数据
      */
-    @SagaTask(code = "wikiRegisterInitDemoData",
+    @SagaTask(code = "register-wiki-init-demo-data",
             description = "初始化wiki的demo数据",
-            sagaCode = "register-wiki-init-demo-data",
-            maxRetryCount = 8,
+            sagaCode = "register-org",
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 160)
-    public String handleWikiRegisterInitDemoDataEvent(String data) throws IOException {
+    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitDemoDataEvent(String data) throws IOException {
         loggerInfo(data);
         OrganizationRegisterEventPayloadDTO wikiDemoData = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
 
         wikiSpaceService.createDemo(wikiDemoData.getOrganization().getId(), BaseStage.USERNAME);
-        return data;
+        return wikiDemoData;
     }
 
     /************************************************************************************
@@ -437,7 +438,9 @@ public class WikiEventHandler {
         wikiGroupDTO.setOrganizationName(orgNameSelect);
         wikiGroupDTO.setOrganizationCode(orgCode);
         wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, false);
+
         wikiGroupService.setUserToGroup(adminGroupName, userId, BaseStage.USERNAME);
+
         wikiGroupDTO.setGroupName(userGroupName);
         wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, false);
     }

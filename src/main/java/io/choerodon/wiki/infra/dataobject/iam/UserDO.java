@@ -168,4 +168,16 @@ public class UserDO extends AuditDomain {
     public void setLocked(Boolean locked) {
         isLocked = locked;
     }
+
+
+    @Override
+    public String toString() {
+        return "UserDO{" +
+                "id=" + id +
+                ", loginName=" + loginName +
+                ", email=" + email +
+                ", organizationId=" + organizationId +
+                ", realName=" + realName +
+                '}';
+    }
 }

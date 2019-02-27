@@ -1,8 +1,9 @@
 package io.choerodon.wiki.infra.persistence.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,8 @@ import io.choerodon.wiki.infra.feign.IamServiceClient;
  */
 @Component
 public class IamRepositoryImpl implements IamRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IamRepositoryImpl.class);
 
     private IamServiceClient iamServiceClient;
 
@@ -62,14 +65,20 @@ public class IamRepositoryImpl implements IamRepository {
     }
 
     @Override
-    public UserE queryUserById(Long userId) {
-        List<Long> userIds = new ArrayList<>();
-        userIds.add(userId);
-        ResponseEntity<List<UserDO>> responseEntity = iamServiceClient.queryUsersByIds(userIds);
+    public UserE queryUserById(Long organizationId, Long id) {
+        ResponseEntity<UserDO> userDOResponseEntity = iamServiceClient.query(organizationId, id);
+        LOGGER.info("query user info:{}", userDOResponseEntity.getBody().toString());
+        return ConvertHelper.convert(userDOResponseEntity.getBody(), UserE.class);
+    }
+
+    @Override
+    public UserE queryUserByIds(Long[] ids, Boolean flag) {
+        ResponseEntity<List<UserDO>> responseEntity = iamServiceClient.listUsersByIds(ids, flag);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw new CommonException("error.user.get");
         }
         List<UserDO> list = responseEntity.getBody();
+        LOGGER.info("query user info:{}", list.toString());
         if (list != null && list.size() == 1) {
             return ConvertHelper.convert(list.get(0), UserE.class);
         } else {
@@ -135,7 +144,7 @@ public class IamRepositoryImpl implements IamRepository {
     @Override
     public Page<UserE> pagingQueryUsersByRoleIdOnOrganizationLevel(Long roleId, Long organizationId, int page, int size) {
         ResponseEntity<Page<UserDO>> responseEntity =
-                iamServiceClient.pagingQueryUsersByRoleIdOnOrganizationLevel(roleId, organizationId, page, size,new RoleAssignmentSearch());
+                iamServiceClient.pagingQueryUsersByRoleIdOnOrganizationLevel(roleId, organizationId, page, size, new RoleAssignmentSearch());
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw new CommonException("error.organization.get");
         }
@@ -145,7 +154,7 @@ public class IamRepositoryImpl implements IamRepository {
 
     @Override
     public Page<UserWithRoleDO> pagingQueryUsersWithProjectLevelRoles(Long projectId) {
-        ResponseEntity<Page<UserWithRoleDO>> responseEntity = iamServiceClient.pagingQueryUsersWithProjectLevelRoles(projectId,new RoleAssignmentSearch(),false);
+        ResponseEntity<Page<UserWithRoleDO>> responseEntity = iamServiceClient.pagingQueryUsersWithProjectLevelRoles(projectId, new RoleAssignmentSearch(), false);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw new CommonException("error.project.user.and.role.get");
         }
