@@ -1,5 +1,7 @@
 package io.choerodon.wiki.infra.feign;
 
+import java.util.Map;
+
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -65,190 +67,6 @@ public interface WikiClient {
             @Path("param1") String param1,
             @Path("param2") String param2,
             @Path("param3") String param3,
-            @Body RequestBody xmlParam);
-
-
-    //codeWebHome
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/Code/pages/WebHome?objects=true")
-    Call<ResponseBody> createSpace1CodeWebHome(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/Code/pages/WebHome?objects=true")
-    Call<ResponseBody> createSpace2CodeWebHome(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/{param3}/spaces/Code/pages/WebHome?objects=true")
-    Call<ResponseBody> createSpace3CodeWebHome(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Body RequestBody xmlParam);
-
-    //spaceClass
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/Code/pages/{param2}Class?objects=true")
-    Call<ResponseBody> createSpace1Class(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/Code/pages/{param3}Class?objects=true")
-    Call<ResponseBody> createSpace2Class(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/{param3}/spaces/Code/pages/{param4}Class?objects=true")
-    Call<ResponseBody> createSpace3Class(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Path("param4") String param4,
-            @Body RequestBody xmlParam);
-
-    //sheet
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/Code/pages/{param2}Sheet?objects=true")
-    Call<ResponseBody> createSpace1Sheet(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/Code/pages/{param3}Sheet?objects=true")
-    Call<ResponseBody> createSpace2Sheet(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/{param3}/spaces/Code/pages/{param4}Sheet?objects=true")
-    Call<ResponseBody> createSpace3Sheet(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Path("param4") String param4,
-            @Body RequestBody xmlParam);
-
-    //template
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/Code/pages/{param2}Template?objects=true")
-    Call<ResponseBody> createSpace1Template(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/Code/pages/{param3}Template?objects=true")
-    Call<ResponseBody> createSpace2Template(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/{param3}/spaces/Code/pages/{param4}Template?objects=true")
-    Call<ResponseBody> createSpace3Template(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Path("param4") String param4,
-            @Body RequestBody xmlParam);
-
-    //templateProvider
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/Code/pages/{param2}TemplateProvider?objects=true")
-    Call<ResponseBody> createSpace1TemplateProvider(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/Code/pages/{param3}TemplateProvider?objects=true")
-    Call<ResponseBody> createSpace2TemplateProvider(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/{param3}/spaces/Code/pages/{param4}TemplateProvider?objects=true")
-    Call<ResponseBody> createSpace3TemplateProvider(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Path("param4") String param4,
-            @Body RequestBody xmlParam);
-
-    //translations
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/Code/pages/{param2}Translations?objects=true")
-    Call<ResponseBody> createSpace1Translations(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/Code/pages/{param3}Translations?objects=true")
-    Call<ResponseBody> createSpace2Translations(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Body RequestBody xmlParam);
-
-    @Headers({"Content-Type:application/xml;charset=UTF-8"})
-    @PUT("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/spaces/{param3}/spaces/Code/pages/{param4}Translations?objects=true")
-    Call<ResponseBody> createSpace3Translations(
-            @Header("username") String username,
-            @Path("client") String client,
-            @Path("param1") String param1,
-            @Path("param2") String param2,
-            @Path("param3") String param3,
-            @Path("param4") String param4,
             @Body RequestBody xmlParam);
 
     //user
@@ -392,4 +210,12 @@ public interface WikiClient {
             @Path("className") String className,
             @Path("objectNumber") Integer objectNumber,
             @Body RequestBody xmlParam);
+
+    //获取项目空间下的文档
+    @Headers({"Content-Type:application/json;charset=UTF-8"})
+    @GET
+    Call<ResponseBody> getPageMenuUnderProject(
+            @Header("username") String username,
+            @Url String url);
+
 }

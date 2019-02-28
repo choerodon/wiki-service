@@ -3,7 +3,6 @@ package io.choerodon.wiki.api.controller.v1;
 import java.util.List;
 import javax.validation.Valid;
 
-import io.choerodon.wiki.domain.application.event.ProjectEvent;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
@@ -17,6 +16,7 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.wiki.api.dto.MenuDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
@@ -218,6 +218,24 @@ public class WikiProjectSpaceController {
                                  @PathVariable Long id) {
         wikiSpaceService.delete(projectId, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * 查询wiki menus列表
+     *
+     * @param projectId 项目id
+     * @param menuDTO
+     * @return
+     */
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询wiki menus列表")
+    @PostMapping("/menus")
+    public ResponseEntity<String> queryWikiMenus(@ApiParam(value = "项目ID", required = true)
+                                                 @PathVariable(name = "project_id") Long projectId,
+                                                 @ApiParam(value = "目录", required = true)
+                                                 @RequestBody MenuDTO menuDTO) {
+        return new ResponseEntity<>(wikiSpaceService.queryWikiMenus(projectId, menuDTO),
+                HttpStatus.OK);
     }
 
 }

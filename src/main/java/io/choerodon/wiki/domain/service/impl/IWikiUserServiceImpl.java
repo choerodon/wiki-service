@@ -54,7 +54,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
                 return false;
             }
         } catch (IOException e) {
-            throw new CommonException("error.user.create", e);
+            throw new CommonException("error.user.create,connection wiki timeout", e);
         }
     }
 
@@ -74,7 +74,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
                 throw new NetworkRequestStatusCodeException("Check that the page has returned error code in the wiki: " + response.code());
             }
         } catch (IOException e) {
-            throw new CommonException("error.wiki.page.check", e);
+            throw new CommonException("error.wiki.page.check,connection wiki timeout", e);
         }
     }
 
@@ -94,7 +94,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
                 throw new NetworkRequestStatusCodeException("error delete page return code: " + response.code());
             }
         } catch (IOException e) {
-            throw new CommonException("error.delete.page", e);
+            throw new CommonException("error.delete.page,connection wiki timeout", e);
         }
     }
 

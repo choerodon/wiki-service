@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.wiki.api.dto.MenuDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
@@ -43,4 +44,6 @@ public interface WikiSpaceService {
     List<WikiSpaceResponseDTO> getWikiSpaceList(Long resourceId, String resourceType);
 
     void createDemo(Long id,String username);
+
+    String queryWikiMenus(Long projectId, MenuDTO menuDTO);
 }
