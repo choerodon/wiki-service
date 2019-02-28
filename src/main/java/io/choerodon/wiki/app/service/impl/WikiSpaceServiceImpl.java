@@ -2,11 +2,14 @@ package io.choerodon.wiki.app.service.impl;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.*;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +23,7 @@ import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.wiki.api.dto.MenuDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
@@ -309,6 +313,30 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             default:
                 break;
         }
+    }
+
+    @Override
+    public String queryWikiMenus(Long projectId, MenuDTO menuDTO) {
+        String param = "";
+        if (StringUtils.isEmpty(menuDTO.getMenuId())) {
+            List<WikiSpaceResponseDTO> wikiSpaceList = this.getWikiSpaceList(projectId, WikiSpaceResourceType.PROJECT.getResourceType());
+            if (wikiSpaceList != null && !wikiSpaceList.isEmpty() && wikiSpaceList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
+                String[] path = wikiSpaceList.get(0).getPath().split("/");
+                param = "document:xwiki:" + path[0].replace(".", "\\.") + "." + path[1].replace(".", "\\.") + ".WebHome";
+            }
+
+        } else {
+           param = menuDTO.getMenuId();
+        }
+
+        String menuIdStr = null;
+        try {
+            menuIdStr = URLEncoder.encode(param, BaseStage.ENC);
+        } catch (UnsupportedEncodingException n) {
+            throw new CommonException(n.getMessage());
+        }
+
+        return iWikiSpaceWebHomeService.getPageMenuUnderProject(menuIdStr, BaseStage.USERNAME);
     }
 
     @Override

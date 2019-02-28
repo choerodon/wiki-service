@@ -27,6 +27,7 @@ public abstract class BaseStage {
     public static final String XWIKIGROUPS = "XWiki.XWikiGroups";
     public static final String XWIKIGLOBALRIGHTS = "XWiki.XWikiGlobalRights";
     public static final String LOCATION = "bin/view/";
+    public static final String ENC = "utf-8";
     public static final String AGILEMANAGEMENT = "敏捷管理";
     public static final String MEETING = "冲刺会议回顾";
     public static final String VERSION = "版本更新";

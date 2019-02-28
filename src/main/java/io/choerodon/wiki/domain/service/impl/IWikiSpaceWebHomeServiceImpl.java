@@ -32,6 +32,9 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
     @Value("${wiki.client}")
     private String client;
 
+    @Value("${wiki.url}")
+    private String wikiUrl;
+
     private WikiClient wikiClient;
     private WikiSpaceRepository wikiSpaceRepository;
 
@@ -177,6 +180,25 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
             }
         } catch (IOException e) {
             throw new CommonException("error.wiki.project.space.check", e);
+        }
+    }
+
+    @Override
+    public String getPageMenuUnderProject(String menuIdStr, String username) {
+        LOGGER.info("start get page menu....");
+        String url = wikiUrl + "/bin/get?outputSyntax=plain&sheet=XWiki.DocumentTree&showAttachments=false&showTranslations=false&data=children&limit=999&id=";
+        LOGGER.info("get page menu request url:{}", url + menuIdStr);
+        Call<ResponseBody> call = wikiClient.getPageMenuUnderProject(username, url + menuIdStr);
+        try {
+            ResponseBody responseBody = call.execute().body();
+            if (responseBody == null) {
+                return "";
+            } else {
+                return responseBody.string();
+            }
+        } catch (Exception e) {
+            LOGGER.info("get page menu under project error", e);
+            return "";
         }
     }
 
