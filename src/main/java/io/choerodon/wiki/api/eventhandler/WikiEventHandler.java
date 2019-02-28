@@ -71,7 +71,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiCreateOrganization",
             description = "wiki服务的创建组织监听",
             sagaCode = "org-create-organization",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -92,7 +92,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiCreateProject",
             description = "wiki服务的创建项目监听",
             sagaCode = "iam-create-project",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -120,7 +120,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiUpdateMemberRole",
             description = "wiki服务的角色分配监听",
             sagaCode = "iam-update-memberRole",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
@@ -140,7 +140,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiDeleteMemberRole",
             description = "wiki服务的去除角色监听",
             sagaCode = "iam-delete-memberRole",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
@@ -159,7 +159,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiCreateUser",
             description = "wiki服务的用户创建监听",
             sagaCode = "iam-create-user",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 1)
@@ -178,7 +178,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiDisableOrganization",
             description = "wiki服务的组织禁用监听",
             sagaCode = "iam-disable-organization",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -195,7 +195,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiDisableProject",
             description = "wiki服务的项目禁用监听",
             sagaCode = "iam-disable-project",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -212,7 +212,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiEnableOrganization",
             description = "wiki服务的组织启用监听",
             sagaCode = "iam-enable-organization",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -237,7 +237,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiProjectUpdate",
             description = "项目修改名称同步",
             sagaCode = PROJECT_UPDATE,
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -251,7 +251,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiOrganizationUpdate",
             description = "组织修改名称同步",
             sagaCode = ORG_UPDATE,
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -267,7 +267,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiEnableOrganization",
             description = "wiki服务的项目启用监听",
             sagaCode = "iam-enable-project",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
@@ -304,7 +304,7 @@ public class WikiEventHandler {
     @SagaTask(code = "wikiUpdateLogo",
             description = "wiki服务的Logo修改监听",
             sagaCode = "iam-update-system-setting",
-            maxRetryCount = 3,
+            maxRetryCount = 10,
             concurrentLimitNum = 2,
             concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
             seq = 10)
