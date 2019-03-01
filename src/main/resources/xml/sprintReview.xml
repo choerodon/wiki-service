@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <page xmlns="http://www.xwiki.org">
-    <id/>
-    <fullName/>
     <wiki>xwiki</wiki>
-    <space/>
     <name>WebHome</name>
     <title>冲刺会议回顾</title>
-    <parent/>
-    <parentId/>
+    <parent></parent>
     <version>1.1</version>
-    <author>XWiki.Admin</author>
     <translations/>
     <syntax>xwiki/2.1</syntax>
     <language></language>
     <majorVersion>1</majorVersion>
     <minorVersion>1</minorVersion>
     <hidden>false</hidden>
-    <creator>XWiki.Admin</creator>
-    <modifier>XWiki.Admin</modifier>
+    <creator>XWiki.admin</creator>
+    <modifier>XWiki.admin</modifier>
     <comment></comment>
     <content>(% border="1" cellspacing="0" style="border-collapse:collapse" %)
         |(% colspan="7" style="background-color:#f5f5f5; border-color:#000000; text-align:center; text-decoration:underline" %)客户生态组冲刺回顾会议记录
         |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)冲刺|(% colspan="2" style="border-color:#000000; width:274px" %)文档更新|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)时间|(% colspan="3" rowspan="1" style="border-color:#000000; width:647px" %)2018年12月27日
-        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)参会人员|(% colspan="6" style="border-color:#000000; width:966px" %)李刚、王梅梅、张三丰、陈一
+        |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)参会人员|(% colspan="6" style="border-color:#000000; width:966px" %)李刚、王梅梅、张三丰1、陈一
         |(% colspan="7" style="border-color:#000000; text-align:center; vertical-align:middle" %)回顾总结
         |(% style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)方面|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:46px" %)序号|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:228px" %)模块|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:47px" %)序号|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:222px" %) 问题|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:336px" %)提升方式|(% style="border-color:#000000; text-align:center; vertical-align:middle; width:89px" %)落地负责人
         |(% rowspan="2" style="border-color:#000000; text-align:center; vertical-align:middle; width:50px" %)(((
