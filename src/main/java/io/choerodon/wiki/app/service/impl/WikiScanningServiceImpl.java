@@ -238,7 +238,9 @@ public class WikiScanningServiceImpl implements WikiScanningService {
                         wikiUserE.setEmail(ur.getEmail());
                         wikiUserE.setPhone(ur.getPhone());
                         String xmlParam = getUserXml(wikiUserE);
-                        iWikiUserService.createUser(ur.getLoginName(), xmlParam, BaseStage.USERNAME);
+                        if (!iWikiUserService.createUser(ur.getLoginName(), xmlParam, BaseStage.USERNAME)) {
+                            throw new CommonException("error.wiki.user.create");
+                        }
                     }
                     List<Integer> list = wikiGroupService.getGroupsObjectNumber(BaseStage.XWIKI_ADMIN_GROUP, BaseStage.USERNAME, ur.getLoginName());
                     if (list == null || list.isEmpty()) {
