@@ -128,7 +128,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         wikiUserE.setPhone(user.getPhone());
                         String xmlParam = getUserXml(wikiUserE);
                         if (!checkDocExsist(username, user.getLoginName())) {
-                            iWikiUserService.createUser(user.getLoginName(), xmlParam, username);
+                            if (!iWikiUserService.createUser(user.getLoginName(), xmlParam, username)) {
+                                throw new CommonException("error.wiki.user.create");
+                            }
                         }
 
                         List<Integer> list = getGroupsObjectNumber(groupName, username, user.getLoginName());
@@ -200,7 +202,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                             wikiUserE.setEmail(user.getEmail());
 
                             String xmlParam = getUserXml(wikiUserE);
-                            iWikiUserService.createUser(loginName, xmlParam, username);
+                            if (!iWikiUserService.createUser(loginName, xmlParam, username)) {
+                                throw new CommonException("error.wiki.user.create");
+                            }
                         }
 
                         //通过groupName给组添加成员
@@ -283,7 +287,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 wikiUserE.setEmail(userE.getEmail());
                 wikiUserE.setPhone(userE.getPhone());
 
-                iWikiUserService.createUser(loginName, getUserXml(wikiUserE), username);
+                if (!iWikiUserService.createUser(loginName, getUserXml(wikiUserE), username)) {
+                    throw new CommonException("error.wiki.user.create");
+                }
             }
             iWikiGroupService.createGroupUsers(groupName, loginName, username);
         } else {

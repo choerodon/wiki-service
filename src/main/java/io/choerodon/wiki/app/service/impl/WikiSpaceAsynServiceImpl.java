@@ -77,7 +77,6 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
     }
 
     @Override
-    @Async("org-pro-sync")
     public void createDemoOrgUnderSpace(String param1, String param2, WikiSpaceE orgUnderSpace, String username) {
         int webHomeCode = iWikiSpaceWebHomeService.createSpace2WebHome(orgUnderSpace.getId(), param1, param2, getWebHome2XmlStr(param1, orgUnderSpace), username);
         int webPreferencesCode = iWikiSpaceWebPreferencesService.createSpace2WebPreferences(orgUnderSpace.getId(), param1, param2, getWebPreferencesXmlStr(orgUnderSpace), username);
@@ -119,6 +118,7 @@ public class WikiSpaceAsynServiceImpl implements WikiSpaceAsynService {
                     throw new CommonException("error.wikispace.update");
                 }
             }
+            throw new CommonException("create space is error, path:" + wikiSpaceE.getPath());
         }
     }
 

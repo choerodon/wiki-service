@@ -99,9 +99,13 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     }
 
     private Boolean addUserToDefaultGroup(String param1, String username) throws IOException {
-        FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + param1).build();
-        Call<ResponseBody> addGroupCall = wikiClient.createGroupUsers(username, client, defaultGroup, body);
-        Response addGroupResponse = addGroupCall.execute();
-        return addGroupResponse.code() == BaseStage.CREATED;
+        try {
+            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + param1).build();
+            Call<ResponseBody> addGroupCall = wikiClient.createGroupUsers(username, client, defaultGroup, body);
+            Response addGroupResponse = addGroupCall.execute();
+            return addGroupResponse.code() == BaseStage.CREATED || addGroupResponse.code() == BaseStage.ACCEPTED;
+        } catch (IOException e) {
+            throw new CommonException("error.delete.page,connection wiki timeout", e);
+        }
     }
 }

@@ -2,14 +2,13 @@ package io.choerodon.wiki.app.service.impl;
 
 import static java.util.stream.Collectors.toList;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
@@ -326,7 +325,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
             }
 
         } else {
-           param = menuDTO.getMenuId();
+            param = menuDTO.getMenuId();
         }
 
         String menuIdStr = null;
@@ -376,6 +375,8 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                     }
                 }
             }
+        } else {
+            throw new CommonException("error.create.organization.space");
         }
     }
 

@@ -113,7 +113,6 @@ public class WikiEventHandler {
         return data;
     }
 
-
     /**
      * wiki服务的角色分配监听
      */
