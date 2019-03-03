@@ -402,10 +402,10 @@ public class WikiEventHandler {
         wikiGroupDTO.setOrganizationName(orgName);
         wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, true, true);
 
+        wikiGroupService.setUserToGroup(adminGroupName, userId, BaseStage.USERNAME);
+
         wikiGroupDTO.setGroupName(userGroupName);
         wikiGroupService.create(wikiGroupDTO, BaseStage.USERNAME, false, true);
-
-        wikiGroupService.setUserToGroup(adminGroupName, userId, BaseStage.USERNAME);
     }
 
     private String getWikiSpace(Long organizationId) {
