@@ -64,9 +64,21 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     @Override
     public Boolean create(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg) {
-        Boolean assign = false;
-        if (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
-            if (iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username)) {
+        try {
+            if (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
+                iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
+
+                Calendar ca = Calendar.getInstance();
+                long old = ca.getTimeInMillis();
+
+                Thread.sleep(1500);
+                while (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
+                    Thread.sleep(1500);
+                    if (ca.getTimeInMillis() - old > 4500) {
+                        return false;
+                    }
+                }
+
                 String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
                 List<String> adminRightsList = Arrays.asList(adminRights);
                 String[] userRights = {"login", "view", "edit", "creator", "comment"};
@@ -74,28 +86,27 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 if (isAdmin) {
                     if (isOrg) {
                         //给组织组分配admin权限
-                        assign = iWikiGroupService.addRightsToOrg(wikiGroupDTO, adminRightsList, isAdmin, username);
+                        iWikiGroupService.addRightsToOrg(wikiGroupDTO, adminRightsList, isAdmin, username);
                     } else {
                         //给项目组分配admin权限
-                        assign = iWikiGroupService.addRightsToProject(wikiGroupDTO, adminRightsList, isAdmin, username);
+                        iWikiGroupService.addRightsToProject(wikiGroupDTO, adminRightsList, isAdmin, username);
                     }
                 } else {
                     if (isOrg) {
                         //给组织组分配user权限
-                        assign = iWikiGroupService.addRightsToOrg(wikiGroupDTO, userRightsList, isAdmin, username);
+                        iWikiGroupService.addRightsToOrg(wikiGroupDTO, userRightsList, isAdmin, username);
                     } else {
                         //给项目组分配user权限
-                        assign = iWikiGroupService.addRightsToProject(wikiGroupDTO, userRightsList, isAdmin, username);
+                        iWikiGroupService.addRightsToProject(wikiGroupDTO, userRightsList, isAdmin, username);
                     }
                 }
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new CommonException("error.interrupted.exception", e);
         }
 
-        if (assign) {
-            return true;
-        } else {
-            throw new CommonException("permission assignment failed");
-        }
+        return true;
     }
 
     @Override
