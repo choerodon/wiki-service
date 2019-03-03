@@ -64,21 +64,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     @Override
     public Boolean create(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg) {
-        try {
-            if (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
-                iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username);
-
-                Calendar ca = Calendar.getInstance();
-                long old = ca.getTimeInMillis();
-
-                Thread.sleep(1500);
-                while (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
-                    Thread.sleep(1500);
-                    if (ca.getTimeInMillis() - old > 4500) {
-                        return false;
-                    }
-                }
-
+        Boolean assign = false;
+        if (!checkDocExsist(username, wikiGroupDTO.getGroupName())) {
+            if (iWikiGroupService.createGroup(wikiGroupDTO.getGroupName(), username)) {
                 String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
                 List<String> adminRightsList = Arrays.asList(adminRights);
                 String[] userRights = {"login", "view", "edit", "creator", "comment"};
@@ -86,27 +74,28 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 if (isAdmin) {
                     if (isOrg) {
                         //给组织组分配admin权限
-                        iWikiGroupService.addRightsToOrg(wikiGroupDTO, adminRightsList, isAdmin, username);
+                        assign = iWikiGroupService.addRightsToOrg(wikiGroupDTO, adminRightsList, isAdmin, username);
                     } else {
                         //给项目组分配admin权限
-                        iWikiGroupService.addRightsToProject(wikiGroupDTO, adminRightsList, isAdmin, username);
+                        assign = iWikiGroupService.addRightsToProject(wikiGroupDTO, adminRightsList, isAdmin, username);
                     }
                 } else {
                     if (isOrg) {
                         //给组织组分配user权限
-                        iWikiGroupService.addRightsToOrg(wikiGroupDTO, userRightsList, isAdmin, username);
+                        assign = iWikiGroupService.addRightsToOrg(wikiGroupDTO, userRightsList, isAdmin, username);
                     } else {
                         //给项目组分配user权限
-                        iWikiGroupService.addRightsToProject(wikiGroupDTO, userRightsList, isAdmin, username);
+                        assign = iWikiGroupService.addRightsToProject(wikiGroupDTO, userRightsList, isAdmin, username);
                     }
                 }
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new CommonException("error.interrupted.exception", e);
         }
 
-        return true;
+        if (assign) {
+            return true;
+        } else {
+            throw new CommonException("permission assignment failed");
+        }
     }
 
     @Override
@@ -153,6 +142,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                                 }
                             }
                         }
+                    } else {
+                        throw new CommonException("group name is null");
                     }
                 });
     }
@@ -382,6 +373,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             groupName.append(BaseStage.O);
             //通过组织id获取组织code
             OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
+            if (organization == null) {
+                return new StringBuilder();
+            }
             groupName.append(organization.getCode());
 
         } else if (ResourceLevel.PROJECT.value().equals(resourceType)) {
@@ -396,6 +390,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 groupName.append(organizationE.getCode() + BaseStage.LINE + projectE.getCode());
             } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectE.getCode() + type)) {
                 groupName.append(projectE.getCode());
+            } else {
+                return new StringBuilder();
             }
         }
 

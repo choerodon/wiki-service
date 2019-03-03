@@ -16,7 +16,7 @@ mybatis:
     mapUnderscoreToCamelCase: true
 wiki:
   client: xwiki
-  url: http://localhost:8080
+  url: http://xwiki.staging.saas.hand-china.com
   token: Choerodon
   default-group: XWikiAllGroup
   sync: false #是否服务启动之后自动同步组织和项目
