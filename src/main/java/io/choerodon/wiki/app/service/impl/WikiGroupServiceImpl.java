@@ -79,27 +79,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                     }
                 }
 
-                String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
-                List<String> adminRightsList = Arrays.asList(adminRights);
-                String[] userRights = {"login", "view", "edit", "creator", "comment"};
-                List<String> userRightsList = Arrays.asList(userRights);
-                if (isAdmin) {
-                    if (isOrg) {
-                        //给组织组分配admin权限
-                        iWikiGroupService.addRightsToOrg(wikiGroupDTO, adminRightsList, isAdmin, username);
-                    } else {
-                        //给项目组分配admin权限
-                        iWikiGroupService.addRightsToProject(wikiGroupDTO, adminRightsList, isAdmin, username);
-                    }
-                } else {
-                    if (isOrg) {
-                        //给组织组分配user权限
-                        iWikiGroupService.addRightsToOrg(wikiGroupDTO, userRightsList, isAdmin, username);
-                    } else {
-                        //给项目组分配user权限
-                        iWikiGroupService.addRightsToProject(wikiGroupDTO, userRightsList, isAdmin, username);
-                    }
-                }
+                assignPermission(wikiGroupDTO, username, isAdmin, isOrg);
+            } else {
+                assignPermission(wikiGroupDTO, username, isAdmin, isOrg);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -153,6 +135,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                                 }
                             }
                         }
+                    } else {
+                        throw new CommonException("group name is null");
                     }
                 });
     }
@@ -382,6 +366,9 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             groupName.append(BaseStage.O);
             //通过组织id获取组织code
             OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
+            if (organization == null) {
+                return new StringBuilder();
+            }
             groupName.append(organization.getCode());
 
         } else if (ResourceLevel.PROJECT.value().equals(resourceType)) {
@@ -396,6 +383,8 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                 groupName.append(organizationE.getCode() + BaseStage.LINE + projectE.getCode());
             } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectE.getCode() + type)) {
                 groupName.append(projectE.getCode());
+            } else {
+                return new StringBuilder();
             }
         }
 
@@ -483,7 +472,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         }
     }
 
-    public void deleteGroupMember(List<String> roleLabels, GroupMemberDTO groupMember, String username) {
+    private void deleteGroupMember(List<String> roleLabels, GroupMemberDTO groupMember, String username) {
         if (!roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())) {
             String adminGroupName = getGroupNameBuffer(groupMember, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
             deletePageClass(adminGroupName, username, groupMember.getUsername());
@@ -504,5 +493,29 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     public Boolean checkDocExsist(String username, String groupName) {
         return iWikiUserService.checkDocExsist(username, groupName);
+    }
+
+    private void assignPermission(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg) {
+        String[] adminRights = {"login", "view", "edit", "delete", "creator", "register", "comment", "script", "admin", "createwiki", "programming"};
+        List<String> adminRightsList = Arrays.asList(adminRights);
+        String[] userRights = {"login", "view", "edit", "creator", "comment"};
+        List<String> userRightsList = Arrays.asList(userRights);
+        if (isAdmin) {
+            if (isOrg) {
+                //给组织组分配admin权限
+                iWikiGroupService.addRightsToOrg(wikiGroupDTO, adminRightsList, isAdmin, username);
+            } else {
+                //给项目组分配admin权限
+                iWikiGroupService.addRightsToProject(wikiGroupDTO, adminRightsList, isAdmin, username);
+            }
+        } else {
+            if (isOrg) {
+                //给组织组分配user权限
+                iWikiGroupService.addRightsToOrg(wikiGroupDTO, userRightsList, isAdmin, username);
+            } else {
+                //给项目组分配user权限
+                iWikiGroupService.addRightsToProject(wikiGroupDTO, userRightsList, isAdmin, username);
+            }
+        }
     }
 }
