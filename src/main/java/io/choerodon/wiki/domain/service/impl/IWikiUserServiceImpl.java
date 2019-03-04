@@ -40,16 +40,16 @@ public class IWikiUserServiceImpl implements IWikiUserService {
     }
 
     @Override
-    public Boolean createUser(String param1, String xmlParam, String username) {
-        LOGGER.info("create wiki user: {}", param1);
+    public Boolean createUser(String loginName, String xmlParam, String username) {
+        LOGGER.info("create wiki user: {}", loginName);
         try {
             RequestBody requestBody = RequestBody.create(MediaType.parse(BaseStage.APPXML), xmlParam);
             Call<ResponseBody> call = wikiClient.createUser(username,
-                    client, param1, requestBody);
+                    client, loginName, requestBody);
             Response response = call.execute();
             LOGGER.info("create wiki user code:{} ", response.code());
             if (response.code() == BaseStage.CREATED || response.code() == BaseStage.ACCEPTED) {
-                return addUserToDefaultGroup(param1, username);
+                return addUserToDefaultGroup(loginName, username);
             } else {
                 return false;
             }
@@ -98,9 +98,9 @@ public class IWikiUserServiceImpl implements IWikiUserService {
         }
     }
 
-    private Boolean addUserToDefaultGroup(String param1, String username) throws IOException {
+    private Boolean addUserToDefaultGroup(String loginName, String username) throws IOException {
         try {
-            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + param1).build();
+            FormBody body = new FormBody.Builder().add("className", "XWiki.XWikiGroups").add("property#member", "XWiki." + loginName.replace(".", "\\.")).build();
             Call<ResponseBody> addGroupCall = wikiClient.createGroupUsers(username, client, defaultGroup, body);
             Response addGroupResponse = addGroupCall.execute();
             return addGroupResponse.code() == BaseStage.CREATED || addGroupResponse.code() == BaseStage.ACCEPTED;

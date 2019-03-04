@@ -1,19 +1,23 @@
 package io.choerodon.wiki.app.service.impl;
 
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.wiki.api.dto.WikiLogoDTO;
 import io.choerodon.wiki.app.service.WikiLogoService;
 import io.choerodon.wiki.domain.application.entity.WikiLogoE;
 import io.choerodon.wiki.domain.service.IWikiLogoService;
 import io.choerodon.wiki.infra.common.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * Created by Zenger on 2018/11/18.
+ */
 @Service
 public class WikiLogoServiceImpl implements WikiLogoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiGroupServiceImpl.class);

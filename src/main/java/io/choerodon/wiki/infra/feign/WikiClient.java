@@ -1,7 +1,5 @@
 package io.choerodon.wiki.infra.feign;
 
-import java.util.Map;
-
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -150,6 +148,27 @@ public interface WikiClient {
             @Path("param2") String param2,
             @Path("param3") String param3,
             @Path("className") String className);
+
+    //获取组织对应组的资源
+    @GET("/rest/wikis/{client}/spaces/{param1}/pages/{param2}/objects/{className}/{objectNumber}/properties/groups")
+    Call<ResponseBody> getPageClassGroupResource(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("param2") String param2,
+            @Path("className") String className,
+            @Path("objectNumber") int objectNumber);
+
+    //获取项目对应组的资源
+    @GET("/rest/wikis/{client}/spaces/{param1}/spaces/{param2}/pages/{param3}/objects/{className}/{objectNumber}/properties/groups")
+    Call<ResponseBody> getProjectPageClassGroupResource(
+            @Header("username") String username,
+            @Path("client") String client,
+            @Path("param1") String param1,
+            @Path("param2") String param2,
+            @Path("param3") String param3,
+            @Path("className") String className,
+            @Path("objectNumber") int objectNumber);
 
     //删除组织页面里的对象
     @DELETE("/rest/wikis/{client}/spaces/{param1}/pages/{name}/objects/{className}/{objectNumber}")

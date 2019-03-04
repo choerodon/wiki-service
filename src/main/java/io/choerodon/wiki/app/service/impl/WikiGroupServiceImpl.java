@@ -37,12 +37,13 @@ import io.choerodon.wiki.infra.common.enums.WikiRoleType;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 
 /**
- * Created by Ernst on 2018/7/4.
+ * Created by Zenger on 2018/7/4.
  */
 @Service
 public class WikiGroupServiceImpl implements WikiGroupService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiGroupServiceImpl.class);
+    List<String> data = Collections.synchronizedList(new ArrayList<String>());
 
     private IWikiGroupService iWikiGroupService;
     private IWikiUserService iWikiUserService;
@@ -81,7 +82,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
                 assignPermission(wikiGroupDTO, username, isAdmin, isOrg);
             } else {
-                assignPermission(wikiGroupDTO, username, isAdmin, isOrg);
+                checkAssignAgain(wikiGroupDTO, username, isAdmin, isOrg);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -168,10 +169,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         userDTOList.stream()
                 .forEach(userDTO -> {
                     String loginName = userDTO.getUsername();
+                    LOGGER.info("get user info by loginName:{}", loginName);
                     UserE user = iamRepository.queryByLoginName(loginName);
                     if (user != null) {
-                        Long orgId = user.getOrganization().getId();
-                        OrganizationE organization = iamRepository.queryOrganizationById(orgId);
+                        OrganizationE organization = iamRepository.queryOrganizationById(userDTO.getOrganizationId());
                         String orgCode = organization.getCode();
                         String groupName = BaseStage.O + orgCode + BaseStage.USER_GROUP;
 
@@ -189,10 +190,22 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                             if (!iWikiUserService.createUser(loginName, xmlParam, username)) {
                                 throw new CommonException("error.wiki.user.create");
                             }
+                        } else {
+                            LOGGER.info("WikiAllGroup users:{}", data.toString());
+                            //如果用户存在，判断是否在默认组XWikiAllGroup，不存在加在默认组XWikiAllGroup
+                            if (data.isEmpty() || !data.contains(loginName)) {
+                                data = this.getXwikiAllGroupsUsers(BaseStage.XWIKI_ALL_GROUP, username, loginName);
+                            }
+                            LOGGER.info("WikiAllGroup users:{}", data.toString());
+                            if (!data.contains(loginName)) {
+                                iWikiGroupService.createGroupUsers(BaseStage.XWIKI_ALL_GROUP, loginName, username);
+                            }
                         }
 
                         //通过groupName给组添加成员
                         iWikiGroupService.createGroupUsers(groupName, loginName, username);
+                    } else {
+                        throw new CommonException("error.get.user.info");
                     }
                 });
     }
@@ -345,6 +358,65 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         return !list.isEmpty() ? list.stream().distinct().collect(Collectors.toList()) : list;
     }
 
+    @Override
+    public List<Integer> getGroupsObjectNumber(String groupName, String username, String loginName) {
+        List<Integer> list = new ArrayList<>();
+        try {
+            String page = iWikiClassService.getPageClassResource(BaseStage.SPACE, groupName, BaseStage.XWIKIGROUPS, username);
+            if (!StringUtils.isEmpty(page)) {
+                Document doc = DocumentHelper.parseText(page);
+                Element rootElt = doc.getRootElement();
+                Iterator iter = rootElt.elementIterator("objectSummary");
+                while (iter.hasNext()) {
+                    Element recordEle = (Element) iter.next();
+                    String pageName = recordEle.elementTextTrim("pageName");
+                    if (groupName.equals(pageName)) {
+                        String headline = recordEle.elementTextTrim("headline");
+                        LOGGER.info("loginName: {} get headline: {}", loginName, headline);
+                        if (!StringUtils.isEmpty(headline) && headline.startsWith(BaseStage.XWiki) && loginName.equals(headline.substring(6))) {
+                            list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
+                        } else if (!StringUtils.isEmpty(headline) && !headline.startsWith(BaseStage.XWiki)) {
+                            list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
+                        }
+                    }
+                }
+            }
+        } catch (DocumentException e) {
+            throw new CommonException("error.document.get", e);
+        }
+
+        return list;
+    }
+
+    private List<String> getXwikiAllGroupsUsers(String groupName, String username, String loginName) {
+        List<String> list = new ArrayList<>();
+        try {
+            String page = iWikiClassService.getPageClassResource(BaseStage.SPACE, groupName, BaseStage.XWIKIGROUPS, username);
+            if (!StringUtils.isEmpty(page)) {
+                Document doc = DocumentHelper.parseText(page);
+                Element rootElt = doc.getRootElement();
+                Iterator iter = rootElt.elementIterator("objectSummary");
+                while (iter.hasNext()) {
+                    Element recordEle = (Element) iter.next();
+                    String pageName = recordEle.elementTextTrim("pageName");
+                    if (groupName.equals(pageName)) {
+                        String headline = recordEle.elementTextTrim("headline");
+                        LOGGER.info("loginName: {} get headline: {}", loginName, headline);
+                        if (!StringUtils.isEmpty(headline) && headline.startsWith(BaseStage.XWiki)) {
+                            list.add(headline.substring(6));
+                        } else if (!StringUtils.isEmpty(headline) && !headline.startsWith(BaseStage.XWiki)) {
+                            list.add(headline);
+                        }
+                    }
+                }
+            }
+        } catch (DocumentException e) {
+            throw new CommonException("error.document.get", e);
+        }
+
+        return list;
+    }
+
     private String getGroupName(GroupMemberDTO groupMemberDTO, String username) {
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
         if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) || roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType())) {
@@ -399,36 +471,6 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         params.put("{{ USER_EMAIL }}", wikiUserE.getEmail());
         params.put("{{ PHONE }}", wikiUserE.getPhone());
         return FileUtil.replaceReturnString(inputStream, params);
-    }
-
-    @Override
-    public List<Integer> getGroupsObjectNumber(String groupName, String username, String loginName) {
-        List<Integer> list = new ArrayList<>();
-        try {
-            String page = iWikiClassService.getPageClassResource(BaseStage.SPACE, groupName, BaseStage.XWIKIGROUPS, username);
-            if (!StringUtils.isEmpty(page)) {
-                Document doc = DocumentHelper.parseText(page);
-                Element rootElt = doc.getRootElement();
-                Iterator iter = rootElt.elementIterator("objectSummary");
-                while (iter.hasNext()) {
-                    Element recordEle = (Element) iter.next();
-                    String pageName = recordEle.elementTextTrim("pageName");
-                    if (groupName.equals(pageName)) {
-                        String headline = recordEle.elementTextTrim("headline");
-                        LOGGER.info("loginName: {} get headline: {}", loginName, headline);
-                        if (!StringUtils.isEmpty(headline) && headline.startsWith(BaseStage.XWiki) && loginName.equals(headline.substring(6))) {
-                            list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
-                        } else if (!StringUtils.isEmpty(headline) && !headline.startsWith(BaseStage.XWiki)) {
-                            list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
-                        }
-                    }
-                }
-            }
-        } catch (DocumentException e) {
-            throw new CommonException("error.document.get", e);
-        }
-
-        return list;
     }
 
     private List<Integer> getGlobalRightsObjectNumber(String org, String project, String username) {
@@ -493,6 +535,67 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     public Boolean checkDocExsist(String username, String groupName) {
         return iWikiUserService.checkDocExsist(username, groupName);
+    }
+
+    private void checkAssignAgain(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg) {
+        String page = "";
+        if (isOrg && isAdmin) {
+            page = iWikiClassService.getPageClassResource(BaseStage.O + wikiGroupDTO.getOrganizationName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, username);
+        } else if (isOrg && !isAdmin) {
+            page = iWikiClassService.getPageClassResource(BaseStage.O + wikiGroupDTO.getOrganizationName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, username);
+        } else if (!isOrg && isAdmin) {
+            page = iWikiClassService.getProjectPageClassResource(BaseStage.O + wikiGroupDTO.getOrganizationName(), BaseStage.P + wikiGroupDTO.getProjectName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, username);
+        } else if (!isOrg && !isAdmin) {
+            page = iWikiClassService.getProjectPageClassResource(BaseStage.O + wikiGroupDTO.getOrganizationName(), BaseStage.P + wikiGroupDTO.getProjectName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, username);
+        }
+
+        List<Integer> list = new ArrayList<>();
+        try {
+            if (!StringUtils.isEmpty(page)) {
+                Document doc = DocumentHelper.parseText(page);
+                Element rootElt = doc.getRootElement();
+                Iterator iter = rootElt.elementIterator("objectSummary");
+                while (iter.hasNext()) {
+                    Element recordEle = (Element) iter.next();
+                    String className = recordEle.elementTextTrim("className");
+                    if (BaseStage.XWIKIGLOBALRIGHTS.equals(className)) {
+                        String headline = recordEle.elementTextTrim("headline");
+                        if (!StringUtils.isEmpty(headline) && Integer.valueOf(headline) == 1) {
+                            list.add(Integer.valueOf(recordEle.elementTextTrim("number")));
+                        }
+                    }
+                }
+            }
+        } catch (DocumentException e) {
+            throw new CommonException("error.document.get", e);
+        }
+
+        Boolean flag = false;
+        if (!list.isEmpty()) {
+            String group = "";
+            for (Integer l : list) {
+                if (isOrg) {
+                    group = iWikiClassService.getOrgPageClassGroupResource(BaseStage.O + wikiGroupDTO.getOrganizationName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, username, l);
+                } else {
+                    group = iWikiClassService.getProjectPageClassGroupResource(BaseStage.O + wikiGroupDTO.getOrganizationName(), BaseStage.P + wikiGroupDTO.getProjectName(), BaseStage.WEBPREFERENCES, BaseStage.XWIKIGLOBALRIGHTS, username, l);
+                }
+                if (!StringUtils.isEmpty(group)) {
+                    try {
+                        Document doc = DocumentHelper.parseText(group);
+                        Element rootElt = doc.getRootElement();
+                        if (rootElt.elementTextTrim("value").equals(BaseStage.XWiki + wikiGroupDTO.getGroupName())) {
+                            flag = true;
+                            break;
+                        }
+                    } catch (DocumentException e) {
+                        throw new CommonException("error.document.get", e);
+                    }
+                }
+            }
+        }
+        if (!flag || list.isEmpty()) {
+            assignPermission(wikiGroupDTO, username, isAdmin, isOrg);
+        }
     }
 
     private void assignPermission(WikiGroupDTO wikiGroupDTO, String username, Boolean isAdmin, Boolean isOrg) {
