@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -43,7 +44,7 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 public class WikiGroupServiceImpl implements WikiGroupService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiGroupServiceImpl.class);
-    List<String> data = Collections.synchronizedList(new ArrayList<String>());
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     private IWikiGroupService iWikiGroupService;
     private IWikiUserService iWikiUserService;
@@ -166,6 +167,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
 
     @Override
     public void createWikiUserToGroup(List<UserDTO> userDTOList, String username) {
+        List<WikiUserE> wikiUserEList = new ArrayList<>();
         userDTOList.stream()
                 .forEach(userDTO -> {
                     String loginName = userDTO.getUsername();
@@ -176,38 +178,22 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                         String orgCode = organization.getCode();
                         String groupName = BaseStage.O + orgCode + BaseStage.USER_GROUP;
 
-                        //如果用户不存在则新建
-                        Boolean flag = checkDocExsist(username, loginName);
-                        LOGGER.info("user:{} exist ? {}", loginName, flag);
-                        if (!flag) {
-                            WikiUserE wikiUserE = new WikiUserE();
-                            wikiUserE.setFirstName(user.getLoginName());
-                            wikiUserE.setLastName(user.getRealName());
-                            wikiUserE.setPhone(user.getPhone());
-                            wikiUserE.setEmail(user.getEmail());
-
-                            String xmlParam = getUserXml(wikiUserE);
-                            if (!iWikiUserService.createUser(loginName, xmlParam, username)) {
-                                throw new CommonException("error.wiki.user.create");
-                            }
-                        } else {
-                            LOGGER.info("WikiAllGroup users:{}", data.toString());
-                            //如果用户存在，判断是否在默认组XWikiAllGroup，不存在加在默认组XWikiAllGroup
-                            if (data.isEmpty() || !data.contains(loginName)) {
-                                data = this.getXwikiAllGroupsUsers(BaseStage.XWIKI_ALL_GROUP, username, loginName);
-                            }
-                            LOGGER.info("WikiAllGroup users:{}", data.toString());
-                            if (!data.contains(loginName)) {
-                                iWikiGroupService.createGroupUsers(BaseStage.XWIKI_ALL_GROUP, loginName, username);
-                            }
-                        }
-
-                        //通过groupName给组添加成员
-                        iWikiGroupService.createGroupUsers(groupName, loginName, username);
+                        WikiUserE wikiUserE = new WikiUserE();
+                        wikiUserE.setFirstName(user.getLoginName());
+                        wikiUserE.setLastName(user.getRealName());
+                        wikiUserE.setPhone(user.getPhone());
+                        wikiUserE.setEmail(user.getEmail());
+                        wikiUserE.setGroupName(groupName);
+                        wikiUserEList.add(wikiUserE);
                     } else {
                         throw new CommonException("error.get.user.info");
                     }
                 });
+
+
+        if (!iWikiUserService.createWikiUserToGroup(wikiUserEList, username)) {
+            throw new CommonException("error.create.user.to.group");
+        }
     }
 
     @Override

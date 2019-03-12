@@ -1,6 +1,7 @@
 package io.choerodon.wiki.domain.service.impl;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -14,6 +15,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.wiki.domain.application.entity.WikiUserE;
 import io.choerodon.wiki.domain.service.IWikiUserService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.exception.NetworkRequestStatusCodeException;
@@ -95,6 +97,24 @@ public class IWikiUserServiceImpl implements IWikiUserService {
             }
         } catch (IOException e) {
             throw new CommonException("error.delete.page,connection wiki timeout", e);
+        }
+    }
+
+    @Override
+    public Boolean createWikiUserToGroup(List<WikiUserE> wikiUserEList, String username) {
+        LOGGER.info("create user data: {}", wikiUserEList.toString());
+        Call<ResponseBody> call = wikiClient.createWikiUserToGroup(username,
+                wikiUserEList);
+        try {
+            Response response = call.execute();
+            LOGGER.info("create user to group return code: {}", response.code());
+            if (response.code() == BaseStage.NO_CONTENT) {
+                return true;
+            } else {
+                throw new NetworkRequestStatusCodeException("error create user to group return code: " + response.code());
+            }
+        } catch (IOException e) {
+            throw new CommonException("error.create.user.to.group,connection wiki timeout", e);
         }
     }
 

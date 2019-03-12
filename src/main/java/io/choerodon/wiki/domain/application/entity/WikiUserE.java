@@ -11,6 +11,7 @@ public class WikiUserE {
     private String password;
     private String email;
     private String phone;
+    private String groupName;
 
     public String getFirstName() {
         return firstName;
@@ -58,5 +59,13 @@ public class WikiUserE {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }
