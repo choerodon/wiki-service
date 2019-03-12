@@ -11,6 +11,7 @@ import retrofit2.Response;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.wiki.domain.service.IWikiClassService;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.feign.WikiClient;
 
 /**
@@ -79,6 +80,43 @@ public class IWikiClassServiceImpl implements IWikiClassService {
             LOGGER.info("delete page class resource code:{} ", response.code());
         } catch (IOException e) {
             throw new CommonException("error.page.class.delete", e);
+        }
+    }
+
+    @Override
+    public String getOrgPageClassGroupResource(String org, String pageName, String className, String username, int objectNumber) {
+        LOGGER.info("get page class group resource,path:{} and page: {} and class: {}", org, pageName, className);
+        try {
+            Response<ResponseBody> response = wikiClient.getPageClassGroupResource(username, client, org, pageName, className, objectNumber).execute();
+            LOGGER.info("get page class group resource code:{} ", response.code());
+            if (response.code() == BaseStage.OK) {
+                return response.body().string();
+            } else {
+                return "";
+            }
+        } catch (IOException e) {
+            throw new CommonException("error.page.class.group.get", e);
+        } catch (NullPointerException e) {
+            throw new CommonException(pageName + " not found in wiki", e);
+        }
+    }
+
+    @Override
+    public String getProjectPageClassGroupResource(String org, String project, String pageName, String className, String username, int objectNumber) {
+        LOGGER.info("get page class group resource,path:{}/{} and page: {} and class: {}", org, project, pageName, className);
+        try {
+            Response<ResponseBody> response = wikiClient.getProjectPageClassGroupResource(username,
+                    client, org, project, pageName, className, objectNumber).execute();
+            LOGGER.info("get page class group resource code:{} ", response.code());
+            if (response.code() == BaseStage.OK) {
+                return response.body().string();
+            } else {
+                return "";
+            }
+        } catch (IOException e) {
+            throw new CommonException("error.page.class.group.get", e);
+        } catch (NullPointerException e) {
+            throw new CommonException(pageName + " not found in wiki", e);
         }
     }
 }

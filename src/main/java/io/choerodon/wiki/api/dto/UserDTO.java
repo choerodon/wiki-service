@@ -9,6 +9,7 @@ public class UserDTO {
     private String email;
     private String id;
     private String name;
+    private Long organizationId;
 
     public String getUsername() {
         return username;
@@ -40,5 +41,13 @@ public class UserDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(Long organizationId) {
+        this.organizationId = organizationId;
     }
 }
