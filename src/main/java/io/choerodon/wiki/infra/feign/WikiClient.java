@@ -1,10 +1,14 @@
 package io.choerodon.wiki.infra.feign;
 
+import java.util.List;
+
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;
+
+import io.choerodon.wiki.domain.application.entity.WikiUserE;
 
 /**
  * Created by Zenger on 2018/7/3.
@@ -236,5 +240,12 @@ public interface WikiClient {
     Call<ResponseBody> getPageMenuUnderProject(
             @Header("username") String username,
             @Url String url);
+
+    //创建用户
+    @Headers({"Content-Type:application/json;charset=UTF-8"})
+    @POST("rest/v1/user")
+    Call<ResponseBody> createWikiUserToGroup(
+            @Header("username") String username,
+            @Body List<WikiUserE> wikiUserEList);
 
 }
