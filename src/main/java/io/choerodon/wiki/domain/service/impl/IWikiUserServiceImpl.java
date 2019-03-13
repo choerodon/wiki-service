@@ -51,7 +51,7 @@ public class IWikiUserServiceImpl implements IWikiUserService {
             Response response = call.execute();
             LOGGER.info("create wiki user code:{} ", response.code());
             if (response.code() == BaseStage.CREATED || response.code() == BaseStage.ACCEPTED) {
-                return addUserToDefaultGroup(loginName, username);
+                return true;
             } else {
                 return false;
             }

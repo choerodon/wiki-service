@@ -43,7 +43,6 @@ import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 public class WikiGroupServiceImpl implements WikiGroupService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WikiGroupServiceImpl.class);
-    List<String> data = Collections.synchronizedList(new ArrayList<String>());
 
     private IWikiGroupService iWikiGroupService;
     private IWikiUserService iWikiUserService;
@@ -190,16 +189,6 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                             String xmlParam = getUserXml(wikiUserE);
                             if (!iWikiUserService.createUser(loginName, xmlParam, username)) {
                                 throw new CommonException("error.wiki.user.create");
-                            }
-                        } else {
-                            LOGGER.info("WikiAllGroup users:{}", data.toString());
-                            //如果用户存在，判断是否在默认组XWikiAllGroup，不存在加在默认组XWikiAllGroup
-                            if (data.isEmpty() || !data.contains(loginName)) {
-                                data = this.getXwikiAllGroupsUsers(BaseStage.XWIKI_ALL_GROUP, username, loginName);
-                            }
-                            LOGGER.info("WikiAllGroup users:{}", data.toString());
-                            if (!data.contains(loginName)) {
-                                iWikiGroupService.createGroupUsers(BaseStage.XWIKI_ALL_GROUP, loginName, username);
                             }
                         }
 
