@@ -3,6 +3,7 @@ package io.choerodon.wiki.api.eventhandler;
 import java.io.IOException;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -77,7 +78,7 @@ public class WikiEventHandler {
             seq = 10)
     public String handleOrganizationCreateEvent(String data) throws IOException {
         loggerInfo(data);
-        OrganizationEventPayload organizationEventPayload = objectMapper.readValue(data, OrganizationEventPayload.class);
+        OrganizationEventPayload organizationEventPayload = JSONObject.parseObject(data, OrganizationEventPayload.class);
         createOrganization(organizationEventPayload.getId(),
                 organizationEventPayload.getCode(),
                 organizationEventPayload.getName(),
@@ -98,7 +99,7 @@ public class WikiEventHandler {
             seq = 10)
     public String handleProjectCreateEvent(String data) throws IOException {
         loggerInfo(data);
-        ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
+        ProjectEvent projectEvent = JSONObject.parseObject(data, ProjectEvent.class);
         ProjectE projectE = iamRepository.queryIamProject(projectEvent.getProjectId());
         if (projectE == null) {
             throw new CommonException("error.project.get");
@@ -183,7 +184,7 @@ public class WikiEventHandler {
             seq = 10)
     public String handleOrganizationDisableEvent(String data) throws IOException {
         loggerInfo(data);
-        OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
+        OrganizationDTO organizationDTO = JSONObject.parseObject(data, OrganizationDTO.class);
         wikiGroupService.disableOrganizationGroup(organizationDTO.getOrganizationId(), BaseStage.USERNAME);
         return data;
     }
@@ -200,7 +201,7 @@ public class WikiEventHandler {
             seq = 10)
     public String handleProjectDisableEvent(String data) throws IOException {
         loggerInfo(data);
-        ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
+        ProjectDTO projectDTO = JSONObject.parseObject(data, ProjectDTO.class);
         wikiGroupService.disableProjectGroup(projectDTO.getProjectId(), BaseStage.USERNAME);
         return data;
     }
@@ -217,7 +218,7 @@ public class WikiEventHandler {
             seq = 10)
     public String handleOrganizationEnableEvent(String data) throws IOException {
         loggerInfo(data);
-        OrganizationDTO organizationDTO = objectMapper.readValue(data, OrganizationDTO.class);
+        OrganizationDTO organizationDTO = JSONObject.parseObject(data, OrganizationDTO.class);
         OrganizationE organization = iamRepository.queryOrganizationById(organizationDTO.getOrganizationId());
         List<WikiSpaceResponseDTO> wikiSpaceList = wikiSpaceService.getWikiSpaceList(organization.getId(), WikiSpaceResourceType.ORGANIZATION.getResourceType());
         if (wikiSpaceList != null && !wikiSpaceList.isEmpty() && wikiSpaceList.get(0).getStatus().equals(SpaceStatus.SUCCESS.getSpaceStatus())) {
@@ -242,7 +243,7 @@ public class WikiEventHandler {
             seq = 10)
     public void dealProjectUpdateSync(String data) throws IOException {
         loggerInfo(data);
-        ProjectEvent projectEvent = objectMapper.readValue(data, ProjectEvent.class);
+        ProjectEvent projectEvent = JSONObject.parseObject(data, ProjectEvent.class);
         wikiSpaceService.updateAndSyncProject(projectEvent);
     }
 
@@ -256,7 +257,7 @@ public class WikiEventHandler {
             seq = 10)
     public void dealOrganizationUpdateSync(String data) throws IOException {
         loggerInfo(data);
-        OrganizationEventPayload organizationEventPayload = objectMapper.readValue(data, OrganizationEventPayload.class);
+        OrganizationEventPayload organizationEventPayload = JSONObject.parseObject(data, OrganizationEventPayload.class);
         wikiSpaceService.updateAndSyncOrganization(organizationEventPayload);
     }
 
@@ -272,7 +273,7 @@ public class WikiEventHandler {
             seq = 10)
     public String handleProjectEnableEvent(String data) throws IOException {
         loggerInfo(data);
-        ProjectDTO projectDTO = objectMapper.readValue(data, ProjectDTO.class);
+        ProjectDTO projectDTO = JSONObject.parseObject(data, ProjectDTO.class);
         ProjectE projectE = iamRepository.queryIamProject(projectDTO.getProjectId());
         if (projectE != null) {
             OrganizationE organization = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
@@ -310,7 +311,7 @@ public class WikiEventHandler {
     public String handleLogoUpdateEvent(String data) throws IOException {
         loggerInfo(data);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        WikiLogoDTO wikiLogoDTO = objectMapper.readValue(data, WikiLogoDTO.class);
+        WikiLogoDTO wikiLogoDTO = JSONObject.parseObject(data, WikiLogoDTO.class);
         wikiLogoService.updateLogo(wikiLogoDTO, BaseStage.USERNAME);
         return data;
     }
@@ -331,7 +332,7 @@ public class WikiEventHandler {
             seq = 70)
     public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitOrganizationEvent(String data) throws IOException {
         loggerInfo(data);
-        OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
+        OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = JSONObject.parseObject(data, OrganizationRegisterEventPayloadDTO.class);
 
         createOrganization(organizationRegisterEventPayloadDTO.getOrganization().getId(),
                 organizationRegisterEventPayloadDTO.getOrganization().getCode(),
@@ -353,7 +354,7 @@ public class WikiEventHandler {
             seq = 120)
     public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitProjectEvent(String data) throws IOException {
         loggerInfo(data);
-        OrganizationRegisterEventPayloadDTO projectEvent = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
+        OrganizationRegisterEventPayloadDTO projectEvent = JSONObject.parseObject(data, OrganizationRegisterEventPayloadDTO.class);
         createProject(projectEvent.getOrganization().getId(),
                 projectEvent.getOrganization().getCode(),
                 projectEvent.getProject().getCode(),
@@ -376,7 +377,7 @@ public class WikiEventHandler {
             seq = 160)
     public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitDemoDataEvent(String data) throws IOException {
         loggerInfo(data);
-        OrganizationRegisterEventPayloadDTO wikiDemoData = objectMapper.readValue(data, OrganizationRegisterEventPayloadDTO.class);
+        OrganizationRegisterEventPayloadDTO wikiDemoData = JSONObject.parseObject(data, OrganizationRegisterEventPayloadDTO.class);
 
         wikiSpaceService.createDemo(wikiDemoData.getOrganization().getId(), BaseStage.USERNAME);
         return wikiDemoData;
