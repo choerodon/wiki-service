@@ -135,8 +135,6 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                                 }
                             }
                         }
-                    } else {
-                        throw new CommonException("group name is null");
                     }
                 });
     }
