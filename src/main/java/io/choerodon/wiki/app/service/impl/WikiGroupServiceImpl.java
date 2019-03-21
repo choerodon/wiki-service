@@ -491,10 +491,10 @@ public class WikiGroupServiceImpl implements WikiGroupService {
             //通过组织id获取组织code
             LOGGER.info("select organization info by id:{}", resourceId);
             OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
-            LOGGER.info("select organization info:{}}", organization.toString());
             if (organization == null) {
                 throw new CommonException("error.organization.select");
             }
+            LOGGER.info("select organization info:{}}", organization.toString());
             if (iWikiUserService.checkDocExsist(username, BaseStage.O + organization.getCode() + type)) {
                 groupName.append(organization.getCode());
             } else {
