@@ -12,6 +12,7 @@ import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
 import io.choerodon.wiki.infra.feign.IamServiceClient
 import org.junit.Assert
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -97,11 +98,6 @@ class WikiCreateUserSpec extends Specification {
         userE.setRealName("毕冉")
         userE.setPhone("110")
         userE.setOrganization(organizationE)
-
-        iamServiceClient = Mock(IamServiceClient)
-        Field field = iamRepository.getClass().getDeclaredFields()[0];
-        field.setAccessible(true)
-        field.set(iamRepository, iamServiceClient)
     }
 
     def '创建用户'() {
@@ -115,11 +111,13 @@ class WikiCreateUserSpec extends Specification {
         ResponseEntity<OrganizationDO> organization = new ResponseEntity<>(organizationDO, HttpStatus.OK)
 
         and: 'Mock'
-        1 * iamServiceClient.queryByLoginName(_) >> responseEntity
-        1 * iamServiceClient.queryOrganizationById(_) >> organization
+        1 * iamRepository.queryOrganizationById(*_) >> organizationE
         1 * iWikiUserService.checkDocExsist(_, _) >> false
-        1 * iWikiUserService.createUser(*_)
-        1 * iWikiGroupService.createGroupUsers(*_)
+        1 * iWikiUserService.createUser(*_) >> true
+        1 * iWikiUserService.createWikiUserToGroup(*_) >> true
+        1 * iWikiGroupService.createGroupUsers(*_) >> true
+        1 * iamRepository.queryByLoginName(*_) >> userE
+
 
         when: '模拟发送消息'
         def entity = wikiEventHandler.handleCreateUserEvent(payload)

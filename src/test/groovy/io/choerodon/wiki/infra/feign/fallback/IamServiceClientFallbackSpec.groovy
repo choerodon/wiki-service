@@ -48,15 +48,6 @@ class IamServiceClientFallbackSpec extends Specification {
         e.message == "error.project.get"
     }
 
-    def 'queryUsersByIds'() {
-        when: ''
-        iamServiceClientFallback.queryUsersByIds(Arrays.asList(1L))
-
-        then: ''
-        def e = thrown(FeignException)
-        e.message == "error.user.get"
-    }
-
     def 'pageByOrganization'() {
         when: ''
         iamServiceClientFallback.pageByOrganization(0, 400)

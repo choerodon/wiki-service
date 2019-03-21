@@ -31,7 +31,6 @@ class IWikiUserServiceImplSpec extends Specification {
 
         then: ''
         1 * wikiClient.createUser(*_) >> getCall(201)
-        1 * wikiClient.createGroupUsers(*_) >> getCall(201)
     }
 
     def 'checkDocExsist'() {

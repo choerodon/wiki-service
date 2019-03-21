@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
+import io.choerodon.wiki.domain.application.repository.IamRepository
 import io.choerodon.wiki.domain.service.*
 import okhttp3.Headers
 import okhttp3.Request
@@ -49,7 +50,7 @@ class IntegrationTestConfiguration {
     LiquibaseExecutor liquibaseExecutor
 
     final ObjectMapper objectMapper = new ObjectMapper()
-    
+
     @Bean(name = "mockiWikiSpaceWebHomeService")
     @Primary
     IWikiSpaceWebHomeService iWikiSpaceWebHomeService() {
@@ -84,6 +85,12 @@ class IntegrationTestConfiguration {
     @Primary
     IWikiLogoService iWikiLogoService() {
         detachedMockFactory.Mock(IWikiLogoService.class);
+    }
+
+    @Bean
+    @Primary
+    IamRepository iamRepository() {
+        detachedMockFactory.Mock(IamRepository.class);
     }
 
     @PostConstruct
