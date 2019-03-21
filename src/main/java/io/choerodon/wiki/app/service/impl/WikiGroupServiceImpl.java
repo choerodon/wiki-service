@@ -94,7 +94,6 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void createWikiGroupUsers(List<GroupMemberDTO> groupMemberDTOList, String username) {
         groupMemberDTOList.stream()
-                .filter(groupMember -> groupMember.getRoleLabels() != null)
                 .forEach(groupMember -> {
                     //将用户分配到组
                     List<String> groupNames = getGroupName(groupMember, username);
@@ -122,7 +121,7 @@ public class WikiGroupServiceImpl implements WikiGroupService {
                             }
 
                             if (ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())
-                                    && (groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())
+                                    && groupMember.getRoleLabels() != null && (groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())
                                     || groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()))) {
                                 ProjectE projectE = iamRepository.queryIamProject(groupMember.getResourceId());
                                 LOGGER.info("projectE : {}", projectE.toString());
@@ -429,10 +428,12 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     private List<String> checkSitLevel(GroupMemberDTO groupMemberDTO, String username) {
         List<String> lists = new ArrayList<>();
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
-        if (roleLabels.contains(WikiRoleType.SITE_ADMIN.getResourceType())) {
-            lists.add(BaseStage.XWIKI_ADMIN_GROUP);
-        } else {
+        if (roleLabels == null) {
             deletePageClass(BaseStage.XWIKI_ADMIN_GROUP, username, groupMemberDTO.getUsername());
+        } else {
+            if (roleLabels.contains(WikiRoleType.SITE_ADMIN.getResourceType())) {
+                lists.add(BaseStage.XWIKI_ADMIN_GROUP);
+            }
         }
 
         return lists;
@@ -443,18 +444,20 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
         String projectAdminGroup = getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
         String projectUserGroup = getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
-        if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
-            lists.add(projectAdminGroup);
-            lists.add(projectUserGroup);
-        } else if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && !roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
-            deletePageClass(projectUserGroup, username, groupMemberDTO.getUsername());
-            lists.add(projectAdminGroup);
-        } else if (!roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+        if (roleLabels == null) {
             deletePageClass(projectAdminGroup, username, groupMemberDTO.getUsername());
-            lists.add(projectUserGroup);
+            deletePageClass(projectUserGroup, username, groupMemberDTO.getUsername());
         } else {
-            deletePageClass(projectAdminGroup, username, groupMemberDTO.getUsername());
-            deletePageClass(projectUserGroup, username, groupMemberDTO.getUsername());
+            if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                lists.add(projectAdminGroup);
+                lists.add(projectUserGroup);
+            } else if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && !roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                deletePageClass(projectUserGroup, username, groupMemberDTO.getUsername());
+                lists.add(projectAdminGroup);
+            } else if (!roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                deletePageClass(projectAdminGroup, username, groupMemberDTO.getUsername());
+                lists.add(projectUserGroup);
+            }
         }
 
         return lists;
@@ -465,18 +468,20 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
         String orgAdminGroup = getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
         String orgUserGroup = getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
-        if (roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
-            lists.add(orgAdminGroup);
-            lists.add(orgUserGroup);
-        } else if (roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && !roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
-            deletePageClass(orgUserGroup, username, groupMemberDTO.getUsername());
-            lists.add(orgAdminGroup);
-        } else if (!roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
+        if (roleLabels == null) {
             deletePageClass(orgAdminGroup, username, groupMemberDTO.getUsername());
-            lists.add(orgUserGroup);
+            deletePageClass(orgUserGroup, username, groupMemberDTO.getUsername());
         } else {
-            deletePageClass(orgAdminGroup, username, groupMemberDTO.getUsername());
-            deletePageClass(orgUserGroup, username, groupMemberDTO.getUsername());
+            if (roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
+                lists.add(orgAdminGroup);
+                lists.add(orgUserGroup);
+            } else if (roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && !roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
+                deletePageClass(orgUserGroup, username, groupMemberDTO.getUsername());
+                lists.add(orgAdminGroup);
+            } else if (!roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
+                deletePageClass(orgAdminGroup, username, groupMemberDTO.getUsername());
+                lists.add(orgUserGroup);
+            }
         }
 
         return lists;
