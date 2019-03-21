@@ -428,11 +428,13 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     private List<String> checkSitLevel(GroupMemberDTO groupMemberDTO, String username) {
         List<String> lists = new ArrayList<>();
         List<String> roleLabels = groupMemberDTO.getRoleLabels();
-        if (roleLabels == null) {
+        if (roleLabels == null ) {
             deletePageClass(BaseStage.XWIKI_ADMIN_GROUP, username, groupMemberDTO.getUsername());
         } else {
             if (roleLabels.contains(WikiRoleType.SITE_ADMIN.getResourceType())) {
                 lists.add(BaseStage.XWIKI_ADMIN_GROUP);
+            } else {
+                deletePageClass(BaseStage.XWIKI_ADMIN_GROUP, username, groupMemberDTO.getUsername());
             }
         }
 
