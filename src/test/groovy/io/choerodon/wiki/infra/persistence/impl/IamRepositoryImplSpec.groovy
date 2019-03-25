@@ -128,28 +128,6 @@ class IamRepositoryImplSpec extends Specification {
         e.message == "error.project.get"
     }
 
-    def "queryUserByIdFaliedUserGet"() {
-        given: '自定义数据'
-        ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
-        when: ''
-        service.queryUserById(1L)
-        then: ''
-        1 * iamServiceClient.queryUsersByIds(_) >> responseEntity
-        def e = thrown(CommonException)
-        e.message == "error.user.get"
-    }
-
-    def "queryUserByIdFaliedUserQuery"() {
-        given: '自定义数据'
-        ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(HttpStatus.OK)
-        when: ''
-        service.queryUserById(1L)
-        then: ''
-        1 * iamServiceClient.queryUsersByIds(_) >> responseEntity
-        def e = thrown(CommonException)
-        e.message == "error.user.query"
-    }
-
     def "pageByOrganizationFailedGet"() {
         given: '自定义数据'
         ResponseEntity<Page<OrganizationDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)

@@ -94,49 +94,48 @@ public class WikiGroupServiceImpl implements WikiGroupService {
     @Override
     public void createWikiGroupUsers(List<GroupMemberDTO> groupMemberDTOList, String username) {
         groupMemberDTOList.stream()
-                .filter(groupMember -> groupMember.getRoleLabels() != null)
                 .forEach(groupMember -> {
                     //将用户分配到组
-                    String groupName = getGroupName(groupMember, username);
+                    List<String> groupNames = getGroupName(groupMember, username);
 
                     //通过groupName给组添加成员
-                    if (!StringUtils.isEmpty(groupName)) {
-                        //根据用户名查询用户信息
-                        UserE user = iamRepository.queryByLoginName(groupMember.getUsername());
-                        WikiUserE wikiUserE = new WikiUserE();
-                        wikiUserE.setLastName(user.getRealName());
-                        wikiUserE.setFirstName(user.getLoginName());
-                        wikiUserE.setEmail(user.getEmail());
-                        wikiUserE.setPhone(user.getPhone());
-                        String xmlParam = getUserXml(wikiUserE);
-                        if (!checkDocExsist(username, user.getLoginName())) {
-                            if (!iWikiUserService.createUser(user.getLoginName(), xmlParam, username)) {
-                                throw new CommonException("error.wiki.user.create");
+                    if (!groupNames.isEmpty()) {
+                        for (String groupName : groupNames) {
+                            //根据用户名查询用户信息
+                            UserE user = iamRepository.queryByLoginName(groupMember.getUsername());
+                            WikiUserE wikiUserE = new WikiUserE();
+                            wikiUserE.setLastName(user.getRealName());
+                            wikiUserE.setFirstName(user.getLoginName());
+                            wikiUserE.setEmail(user.getEmail());
+                            wikiUserE.setPhone(user.getPhone());
+                            String xmlParam = getUserXml(wikiUserE);
+                            if (!checkDocExsist(username, user.getLoginName())) {
+                                if (!iWikiUserService.createUser(user.getLoginName(), xmlParam, username)) {
+                                    throw new CommonException("error.wiki.user.create");
+                                }
                             }
-                        }
 
-                        List<Integer> list = getGroupsObjectNumber(groupName, username, user.getLoginName());
-                        if (list == null || list.isEmpty()) {
-                            iWikiGroupService.createGroupUsers(groupName, user.getLoginName(), username);
-                        }
+                            List<Integer> list = getGroupsObjectNumber(groupName, username, user.getLoginName());
+                            if (list == null || list.isEmpty()) {
+                                iWikiGroupService.createGroupUsers(groupName, user.getLoginName(), username);
+                            }
 
-                        if (ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())
-                                && (groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())
-                                || groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()))) {
-                            ProjectE projectE = iamRepository.queryIamProject(groupMember.getResourceId());
-                            LOGGER.info("projectE : {}", projectE.toString());
-                            if (projectE.getOrganization().getId() != null) {
-                                OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
-                                StringBuilder stringBuilder = new StringBuilder();
-                                stringBuilder.append(BaseStage.O).append(organizationE.getCode()).append(BaseStage.USER_GROUP);
-                                List<Integer> list1 = getGroupsObjectNumber(stringBuilder.toString(), username, user.getLoginName());
-                                if (list1 == null || list1.isEmpty()) {
-                                    iWikiGroupService.createGroupUsers(stringBuilder.toString(), user.getLoginName(), username);
+                            if (ResourceLevel.PROJECT.value().equals(groupMember.getResourceType())
+                                    && groupMember.getRoleLabels() != null && (groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())
+                                    || groupMember.getRoleLabels().contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()))) {
+                                ProjectE projectE = iamRepository.queryIamProject(groupMember.getResourceId());
+                                LOGGER.info("projectE : {}", projectE.toString());
+                                if (projectE.getOrganization().getId() != null) {
+                                    OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    stringBuilder.append(BaseStage.O).append(organizationE.getCode()).append(BaseStage.USER_GROUP);
+                                    List<Integer> list1 = getGroupsObjectNumber(stringBuilder.toString(), username, user.getLoginName());
+                                    if (list1 == null || list1.isEmpty()) {
+                                        iWikiGroupService.createGroupUsers(stringBuilder.toString(), user.getLoginName(), username);
+                                    }
                                 }
                             }
                         }
-                    } else {
-                        throw new CommonException("group name is null");
                     }
                 });
     }
@@ -412,17 +411,82 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         return list;
     }
 
-    private String getGroupName(GroupMemberDTO groupMemberDTO, String username) {
-        List<String> roleLabels = groupMemberDTO.getRoleLabels();
-        if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) || roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType())) {
-            return !StringUtils.isEmpty(getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).toString()) ? getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString() : "";
-        } else if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType()) || roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
-            return !StringUtils.isEmpty(getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).toString()) ? getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString() : "";
-        } else if (ResourceLevel.SITE.value().equals(groupMemberDTO.getResourceType()) && roleLabels.contains(WikiRoleType.SITE_ADMIN.getResourceType())) {
-            return BaseStage.XWIKI_ADMIN_GROUP;
-        } else {
-            return "";
+    private List<String> getGroupName(GroupMemberDTO groupMemberDTO, String username) {
+        String resourceType = groupMemberDTO.getResourceType();
+        switch (resourceType) {
+            case "organization":
+                return checkOrganizationLevel(groupMemberDTO, username);
+            case "project":
+                return checkProjectLevel(groupMemberDTO, username);
+            case "site":
+                return checkSitLevel(groupMemberDTO, username);
+            default:
+                return new ArrayList<>();
         }
+    }
+
+    private List<String> checkSitLevel(GroupMemberDTO groupMemberDTO, String username) {
+        List<String> lists = new ArrayList<>();
+        List<String> roleLabels = groupMemberDTO.getRoleLabels();
+        if (roleLabels == null ) {
+            deletePageClass(BaseStage.XWIKI_ADMIN_GROUP, username, groupMemberDTO.getUsername());
+        } else {
+            if (roleLabels.contains(WikiRoleType.SITE_ADMIN.getResourceType())) {
+                lists.add(BaseStage.XWIKI_ADMIN_GROUP);
+            } else {
+                deletePageClass(BaseStage.XWIKI_ADMIN_GROUP, username, groupMemberDTO.getUsername());
+            }
+        }
+
+        return lists;
+    }
+
+    private List<String> checkProjectLevel(GroupMemberDTO groupMemberDTO, String username) {
+        List<String> lists = new ArrayList<>();
+        List<String> roleLabels = groupMemberDTO.getRoleLabels();
+        String projectAdminGroup = getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
+        String projectUserGroup = getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
+        if (roleLabels == null) {
+            deletePageClass(projectAdminGroup, username, groupMemberDTO.getUsername());
+            deletePageClass(projectUserGroup, username, groupMemberDTO.getUsername());
+        } else {
+            if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                lists.add(projectAdminGroup);
+                lists.add(projectUserGroup);
+            } else if (roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && !roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                deletePageClass(projectUserGroup, username, groupMemberDTO.getUsername());
+                lists.add(projectAdminGroup);
+            } else if (!roleLabels.contains(WikiRoleType.PROJECT_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.PROJECT_WIKI_USER.getResourceType())) {
+                deletePageClass(projectAdminGroup, username, groupMemberDTO.getUsername());
+                lists.add(projectUserGroup);
+            }
+        }
+
+        return lists;
+    }
+
+    private List<String> checkOrganizationLevel(GroupMemberDTO groupMemberDTO, String username) {
+        List<String> lists = new ArrayList<>();
+        List<String> roleLabels = groupMemberDTO.getRoleLabels();
+        String orgAdminGroup = getGroupNameBuffer(groupMemberDTO, username, BaseStage.ADMIN_GROUP).append(BaseStage.ADMIN_GROUP).toString();
+        String orgUserGroup = getGroupNameBuffer(groupMemberDTO, username, BaseStage.USER_GROUP).append(BaseStage.USER_GROUP).toString();
+        if (roleLabels == null) {
+            deletePageClass(orgAdminGroup, username, groupMemberDTO.getUsername());
+            deletePageClass(orgUserGroup, username, groupMemberDTO.getUsername());
+        } else {
+            if (roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
+                lists.add(orgAdminGroup);
+                lists.add(orgUserGroup);
+            } else if (roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && !roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
+                deletePageClass(orgUserGroup, username, groupMemberDTO.getUsername());
+                lists.add(orgAdminGroup);
+            } else if (!roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_ADMIN.getResourceType()) && roleLabels.contains(WikiRoleType.ORGANIZATION_WIKI_USER.getResourceType())) {
+                deletePageClass(orgAdminGroup, username, groupMemberDTO.getUsername());
+                lists.add(orgUserGroup);
+            }
+        }
+
+        return lists;
     }
 
     private StringBuilder getGroupNameBuffer(GroupMemberDTO groupMemberDTO, String username, String type) {
@@ -432,26 +496,41 @@ public class WikiGroupServiceImpl implements WikiGroupService {
         if (ResourceLevel.ORGANIZATION.value().equals(resourceType)) {
             groupName.append(BaseStage.O);
             //通过组织id获取组织code
+            LOGGER.info("select organization info by id:{}", resourceId);
             OrganizationE organization = iamRepository.queryOrganizationById(resourceId);
             if (organization == null) {
-                return new StringBuilder();
+                throw new CommonException("error.organization.select");
             }
-            groupName.append(organization.getCode());
+            LOGGER.info("select organization info:{}}", organization.toString());
+            if (iWikiUserService.checkDocExsist(username, BaseStage.O + organization.getCode() + type)) {
+                groupName.append(organization.getCode());
+            } else {
+                LOGGER.info("select wiki group:{} error", BaseStage.O + organization.getCode() + type);
+                throw new CommonException("error.wiki.group.select");
+            }
 
         } else if (ResourceLevel.PROJECT.value().equals(resourceType)) {
             groupName.append(BaseStage.P);
             //通过项目id找到项目code
+            LOGGER.info("select project info by id:{}", resourceId);
             ProjectE projectE = iamRepository.queryIamProject(resourceId);
+            LOGGER.info("select project info:{}", projectE.toString());
             if (projectE.getOrganization().getId() == null) {
-                return new StringBuilder();
+                throw new CommonException("error.organization.select");
             }
+
+            LOGGER.info("select organization info by id:{}", projectE.getOrganization().getId());
             OrganizationE organizationE = iamRepository.queryOrganizationById(projectE.getOrganization().getId());
+            if (organizationE == null) {
+                throw new CommonException("error.organization.select");
+            }
             if (iWikiUserService.checkDocExsist(username, BaseStage.P + organizationE.getCode() + BaseStage.LINE + projectE.getCode() + type)) {
                 groupName.append(organizationE.getCode() + BaseStage.LINE + projectE.getCode());
             } else if (iWikiUserService.checkDocExsist(username, BaseStage.P + projectE.getCode() + type)) {
                 groupName.append(projectE.getCode());
             } else {
-                return new StringBuilder();
+                LOGGER.info("select wiki group:{} error", BaseStage.P + organizationE.getCode() + BaseStage.LINE + projectE.getCode() + type);
+                throw new CommonException("error.wiki.group.select");
             }
         }
 

@@ -28,8 +28,6 @@ import org.springframework.http.ResponseEntity
 import spock.lang.Shared
 import spock.lang.Specification
 
-import java.lang.reflect.Field
-
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
 /**
@@ -150,11 +148,6 @@ class WikiProjectSpaceControllerSpec extends Specification {
 
         organization = new ResponseEntity<>(organizationDO, HttpStatus.OK)
         projectDOResponseEntity = new ResponseEntity<>(projectDO, HttpStatus.OK)
-
-        iamServiceClient = Mock(IamServiceClient)
-        Field field = iamRepository.getClass().getDeclaredFields()[0];
-        field.setAccessible(true)
-        field.set(iamRepository, iamServiceClient)
     }
 
     def '检查项目下空间名唯一性'() {
@@ -186,17 +179,17 @@ class WikiProjectSpaceControllerSpec extends Specification {
         ResponseEntity<List<UserDO>> responseEntity = new ResponseEntity<>(list, HttpStatus.OK)
 
         and: 'Mock'
-        1 * iamServiceClient.queryIamProject(_) >> projectDOResponseEntity
         1 * iWikiSpaceWebHomeService.createSpace2WebHome(*_) >> 201
         1 * iWikiSpaceWebPreferencesService.createSpace2WebPreferences(*_) >> 201
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
         2 * iWikiGroupService.createGroup(_, _)
         2 * iWikiGroupService.addRightsToProject(_, _, _, _)
-        1 * iamServiceClient.queryUsersByIds(_) >> responseEntity
+        1 * iamRepository.queryUserByIds(*_) >> userE
         1 * iWikiUserService.checkDocExsist(_, _) >> false
-        1 * iWikiUserService.createUser(_, _, _)
-        1 * iWikiGroupService.createGroupUsers(_, _, _)
+        1 * iWikiUserService.createUser(_, _, _) >> true
+        1 * iWikiGroupService.createGroupUsers(_, _, _) >> true
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
+        1 * iamRepository.queryIamProject(*_) >> projectE
 
         when: '模拟发送消息'
         def entity = wikiEventHandler.handleProjectCreateEvent(data)
@@ -302,8 +295,8 @@ class WikiProjectSpaceControllerSpec extends Specification {
                 "\"roleLabels\":null}"
 
         and: 'Mock'
-        1 * iamServiceClient.queryIamProject(_) >> projectDOResponseEntity
-        1 * iamServiceClient.queryOrganizationById(_) >> organization
+        1 * iamRepository.queryIamProject(*_) >> projectE
+        1 * iamRepository.queryOrganizationById(*_) >> organizationE
         1 * iWikiGroupService.disableProjectGroupView(*_)
 
         when: '模拟发送消息'
@@ -334,8 +327,8 @@ class WikiProjectSpaceControllerSpec extends Specification {
                 '</objects>'
 
         and: 'Mock'
-        1 * iamServiceClient.queryIamProject(_) >> projectDOResponseEntity
-        1 * iamServiceClient.queryOrganizationById(_) >> organization
+        1 * iamRepository.queryIamProject(_) >> projectE
+        1 * iamRepository.queryOrganizationById(_) >> organizationE
         1 * iWikiClassService.getProjectPageClassResource(*_) >> page
         1 * iWikiClassService.deleteProjectPageClass(*_)
 
@@ -351,8 +344,8 @@ class WikiProjectSpaceControllerSpec extends Specification {
         def id = wikiId
 
         and: 'Mock'
-        1 * iamServiceClient.queryIamProject(_) >> projectDOResponseEntity
-        1 * iamServiceClient.queryOrganizationById(_) >> organization
+        1 * iamRepository.queryIamProject(*_) >> projectE
+        1 * iamRepository.queryOrganizationById(*_) >> organizationE
         2 * iWikiSpaceWebHomeService.deletePage(*_) >> 204
         2 * iWikiSpaceWebHomeService.deletePage1(*_) >> 204
         2 * iWikiSpaceWebHomeService.deletePage2(*_) >> 204

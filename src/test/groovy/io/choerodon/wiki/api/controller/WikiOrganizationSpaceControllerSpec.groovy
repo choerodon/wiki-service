@@ -10,7 +10,6 @@ import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
 import io.choerodon.wiki.domain.service.*
-import io.choerodon.wiki.infra.common.BaseStage
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
 import io.choerodon.wiki.infra.dataobject.iam.ProjectDO
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
@@ -27,8 +26,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import spock.lang.Shared
 import spock.lang.Specification
-
-import java.lang.reflect.Field
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -125,11 +122,6 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         userDO.setLoginName("test")
 
         organization = new ResponseEntity<>(organizationDO, HttpStatus.OK)
-
-        iamServiceClient = Mock(IamServiceClient)
-        Field field = iamRepository.getClass().getDeclaredFields()[0];
-        field.setAccessible(true)
-        field.set(iamRepository, iamServiceClient)
     }
 
     def '检查组织下空间名唯一性'() {
@@ -162,9 +154,9 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
         2 * iWikiGroupService.createGroup(_, _)
         2 * iWikiGroupService.addRightsToOrg(_, _, _, _)
-        1 * iamServiceClient.queryUsersByIds(_) >> responseEntity
+        1 * iamRepository.queryUserByIds(*_) >> userE
         1 * iWikiUserService.checkDocExsist(_, _) >> false
-        1 * iWikiUserService.createUser(_, _, _)
+        1 * iWikiUserService.createUser(_, _, _) >> true
         1 * iWikiGroupService.createGroupUsers(_, _, _)
         2 * iWikiUserService.checkDocExsist(_, _) >>> false >> true
 
@@ -266,7 +258,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 "}"
 
         and: 'Mock'
-        1 * iamServiceClient.queryOrganizationById(_) >> organization
+        1 * iamRepository.queryOrganizationById(*_) >> organizationE
         1 * iWikiGroupService.disableOrgGroupView(_, _, _)
 
         when: '模拟发送消息'
@@ -291,7 +283,7 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '</objects>'
 
         and: 'Mock'
-        1 * iamServiceClient.queryOrganizationById(_) >> organization
+        1 * iamRepository.queryOrganizationById(_) >> organizationE
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> page
         1 * iWikiClassService.deletePageClass(_, _, _, _, _)
 
@@ -320,11 +312,10 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         ResponseEntity<UserDO> userDOResponseEntity = new ResponseEntity<>(userDO, HttpStatus.OK)
 
         and: 'Mock'
-        2 * iamServiceClient.queryOrganizationById(_) >> organization
-        1 * iamServiceClient.queryByLoginName(_) >> userDOResponseEntity
-        1 * iWikiUserService.checkDocExsist(_, _) >> false
-        1 * iWikiUserService.createUser(_, _, _)
-        1 * iWikiGroupService.createGroupUsers(_, _, _)
+        2 * iamRepository.queryOrganizationById(*_) >> organizationE
+        1 * iamRepository.queryByLoginName(*_) >> userE
+        3 * iWikiUserService.checkDocExsist(*_) >> true
+        1 * iWikiGroupService.createGroupUsers(_, _, _) >> true
 
         when: '模拟发送消息'
         def entity = wikiEventHandler.handleCreateGroupMemberEvent(payload)
@@ -364,10 +355,11 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
                 '</objects>'
 
         and: 'Mock'
-        2 * iamServiceClient.queryOrganizationById(_) >> organization
+        2 * iamRepository.queryOrganizationById(_) >> organizationE
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> admin
         1 * iWikiClassService.getPageClassResource(_, _, _, _) >> user
-        2 * iWikiClassService.deletePageClass(_, _, _, _, _);
+        2 * iWikiClassService.deletePageClass(_, _, _, _, _)
+        2 * iWikiUserService.checkDocExsist(*_) >> true
 
         when: '模拟发送消息'
         def entity = wikiEventHandler.handledeleteMemberRoleEvent(payload)
@@ -390,11 +382,9 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         ResponseEntity<ProjectDO> projectDOResponseEntity = new ResponseEntity<>(projectDO, HttpStatus.OK)
 
         and: 'Mock'
-        3 * iamServiceClient.queryOrganizationById(_) >> organization
-        8 * iWikiSpaceWebHomeService.deletePage(*_) >> 204
-        6 * iWikiSpaceWebHomeService.deletePage1(*_) >> 204
-        2 * iamServiceClient.queryIamProject(_) >> projectDOResponseEntity
-        2 * iamServiceClient.pageByProject(*_) >> pageResponseEntity
+        1 * iamRepository.queryOrganizationById(_) >> organizationE
+        4 * iWikiSpaceWebHomeService.deletePage(*_) >> 204
+        2 * iWikiSpaceWebHomeService.deletePage1(*_) >> 204
 
         when: '向接口发请求'
         restTemplate.delete(path + '/{id}', organizationId, id)

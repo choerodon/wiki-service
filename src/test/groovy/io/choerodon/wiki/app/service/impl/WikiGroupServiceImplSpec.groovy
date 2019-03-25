@@ -10,6 +10,7 @@ import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository
 import io.choerodon.wiki.domain.service.IWikiClassService
 import io.choerodon.wiki.domain.service.IWikiGroupService
 import io.choerodon.wiki.domain.service.IWikiUserService
+import spock.lang.Shared
 import spock.lang.Specification
 
 class WikiGroupServiceImplSpec extends Specification {
@@ -20,6 +21,12 @@ class WikiGroupServiceImplSpec extends Specification {
     IWikiClassService iWikiClassService;
     WikiGroupServiceImpl wikiGroupService;
     WikiSpaceRepository wikiSpaceRepository;
+
+    @Shared
+    def OrganizationE organizationE
+
+    @Shared
+    def ProjectE projectE
 
     def setup() {
         iWikiGroupService = Mock(IWikiGroupService);
@@ -34,6 +41,18 @@ class WikiGroupServiceImplSpec extends Specification {
                 iWikiClassService,
                 wikiSpaceRepository
         )
+
+        organizationE = new OrganizationE()
+        organizationE.setId(1)
+        organizationE.setCode("org")
+        organizationE.setName("测试组织")
+        organizationE.setEnabled(true)
+
+        projectE = new ProjectE()
+        projectE.setId(1)
+        projectE.setCode("pro")
+        projectE.setName("测试项目")
+        projectE.setOrganization(organizationE)
     }
 
     def "disableOrganizationGroup"() {
@@ -66,7 +85,7 @@ class WikiGroupServiceImplSpec extends Specification {
         when:
         wikiGroupService.setUserToGroup("testGroupName", 1L, "testUserName")
         then:
-        1 * iamRepository.queryUserById(_) >> new UserE()
+        1 * iamRepository.queryUserByIds(*_) >> new UserE()
         def e = thrown(CommonException)
         e.message == "error.query.user"
     }
@@ -77,6 +96,12 @@ class WikiGroupServiceImplSpec extends Specification {
         List<String> roleLabels = new ArrayList<>();
         roleLabels.add("roleLabel1")
         groupMemberDTO.setRoleLabels(roleLabels)
+        groupMemberDTO.setResourceType("organization")
+
+        and: 'Mock'
+        2 * iamRepository.queryOrganizationById(*_) >> organizationE
+        2 * iWikiUserService.checkDocExsist(*_) >> true
+
         when:
         wikiGroupService.getGroupName(groupMemberDTO, "testUsername")
         then: ''
@@ -88,6 +113,13 @@ class WikiGroupServiceImplSpec extends Specification {
         List<String> roleLabels = new ArrayList<>();
         roleLabels.add("project.wiki.user")
         groupMemberDTO.setRoleLabels(roleLabels)
+        groupMemberDTO.setResourceType("project")
+
+        and: 'Mock'
+        2 * iamRepository.queryOrganizationById(*_) >> organizationE
+        2 * iamRepository.queryIamProject(*_) >> projectE
+        2 * iWikiUserService.checkDocExsist(*_) >> true
+
         when:
         wikiGroupService.getGroupName(groupMemberDTO, "testUsername")
         then: ''
