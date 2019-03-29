@@ -653,6 +653,7 @@ var delete_annotation_icon = `&lt;div class="activity-opera-div activity-icon-de
                 <attribute name="values" value="CSS|LESS"/>
                 <attribute name="allowedValues" value="CSS,LESS"/>
                 <value>CSS</value>
+                
             </property>
             <property name="name" type="String">
                 <attribute name="name" value="name"/>
