@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <page xmlns="http://www.xwiki.org">
     <title>{{ SPACE_TITLE }}</title>
+    <parent>{{ SPACE_ROOT }}.{{ SPACE_PARENT }}.WebHome</parent>
     <content></content>
     <objects>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -60,38 +61,37 @@
                 <attribute name="validationMessage" value=""/>
                 <attribute name="validationRegExp" value=""/>
                 <value>{{html}}&#13;
-&lt;div id="home-page-welcome"&gt;&#13;
-    &lt;div style="margin-top: 10px;margin-left: 21px;"&gt;&#13;
-         &lt;span class="icon icon-check_circle" style="color:#5266D4;width:20px;height:20px"&gt;&lt;/span&gt;&#13;
-         &lt;span class="home-page-font" style="margin-left: 6px;"&gt;欢迎来到您的新空间！&lt;/span&gt;&#13;
-    &lt;/div&gt;&#13;
-     &lt;div class="home-page-left" style="padding: 4px 0;"&gt;&#13;
-        &lt;span class = "home-page-font1" &gt;这是当前空间的主页，下面显示的是最近空间活动。您可以：&lt;/span&gt;&#13;
-     &lt;/div&gt;&#13;
-     &lt;div style="margin-bottom:8px;"&gt;&#13;
-         &lt;div class="home-page-left"&gt;&#13;
-            &lt;span class="home-page-font"&gt;创建您的首个页面&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击顶部导航栏上的创建按钮开始。&lt;/span&gt;&#13;
-         &lt;/div&gt;&#13;
-        &lt;div class="home-page-left"&gt;&#13;
-            &lt;span class="home-page-font"&gt;设置空间权限&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;空间管理员可以点击右上方的“更多 - 管理”按钮修改当前空间的访问权限。&lt;/span&gt;&#13;
-        &lt;/div&gt;&#13;
-     &lt;/div&gt;&#13;
+ &lt;div id="home-page-welcome"&gt;&#13;
+   &lt;div style="margin-top: 10px;margin-left: 21px;"&gt;&#13;
+      &lt;span class="icon icon-check_circle" style="color:#5266D4;width:20px;height:20px"&gt;&lt;/span&gt;&#13;
+      &lt;span class="home-page-font" style="margin-left: 6px;"&gt;欢迎来到您的新空间！&lt;/span&gt;&#13;
+   &lt;/div&gt;&#13;
+   &lt;div class="home-page-left" style="padding: 4px 0;"&gt;&#13;
+         &lt;span class = "home-page-font1" &gt;这是当前空间的主页，下面显示的是最近空间活动。您可以：&lt;/span&gt;&#13;
+   &lt;/div&gt;&#13;
+   &lt;div style="margin-bottom:8px;"&gt;&#13;
+      &lt;div class="home-page-left"&gt;&#13;
+         &lt;span class="home-page-font"&gt;创建您的首个页面&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;点击顶部导航栏上的创建按钮开始。&lt;/span&gt;&#13;
+      &lt;/div&gt;&#13;
+      &lt;div class="home-page-left"&gt;&#13;
+         &lt;span class="home-page-font"&gt;设置空间权限&lt;/span&gt; - &lt;span class = "home-page-font1"&gt;空间管理员可以点击右上方的“更多 - 管理”按钮修改当前空间的访问权限。&lt;/span&gt;&#13;
+      &lt;/div&gt;&#13;
+   &lt;/div&gt;&#13;
 &lt;/div&gt;&#13;
 &lt;div id="home-page-space"&gt;&#13;
-     &lt;div id = "home-page-recent-space"&gt;&#13;
-        &lt;div id="home-page-recent-font"&gt;&#13;
-             最近的空间活动&#13;
-        &lt;/div&gt;&#13;
+   &lt;div id = "home-page-recent-space"&gt;&#13;
+     &lt;div id="home-page-recent-font"&gt;&#13;
+         最近的空间活动&#13;
      &lt;/div&gt;&#13;
+     &lt;div id="space-activity"&gt;&lt;/div&gt;&#13;
+   &lt;/div&gt;&#13;
+&#13;
 &lt;/div&gt;&#13;
 {{/html}}&#13;
 &#13;
-{{velocity}}&#13;
-#set ($space = $doc.getSpace())&#13;
-&#13;
-{{activity subentries="4" entries="5" spaces=$space/}}&#13;
-{{/velocity}}&#13;
-</value>
+{{velocity output="false"}}&#13;
+$xwiki.ssx.use('Main.Activity')&#13;
+{{/velocity}}</value>
             </property>
         </objectSummary>
         <objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -125,14 +125,52 @@
                 <attribute name="contenttype" value="PureText"/>
                 <attribute name="editor" value="PureText"/>
                 <attribute name="number" value="2"/>
-                <value>var activityAction = document.getElementsByClassName("activityAction");&#13;
+                <value>&#13;
+&#13;
+&#13;
+&#13;
+&#13;
+require(['jquery'], function ($) {  &#13;
+var circle = `&lt;div id="waite" style="height: 30px;width: 30px;margin: 160px auto 0 ;"&gt;&#13;
+            &lt;svg viewBox="0 0 50 50"&gt;&#13;
+                &lt;circle cx="25" cy="25" r="20" fill="none" stroke="#3367d6" stroke-width="4" style="&#13;
+                      -webkit-animation: ant-progress-loading 1.4s ease-in-out infinite;&#13;
+                      animation: ant-progress-loading 1.4s ease-in-out infinite;&#13;
+                      stroke-dasharray: 80px 200px;&#13;
+                      stroke-dashoffset: 0;&#13;
+                      "&gt;&lt;/circle&gt;&#13;
+            &lt;/svg&gt;&#13;
+    &lt;/div&gt;&#13;
+&lt;div style="&#13;
+    margin:0 auto;&#13;
+    line-height: 40px;&#13;
+    height: 40px;&#13;
+text-align:center;&#13;
+"&gt;加载中 · · ·&lt;/div&gt;`;&#13;
+&#13;
+  //获取最近空间数据&#13;
+  var spaceActivity= document.getElementById("space-activity");&#13;
+&#13;
+  if(spaceActivity) {&#13;
+    var currentSpace = $("#currentSpace").text()&#13;
+    $("#space-activity").html(circle);&#13;
+    $.ajax({&#13;
+      typy: "GET",&#13;
+      url: "/bin/get/ChoerodonConfig/ChoerodonFetchData/AllActivity?currentSpace="+currentSpace,&#13;
+      async: true,&#13;
+      success: function (data) {&#13;
+        //获取最近空间的结果&#13;
+        $("#space-activity").html(data);&#13;
+        new XWiki.Activity();&#13;
+        &#13;
+        &#13;
+        var activityAction = document.getElementsByClassName("activityAction");&#13;
                     for (var i = 0; i &lt; activityAction.length; i++) {&#13;
                     if (activityAction[i].getElementsByTagName("a").length != 0) {&#13;
                     activityAction[i].getElementsByTagName("a")[0].innerHTML = '(查看更新)';&#13;
                     }&#13;
                     }&#13;
-                    &#13;
-                    &#13;
+&#13;
                     &#13;
                     //最近空间活动&#13;
                     var descIcon = `&lt;span class="icon icon-description" style="&#13;
@@ -144,61 +182,69 @@
                     typePage[i].insertAdjacentHTML('afterBegin', descIcon);&#13;
                     }&#13;
                     &#13;
-                    var edit_doc_icon = `&lt;div class="activity-opera-div  activity-icon-edit"&gt;&lt;span class="icon icon-mode_edit activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var create_doc_icon = `&lt;div class="activity-opera-div  activity-icon-add"&gt;&lt;span class="icon icon-playlist_add activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_doc_icon = `&lt;div class="activity-opera-div  activity-icon-delete"&gt;&lt;span class="icon icon-delete activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var edit_comment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-textsms activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var add_comment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_comment activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_comment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_commet activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var edit_attachment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-border_color activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var add_attachment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_attachment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var edit_annotation_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var add_annotation_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-                    var delete_annotation_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
-
+var edit_doc_icon = `&lt;div class="activity-opera-div  activity-icon-edit"&gt;&lt;span class="icon icon-mode_edit activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var create_doc_icon = `&lt;div class="activity-opera-div  activity-icon-add"&gt;&lt;span class="icon icon-playlist_add activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var delete_doc_icon = `&lt;div class="activity-opera-div  activity-icon-delete"&gt;&lt;span class="icon icon-delete activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`&#13;
+var edit_comment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-textsms activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var add_comment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_comment activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var delete_comment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_commet activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var edit_attachment_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-border_color activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var add_attachment_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-add_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var delete_attachment_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-delete_attach activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var edit_annotation_icon = `&lt;div class="activity-opera-div activity-icon-edit"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var add_annotation_icon = `&lt;div class="activity-opera-div activity-icon-add"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+var delete_annotation_icon = `&lt;div class="activity-opera-div activity-icon-delete"&gt;&lt;span class="icon icon-speaker_notes activity-opera-icon"&gt;&lt;/span&gt;&lt;/div&gt;`;&#13;
+           &#13;
+        &#13;
                     var litleIcon = document.getElementsByClassName("activityActionAvatar");&#13;
-                    for(var i=0; i&lt;litleIcon.length; i++){&#13;
-                    if(litleIcon[i].alt == "编辑页面"){&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', edit_doc_icon);&#13;
-                    }else if (litleIcon[i].alt == "创建页面") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', create_doc_icon);&#13;
-                    } else if(litleIcon[i].alt == "删除页面") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', delete_doc_icon);&#13;
+                    for (var i = 0; i &lt; litleIcon.length; i++) {&#13;
+                    if (litleIcon[i].alt == "编辑页面") {&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', edit_doc_icon);&#13;
+                    } else if (litleIcon[i].alt == "创建页面") {&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', create_doc_icon);&#13;
+                    } else if (litleIcon[i].alt == "删除页面") {&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', delete_doc_icon);&#13;
                     } else if (litleIcon[i].alt == "添加评论") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', add_comment_icon);&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', add_comment_icon);&#13;
                     } else if (litleIcon[i].alt == "编辑评论") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', edit_comment_icon);&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', edit_comment_icon);&#13;
                     } else if (litleIcon[i].alt == "删除评论") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', delete_comment_icon);&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', delete_comment_icon);&#13;
                     } else if (litleIcon[i].alt == "添加附件") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', add_attachment_icon);&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', add_attachment_icon);&#13;
                     } else if (litleIcon[i].alt == "编辑附件") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', edit_attachment_icon);&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', edit_attachment_icon);&#13;
                     } else if (litleIcon[i].alt == "删除附件") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', delete_attachment_icon);&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', delete_attachment_icon);&#13;
                     } else if (litleIcon[i].alt == "添加注释") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', add_annotation_icon);&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', add_annotation_icon);&#13;
                     } else if (litleIcon[i].alt == "编辑注释") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', edit_annotation_icon);&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', edit_annotation_icon);&#13;
                     } else if (litleIcon[i].alt == "删除注释") {&#13;
-                    litleIcon[i].style.display = "none";&#13;
-                    litleIcon[i].insertAdjacentHTML('afterEnd', delete_annotation_icon);&#13;
+                        litleIcon[i].style.display = "none";&#13;
+                        litleIcon[i].insertAdjacentHTML('afterEnd', delete_annotation_icon);&#13;
                     }&#13;
-                    }&#13;
-                    &#13;
-                </value>
+                }&#13;
+        &#13;
+        &#13;
+        &#13;
+      }&#13;
+    });&#13;
+  }&#13;
+&#13;
+});&#13;
+</value>
             </property>
             <property name="name" type="String">
                 <attribute name="name" value="name"/>
@@ -405,7 +451,11 @@
                 <attribute name="contenttype" value="PureText"/>
                 <attribute name="editor" value="PureText"/>
                 <attribute name="number" value="2"/>
-                <value>#home-page-welcome{&#13;
+                <value>.wikimodel-emptyline{&#13;
+  display:none;&#13;
+}&#13;
+&#13;
+#home-page-welcome{&#13;
                     background: rgba(140,158,255,0.08);&#13;
                     border: 1px solid #5266D4;&#13;
                     border-radius: 2px;&#13;
@@ -489,16 +539,14 @@
                     .activity{&#13;
                     clear: both;&#13;
                     width: 674px;&#13;
-                    margin-top: 54px;&#13;
-                    position: absolute;&#13;
+                    margin-top: 6px;&#13;
                     margin-left: 18px;&#13;
                     }&#13;
                     &#13;
                     .activity&gt;h2{&#13;
                     display: none;&#13;
                     }&#13;
-                    &#13;
-                    &#13;
+&#13;
                     .activityAuthor a{&#13;
                     font-size: 16px;&#13;
                     color: #000000;&#13;
@@ -511,28 +559,28 @@
                     color: #5E6C84 !important;&#13;
                     line-height: 20px;&#13;
                     }&#13;
-                    &#13;
+&#13;
                     .activityAction{&#13;
                     font-size: 12px;&#13;
                     color: rgba(0,0,0,0.65);&#13;
                     text-align: left;&#13;
                     }&#13;
-                    &#13;
+&#13;
                     .activitySnapshot img {&#13;
                     border-radius: 12px;&#13;
                     height: 24px;&#13;
                     width: 24px;&#13;
-                    }&#13;
-                    &#13;
-                    .activitySnapshot .activityActionAvatar {&#13;
+                    } &#13;
+                   &#13;
+.activitySnapshot .activityActionAvatar {&#13;
                     bottom: 6px;&#13;
                     height: 10px;&#13;
                     right: -12px;&#13;
                     width: 10px;&#13;
                     border-width:0;&#13;
                     }&#13;
-                    &#13;
-                    .activityAction a {&#13;
+&#13;
+.activityAction a {&#13;
                     text-decoration: none;&#13;
                     }&#13;
                     &#13;
@@ -547,8 +595,8 @@
                     .activity-icon-add {&#13;
                     background: #1AB16F;&#13;
                     }&#13;
-                    &#13;
-                    .activity-icon-edit {&#13;
+&#13;
+.activity-icon-edit {&#13;
                     background: #4D90FE;&#13;
                     }&#13;
                     &#13;
@@ -621,7 +669,7 @@
                 <attribute name="unmodifiable" value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="displayFormType" value="select"/>
-                <attribute name="displayType"            value="yesno"/>
+                <attribute name="displayType"              value="yesno"/>
                 <attribute name="number" value="4"/>
                 <value></value>
             </property>
@@ -634,25 +682,21 @@
                 <attribute name="displayType" value="select"/>
                 <attribute name="multiSelect" value="0"/>
                 <attribute name="size" value="1"/>
-                <attribute name="separator" value=""/>
+                <attribute name="separator" value=" "/>
                 <attribute name="cache" value="0"/>
                 <attribute name="separators" value="|, "/>
                 <attribute name="number" value="3"/>
                 <attribute name="values" value="currentPage|onDemand|always"/>
                 <attribute name="allowedValues" value="currentPage,onDemand,always"/>
                 <value>currentPage</value>
-            </property>
-        </objectSummary>
-<objectSummary xsi:type="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            </property></objectSummary>
+        <objectSummary xsi:type="Object"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <className>XWiki.UIExtensionClass</className>
             <number>0</number>
-
-
-<headline></headline>
-
-<property name="content" type="TextArea">
-<attribute name="name" value="content"/>
-                <attribute name="prettyName" value="Extension Content"/>
+            <headline></headline>
+            <property name="content" type="TextArea">
+            <attribute name="name" value="content"/>
+            <attribute name="prettyName" value="Extension Content"/>
                 <attribute name="unmodifiable" value="0"/>
                 <attribute name="disabled" value="0"/>
                 <attribute name="size" value="40"/>
