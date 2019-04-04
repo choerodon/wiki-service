@@ -1,17 +1,34 @@
 package io.choerodon.wiki.api.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created by Zenger on 2018/7/5.
  */
 public class WikiSpaceResponseDTO {
 
+    @ApiModelProperty(value = "空间id")
     private Long id;
+
+    @ApiModelProperty(value = "组织id/项目id")
     private Long resourceId;
+
+    @ApiModelProperty(value = "空间类型")
     private String resourceType;
+
+    @ApiModelProperty(value = "空间名称")
     private String name;
+
+    @ApiModelProperty(value = "空间图标")
     private String icon;
+
+    @ApiModelProperty(value = "空间路径")
     private String path;
+
+    @ApiModelProperty(value = "空间状态")
     private String status;
+
+    @ApiModelProperty(value = "审计字段")
     private Long objectVersionNumber;
 
     public Long getId() {

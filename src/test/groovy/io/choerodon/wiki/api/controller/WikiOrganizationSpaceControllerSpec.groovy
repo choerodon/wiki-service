@@ -6,10 +6,14 @@ import io.choerodon.wiki.api.dto.WikiSpaceDTO
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO
 import io.choerodon.wiki.api.eventhandler.WikiEventHandler
+import io.choerodon.wiki.domain.application.entity.WikiSpaceE
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE
 import io.choerodon.wiki.domain.application.entity.iam.UserE
 import io.choerodon.wiki.domain.application.repository.IamRepository
+import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository
 import io.choerodon.wiki.domain.service.*
+import io.choerodon.wiki.infra.common.enums.SpaceStatus
+import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
 import io.choerodon.wiki.infra.dataobject.iam.ProjectDO
 import io.choerodon.wiki.infra.dataobject.iam.UserDO
@@ -57,6 +61,9 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
     @Autowired
     private IamRepository iamRepository
+
+    @Autowired
+    private WikiSpaceRepository wikiSpaceRepository
 
     @Autowired
     private IWikiClassService iWikiClassService
@@ -197,6 +204,17 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
 
         then: '状态码为201'
         Assert.assertEquals(201, entity.statusCodeValue)
+    }
+
+    def '查询组织下的wiki空间'() {
+        given: '定义请求数据格式'
+        def id = organizationId
+
+        when: '向接口发请求'
+        def entity = restTemplate.getForEntity(path + '/under', List.class, id)
+
+        then: '状态码为200,返回数据与请求数据相同'
+        Assert.assertEquals(200, entity.statusCodeValue)
     }
 
     def '查询组织下单个wiki空间'() {

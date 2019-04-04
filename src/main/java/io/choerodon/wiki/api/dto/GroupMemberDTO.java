@@ -2,6 +2,8 @@ package io.choerodon.wiki.api.dto;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created by Ernst on 2018/7/9.
  */
@@ -9,24 +11,16 @@ public class GroupMemberDTO {
 
     private Long userId;
 
-    /**
-     * 被更改角色的用户的用户名
-     */
+    @ApiModelProperty(value = "用户名/必填")
     private String username;
 
-    /**
-     * 项目Id
-     */
+    @ApiModelProperty(value = "siteId/organizationId/projectId/必填")
     private Long resourceId;
 
-    /**
-     * 层级  site/organization/project
-     */
+    @ApiModelProperty(value = "site/organization/project/必填")
     private String resourceType;
 
-    /**
-     * 权限列表
-     */
+    @ApiModelProperty(value = "权限类型的label/必填")
     private List<String> roleLabels;
 
     private String uuid;

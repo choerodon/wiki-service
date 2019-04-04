@@ -122,7 +122,44 @@ class WikiGroupServiceImplSpec extends Specification {
 
         when:
         wikiGroupService.getGroupName(groupMemberDTO, "testUsername")
+
         then: ''
+    }
+
+    def "getGroupsUsers"() {
+        given:
+        def groupName = "XWiki.test"
+        def username = "admin"
+        def page = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
+                '<objects xmlns="http://www.xwiki.org">\n' +
+                '    <objectSummary>\n' +
+                '        <pageName>XWiki.test</pageName>\n' +
+                '        <number>1</number>\n' +
+                '        <headline>XWiki.admin</headline>\n' +
+                '    </objectSummary>\n' +
+                '    <objectSummary>\n' +
+                '        <pageName>XWiki.test</pageName>\n' +
+                '        <number>1</number>\n' +
+                '        <headline>XWiki.1111</headline>\n' +
+                '    </objectSummary>\n' +
+                '    <objectSummary>\n' +
+                '        <pageName>XWiki.test</pageName>\n' +
+                '        <number>1</number>\n' +
+                '        <headline>XWiki.1111</headline>\n' +
+                '    </objectSummary>\n' +
+                '    <objectSummary>\n' +
+                '        <pageName>XWiki.test</pageName>\n' +
+                '        <number>1</number>\n' +
+                '        <headline>XWiki.22.22</headline>\n' +
+                '    </objectSummary>\n' +
+                '</objects>'
+
+        when:
+        wikiGroupService.getGroupsUsers(groupName, username)
+
+        then:
+        3 * iWikiClassService.getPageClassResource(*_) >> page
+        2 * iWikiClassService.deletePageClass(*_)
     }
 
     def "getGroupNameBuffer"() {
