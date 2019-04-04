@@ -2,6 +2,7 @@ package io.choerodon.wiki.api.controller
 
 import io.choerodon.core.domain.Page
 import io.choerodon.wiki.IntegrationTestConfiguration
+import io.choerodon.wiki.api.dto.MenuDTO
 import io.choerodon.wiki.api.dto.WikiSpaceDTO
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO
 import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO
@@ -230,6 +231,17 @@ class WikiProjectSpaceControllerSpec extends Specification {
         Assert.assertEquals(201, entity.statusCodeValue)
     }
 
+    def '查询项目下的wiki空间'() {
+        given: '定义请求数据格式'
+        def projectId = projectId
+
+        when: '向接口发请求'
+        def entity = restTemplate.getForEntity(path + '/under', List.class, projectId)
+
+        then: '状态码为200,返回数据与请求数据相同'
+        Assert.assertEquals(200, entity.statusCodeValue)
+    }
+
     def '查询项目下单个wiki空间'() {
         given: '定义请求数据格式'
         def id = wikiId
@@ -354,5 +366,19 @@ class WikiProjectSpaceControllerSpec extends Specification {
         restTemplate.delete(path + '/{id}', projectId, id)
 
         then: '校验返回数据'
+    }
+
+    def '查询wiki menus列表'() {
+        given: '定义请求数据格式'
+        def projectId = projectId
+
+        and: 'Mock'
+        1 * iWikiSpaceWebHomeService.getPageMenuUnderProject(*_)
+
+        when: '向接口发请求'
+        def entity = restTemplate.postForEntity(path + '/menus', new MenuDTO(), String.class, projectId)
+
+        then: '状态码为201'
+        Assert.assertEquals(200, entity.statusCodeValue)
     }
 }
