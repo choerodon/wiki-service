@@ -13,9 +13,8 @@ spring:
       uri: localhost:8010
       enabled: false
 management:
-  port: 9991
-  security:
-    enabled: false
+  server:
+    port: 9991
 
 
 
