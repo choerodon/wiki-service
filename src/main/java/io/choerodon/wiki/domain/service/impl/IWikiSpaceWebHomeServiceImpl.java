@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 import io.choerodon.core.exception.CommonException;
@@ -199,6 +200,27 @@ public class IWikiSpaceWebHomeServiceImpl implements IWikiSpaceWebHomeService {
         } catch (Exception e) {
             LOGGER.info("get page menu under project error", e);
             return "";
+        }
+    }
+
+    @Override
+    public void updateWikiSpaceResource() {
+        LOGGER.info("start update wiki space....");
+        Call<ResponseBody> call = wikiClient.updateWikiSpaceResource();
+        try {
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    LOGGER.info("Modify space home page successfully");
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    throw new NetworkRequestStatusCodeException("Failed to modify the space home page");
+                }
+            });
+        } catch (Exception e) {
+            throw new CommonException("error.update.wiki.space.resource", e);
         }
     }
 
