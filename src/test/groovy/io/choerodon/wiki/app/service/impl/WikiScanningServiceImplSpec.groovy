@@ -229,58 +229,9 @@ class WikiScanningServiceImplSpec extends Specification {
 
     def 'updateWikiPage'() {
         given: '定义请求数据格式'
-        WikiSpaceE orgSpace = new WikiSpaceE()
-        orgSpace.setId(1)
-        orgSpace.setResourceId(256)
-        orgSpace.setResourceType("organization")
-        orgSpace.setName("O-知识管理测试4")
-        orgSpace.setIcon("domain")
-        orgSpace.setPath("O-知识管理测试4")
-        orgSpace.setStatus("success")
-        List<WikiSpaceE> orgWikiSpaceEList = new ArrayList<>()
-        orgWikiSpaceEList.add(orgSpace)
-
-        WikiSpaceE orgUnderSpace = new WikiSpaceE()
-        orgUnderSpace.setId(2)
-        orgUnderSpace.setResourceId(256)
-        orgUnderSpace.setResourceType("organization-s")
-        orgUnderSpace.setName("test1")
-        orgUnderSpace.setIcon("instance_outline")
-        orgUnderSpace.setPath("O-知识管理测试4/test1")
-        orgUnderSpace.setStatus("success")
-        List<WikiSpaceE> orgUnderList = new ArrayList<>()
-        orgUnderList.add(orgUnderSpace)
-
-        WikiSpaceE projectSpace = new WikiSpaceE()
-        projectSpace.setId(3)
-        projectSpace.setResourceId(237)
-        projectSpace.setResourceType("project")
-        projectSpace.setName("P-知识管理测试项目1")
-        projectSpace.setIcon("branch")
-        projectSpace.setPath("O-知识管理测试4/P-知识管理测试项目1")
-        projectSpace.setStatus("success")
-        List<WikiSpaceE> projectWikiSpaceList = new ArrayList<>()
-        projectWikiSpaceList.add(projectSpace)
-
-        WikiSpaceE projectUnderSpace = new WikiSpaceE()
-        projectUnderSpace.setId(4)
-        projectUnderSpace.setResourceId(237)
-        projectUnderSpace.setResourceType("project-s")
-        projectUnderSpace.setName("test4")
-        projectUnderSpace.setIcon("compass")
-        projectUnderSpace.setPath("O-知识管理测试4/P-知识管理测试项目1/test4")
-        projectUnderSpace.setStatus("success")
-        List<WikiSpaceE> projectUnderSpaceList = new ArrayList<>()
-        projectUnderSpaceList.add(projectUnderSpace)
 
         and: 'Mock'
-        1 * wikiSpaceRepository.getWikiSpaceByType(*_) >> orgWikiSpaceEList
-        1 * wikiSpaceRepository.getWikiSpaceByType(*_) >> projectWikiSpaceList
-        1 * iWikiSpaceWebHomeService.createSpace1WebHome(*_)
-        1 * wikiSpaceRepository.getWikiSpaceList(*_) >> orgUnderList
-        1 * wikiSpaceRepository.getWikiSpaceList(*_) >> projectUnderSpaceList
-        2 * iWikiSpaceWebHomeService.createSpace2WebHome(*_)
-        1 * iWikiSpaceWebHomeService.createSpace3WebHome(*_)
+        1 * iWikiSpaceWebHomeService.updateWikiSpaceResource()
 
         when: '模拟发送消息'
         service.updateWikiPage()

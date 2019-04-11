@@ -186,10 +186,8 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     @Override
-    @Async("org-pro-sync")
     public void updateWikiPage() {
-        updateWikiOrgHomePage();
-        updateWikiProjectHomePage();
+        iWikiSpaceWebHomeService.updateWikiSpaceResource();
     }
 
     @Override
@@ -308,94 +306,6 @@ public class WikiScanningServiceImpl implements WikiScanningService {
             }
         } catch (Exception e) {
             LOGGER.error(String.valueOf(e));
-        }
-    }
-
-    public void updateWikiOrgHomePage() {
-        List<WikiSpaceE> orgWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
-                WikiSpaceResourceType.ORGANIZATION.getResourceType());
-
-        for (WikiSpaceE p : orgWikiSpaceEList) {
-            try {
-                LOGGER.info("modify the home page of the organization space, {}", p);
-                Map<String, String> params = new HashMap<>(16);
-                params.put("{{ SPACE_ICON }}", p.getIcon());
-                params.put("{{ SPACE_TITLE }}", p.getName());
-                params.put("{{ SPACE_LABEL }}", p.getName());
-                params.put("{{ SPACE_TARGET }}", p.getPath().replace(".", "\\."));
-
-                InputStream orgIs = this.getClass().getResourceAsStream("/xml/webhome.xml");
-                String orgXmlParam = FileUtil.replaceReturnString(orgIs, params);
-                iWikiSpaceWebHomeService.createSpace1WebHome(p.getId(), p.getPath(), orgXmlParam, BaseStage.USERNAME);
-
-                List<WikiSpaceE> orgUnderList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
-                        WikiSpaceResourceType.ORGANIZATION_S.getResourceType());
-                for (WikiSpaceE space : orgUnderList) {
-                    try {
-                        LOGGER.info("modify the home page of the space under the organization, {}", space);
-                        String[] path = space.getPath().split("/");
-                        Map<String, String> orgUnderParams = new HashMap<>(16);
-                        orgUnderParams.put("{{ SPACE_TITLE }}", space.getName());
-                        orgUnderParams.put("{{ SPACE_LABEL }}", space.getName());
-                        orgUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
-                        orgUnderParams.put("{{ SPACE_PARENT }}", path[0].replace(".", "\\."));
-                        orgUnderParams.put("{{ SPACE_TARGET }}", path[1].replace(".", "\\."));
-
-                        InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
-                        String xmlParam = FileUtil.replaceReturnString(inputStream, orgUnderParams);
-                        iWikiSpaceWebHomeService.createSpace2WebHome(p.getId(), path[0], path[1], xmlParam, BaseStage.USERNAME);
-                    } catch (CommonException e) {
-                        LOGGER.error(String.valueOf(e));
-                    }
-                }
-            } catch (CommonException e) {
-                LOGGER.error(String.valueOf(e));
-            }
-        }
-    }
-
-    public void updateWikiProjectHomePage() {
-        List<WikiSpaceE> projectWikiSpaceEList = wikiSpaceRepository.getWikiSpaceByType(
-                WikiSpaceResourceType.PROJECT.getResourceType());
-        for (WikiSpaceE p : projectWikiSpaceEList) {
-            try {
-                LOGGER.info("modify the home page of the project space, {}", p);
-                String[] projectPath = p.getPath().split("/");
-                Map<String, String> projectParams = new HashMap<>(16);
-                projectParams.put("{{ SPACE_TITLE }}", p.getName());
-                projectParams.put("{{ SPACE_LABEL }}", p.getName());
-                projectParams.put("{{ SPACE_ICON }}", p.getIcon());
-                projectParams.put("{{ SPACE_PARENT }}", projectPath[0].replace(".", "\\."));
-                projectParams.put("{{ SPACE_TARGET }}", projectPath[1].replace(".", "\\."));
-
-                InputStream inputStream = this.getClass().getResourceAsStream("/xml/webhome1.xml");
-                String xmlParam = FileUtil.replaceReturnString(inputStream, projectParams);
-                iWikiSpaceWebHomeService.createSpace2WebHome(p.getId(), projectPath[0], projectPath[1], xmlParam, BaseStage.USERNAME);
-
-                List<WikiSpaceE> projectUnderlist = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(),
-                        WikiSpaceResourceType.PROJECT_S.getResourceType());
-                for (WikiSpaceE space : projectUnderlist) {
-                    try {
-                        LOGGER.info("modify the home page of the space under the project, {}", space);
-                        String[] projectUnderPath = space.getPath().split("/");
-                        Map<String, String> projectUnderParams = new HashMap<>(16);
-                        projectUnderParams.put("{{ SPACE_TITLE }}", space.getName());
-                        projectUnderParams.put("{{ SPACE_LABEL }}", space.getName());
-                        projectUnderParams.put("{{ SPACE_ICON }}", space.getIcon());
-                        projectUnderParams.put("{{ SPACE_ROOT }}", projectUnderPath[0].replace(".", "\\."));
-                        projectUnderParams.put("{{ SPACE_PARENT }}", projectUnderPath[1].replace(".", "\\."));
-                        projectUnderParams.put("{{ SPACE_TARGET }}", projectUnderPath[2].replace(".", "\\."));
-
-                        InputStream is = this.getClass().getResourceAsStream("/xml/webhome2.xml");
-                        String xml = FileUtil.replaceReturnString(is, projectUnderParams);
-                        iWikiSpaceWebHomeService.createSpace3WebHome(p.getId(), projectUnderPath[0], projectUnderPath[1], projectUnderPath[2], xml, BaseStage.USERNAME);
-                    } catch (CommonException e) {
-                        LOGGER.error(String.valueOf(e));
-                    }
-                }
-            } catch (CommonException e) {
-                LOGGER.error(String.valueOf(e));
-            }
         }
     }
 

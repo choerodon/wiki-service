@@ -1,7 +1,5 @@
 package io.choerodon.wiki.domain.service;
 
-import java.util.Map;
-
 /**
  * Created by Zenger on 2018/7/3.
  */
@@ -24,4 +22,6 @@ public interface IWikiSpaceWebHomeService {
     Boolean checkProjectSpaceExsist(String orgSpace, String projectSpace, String username);
 
     String getPageMenuUnderProject(String menuIdStr, String username);
+
+    void updateWikiSpaceResource();
 }

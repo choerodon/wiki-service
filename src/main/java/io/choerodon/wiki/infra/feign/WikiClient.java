@@ -248,4 +248,8 @@ public interface WikiClient {
             @Header("username") String username,
             @Body List<WikiUserE> wikiUserEList);
 
+    //更新wiki空间主页
+    @Headers({"Content-Type:application/json;charset=UTF-8"})
+    @PUT("rest/v1/space")
+    Call<ResponseBody> updateWikiSpaceResource();
 }
