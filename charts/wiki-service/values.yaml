@@ -28,6 +28,13 @@ preJob:
       password: password
 deployment:
   managementPort: 9991
+
+service:
+  name: wiki-service
+  enable: false
+  type: ClusterIP
+  port: 9990
+
 env:
   open:
     WIKI_CLIENT: xwiki
