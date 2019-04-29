@@ -1,4 +1,4 @@
-# Default values for manager-service.
+# Default values for wiki-service.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -6,69 +6,62 @@ replicaCount: 1
 
 image:
   repository: registry.cn-hangzhou.aliyuncs.com/choerodon-wiki/wiki-service
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 preJob:
+  timeout: 300
+  image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.6.2
   preConfig:
     enable: true
     configFile: application.yml
-    mysql:
-      host: 192.168.12.175
-      port: 3306
-      database: manager_service
-      username: root
-      password: choerodon
+    configType: k8s
+    registerHost: http://register-server.c7n-system:8000
+    datasource:
+      url: jdbc:mysql://localhost:3306/manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: username
+      password: password
   preInitDB:
     enable: true
-    mysql:
-      host: 192.168.12.175
-      port: 3306
-      database: wiki_service
-      username: root
-      password: choerodon
-
+    datasource:
+      url: jdbc:mysql://localhost:3306/wiki_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: username
+      password: password
 deployment:
   managementPort: 9991
-
-env:
-  open:
-    EUREKA_DEFAULT_ZONE: http://register-server.io-choerodon:8000/eureka/
-    SPRING_DATASOURCE_URL: jdbc:mysql://localhost/wiki_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    SPRING_DATASOURCE_USERNAME: root
-    SPRING_DATASOURCE_PASSWORD: choerodon
-    SPRING_CLOUD_CONFIG_ENABLED: true
-    SPRING_CLOUD_CONFIG_URI: http://config-server.framework:8010/
-    WIKI_CLIENT: xwiki
-    WIKI_URL: http://xwiki-alpha.saas.hand-china.com
-    WIKI_TOKEN: Choerodon
-    WIKI_DEFAULT_GROUP: XWikiAllGroup
-    WIKI_SYNC: false
-    SKYWALKING_OPTS: >-
-          -javaagent:/agent/skywalking-agent.jar
-          -Dskywalking.agent.application_code=${service_name}
-          -Dskywalking.agent.sample_n_per_3_secs=-1
-          -Dskywalking.collector.backend_service=oap.skywalking:11800
-
-metrics:
-  path: /actuator/prometheus
-  group: spring-boot
-
-logs:
- parser: spring-boot
-
-persistence:
-  enabled: false
-  ## A manually managed Persistent Volume and Claim
-  ## Requires persistence.enabled: true
-  ## If defined, PVC must be created manually before volume will be bound
-  # existingClaim:
-  # subPath:
 
 service:
   name: wiki-service
   enable: false
   type: ClusterIP
   port: 9990
+
+env:
+  open:
+    WIKI_CLIENT: xwiki
+    WIKI_URL: http://xwiki-alpha.saas.hand-china.com
+    WIKI_TOKEN: Choerodon
+    WIKI_DEFAULT_GROUP: XWikiAllGroup
+    WIKI_SYNC: false
+    SPRING_CLOUD_CONFIG_ENABLED: true
+    SPRING_CLOUD_CONFIG_URI: http://register-server:8000
+    SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/wiki_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    SPRING_DATASOURCE_USERNAME: username
+    SPRING_DATASOURCE_PASSWORD: password
+    EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://register-server.io-choerodon:8000/eureka/
+    # 清理permission表中的旧接口和role_permission表中角色和权限层级不匹配的脏数据
+    CHOERODON_CLEANPERMISSION: false
+    # skywalking 代理端配置
+#    SKYWALKING_OPTS: >-
+#      -javaagent:/agent/skywalking-agent.jar
+#      -Dskywalking.agent.application_code=iam-service
+#      -Dskywalking.agent.sample_n_per_3_secs=-1
+#      -Dskywalking.collector.backend_service=oap.skywalking:11800
+metrics:
+  path: /actuator/prometheus
+  group: spring-boot
+
+logs:
+  parser: spring-boot
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -77,7 +70,7 @@ resources:
   # lines,adjust them as necessary,and remove the curly braces after 'resources:'.
   limits:
     # cpu: 100m
-    memory: 4Gi
+    memory: 1Gi
   requests:
     # cpu: 100m
-    memory: 2Gi
+    memory: 1Gi
