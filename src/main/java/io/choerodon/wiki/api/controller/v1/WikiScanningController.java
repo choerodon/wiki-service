@@ -1,16 +1,15 @@
 package io.choerodon.wiki.api.controller.v1;
 
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.wiki.app.service.WikiScanningService;
+import io.choerodon.wiki.infra.common.BaseStage;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.swagger.annotation.Permission;
-import io.choerodon.wiki.app.service.WikiScanningService;
-import io.choerodon.wiki.infra.common.BaseStage;
 
 /**
  * Created by Zenger on 2018/7/18.
@@ -30,7 +29,7 @@ public class WikiScanningController {
      *
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.SITE)
+    @Permission(type = ResourceType.SITE)
     @ApiOperation(value = "同步组织和项目")
     @GetMapping(value = "/site/scan")
     public ResponseEntity scanning() {
@@ -44,7 +43,7 @@ public class WikiScanningController {
      * @param organizationId 组织id
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "同步指定组织和项目")
@@ -61,7 +60,7 @@ public class WikiScanningController {
      * @param organizationId 组织id
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "同步指定组织")
@@ -78,7 +77,7 @@ public class WikiScanningController {
      * @param projectId 项目id
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "同步指定项目")
@@ -94,7 +93,7 @@ public class WikiScanningController {
      *
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.SITE)
+    @Permission(type = ResourceType.SITE)
     @ApiOperation(value = "更新wiki系统主页")
     @PostMapping(value = "/site/main_page")
     public ResponseEntity update() {
@@ -107,7 +106,7 @@ public class WikiScanningController {
      *
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.SITE)
+    @Permission(type = ResourceType.SITE)
     @ApiOperation(value = "同步项目下的成员到wiki系统的组织成员组")
     @PostMapping(value = "/site/organization_user_group")
     public ResponseEntity syncOrganizationUserGroup() {
@@ -120,7 +119,7 @@ public class WikiScanningController {
      *
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.SITE)
+    @Permission(type = ResourceType.SITE)
     @ApiOperation(value = "同步平台管理员到wiki的系统管理员组")
     @PostMapping(value = "/site/sync_xwiki_admin_group")
     public ResponseEntity syncXWikiAdminGroup() {
@@ -133,7 +132,7 @@ public class WikiScanningController {
      *
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.SITE)
+    @Permission(type = ResourceType.SITE)
     @ApiOperation(value = "更新wiki组中重复数据和带点用户")
     @PostMapping(value = "/wiki/group_users")
     public ResponseEntity updateGrpupUsers() {

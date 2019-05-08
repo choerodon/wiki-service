@@ -1,21 +1,11 @@
 package io.choerodon.wiki.api.controller.v1;
 
-import java.util.List;
-import javax.validation.Valid;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
-
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.CustomPageRequest;
-import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.wiki.api.dto.MenuDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
@@ -23,6 +13,15 @@ import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
 import io.choerodon.wiki.app.service.WikiSpaceService;
 import io.choerodon.wiki.infra.common.BaseStage;
 import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
+
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Created by Zenger on 2018/7/2.
@@ -44,7 +43,7 @@ public class WikiProjectSpaceController {
      * @param name      空间名
      * @return Boolean
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "检查项目下空间名唯一性")
@@ -68,7 +67,7 @@ public class WikiProjectSpaceController {
      * @param wikiSpaceDTO 空间信息
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "项目下创建wiki空间")
@@ -93,7 +92,7 @@ public class WikiProjectSpaceController {
      * @param searchParam 查询参数
      * @return Page of WikiSpaceListTreeDTO
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "分页查询项目下创建的空间")
@@ -120,7 +119,7 @@ public class WikiProjectSpaceController {
      * @param projectId 项目id
      * @return list of wikiSpaceResponseDTO
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "查询项目下的wiki空间")
@@ -141,7 +140,7 @@ public class WikiProjectSpaceController {
      * @param id        空间id
      * @return WikiSpaceResponseDTO
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "查询项目下单个wiki空间")
@@ -162,7 +161,7 @@ public class WikiProjectSpaceController {
      * @param wikiSpaceDTO 空间信息
      * @return WikiSpaceResponseDTO
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "更新项目下单个空间")
@@ -187,7 +186,7 @@ public class WikiProjectSpaceController {
      * @param id        空间id
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "同步项目下的单个空间")
@@ -208,7 +207,7 @@ public class WikiProjectSpaceController {
      * @param id        空间ID
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER})
     @ApiOperation(value = "删除项目下的空间")
     @DeleteMapping(value = "/{id}")
@@ -227,7 +226,7 @@ public class WikiProjectSpaceController {
      * @param menuDTO
      * @return
      */
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询wiki menus列表")
     @PostMapping("/menus")
     public ResponseEntity<String> queryWikiMenus(@ApiParam(value = "项目ID", required = true)

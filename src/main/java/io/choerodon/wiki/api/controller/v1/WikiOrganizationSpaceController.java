@@ -1,8 +1,17 @@
 package io.choerodon.wiki.api.controller.v1;
 
-import java.util.List;
-import javax.validation.Valid;
-
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.swagger.annotation.CustomPageRequest;
+import io.choerodon.wiki.api.dto.WikiSpaceDTO;
+import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
+import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
+import io.choerodon.wiki.app.service.WikiSpaceService;
+import io.choerodon.wiki.infra.common.BaseStage;
+import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
@@ -10,18 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.swagger.annotation.CustomPageRequest;
-import io.choerodon.swagger.annotation.Permission;
-import io.choerodon.wiki.api.dto.WikiSpaceDTO;
-import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
-import io.choerodon.wiki.api.dto.WikiSpaceResponseDTO;
-import io.choerodon.wiki.app.service.WikiSpaceService;
-import io.choerodon.wiki.infra.common.BaseStage;
-import io.choerodon.wiki.infra.common.enums.WikiSpaceResourceType;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Created by Zenger on 2018/7/2.
@@ -43,7 +42,7 @@ public class WikiOrganizationSpaceController {
      * @param name           空间名
      * @return Boolean
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "检查组织下空间名唯一性")
@@ -67,7 +66,7 @@ public class WikiOrganizationSpaceController {
      * @param wikiSpaceDTO   空间信息
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "组织下创建wiki空间")
@@ -92,7 +91,7 @@ public class WikiOrganizationSpaceController {
      * @param searchParam    查询参数
      * @return Page of WikiSpaceListTreeDTO
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "分页查询组织下创建的空间")
@@ -119,7 +118,7 @@ public class WikiOrganizationSpaceController {
      * @param organizationId 组织id
      * @return list of wikiSpaceResponseDTO
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "查询组织下的wiki空间")
@@ -140,7 +139,7 @@ public class WikiOrganizationSpaceController {
      * @param id             空间id
      * @return WikiSpaceResponseDTO
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "查询组织下单个wiki空间")
@@ -161,7 +160,7 @@ public class WikiOrganizationSpaceController {
      * @param wikiSpaceDTO   空间信息
      * @return WikiSpaceResponseDTO
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "更新组织下单个空间")
@@ -186,7 +185,7 @@ public class WikiOrganizationSpaceController {
      * @param id             空间id
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR,
                     BaseStage.ORGANIZATION_MEMBER})
     @ApiOperation(value = "同步组织下的单个空间")
@@ -207,7 +206,7 @@ public class WikiOrganizationSpaceController {
      * @param id             空间ID
      * @return ResponseEntity
      */
-    @Permission(level = ResourceLevel.ORGANIZATION,
+    @Permission(type = ResourceType.ORGANIZATION,
             roles = {InitRoleCode.ORGANIZATION_ADMINISTRATOR})
     @ApiOperation(value = "删除组织下的空间")
     @DeleteMapping(value = "/{id}")
