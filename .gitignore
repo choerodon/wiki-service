@@ -34,4 +34,11 @@ Thumbs.db
 
 .vscode
 init-local-database.sh
+
+# frontend
+lib
 node_modules
+package-lock.json
+**/lib/dist/
+**/lib/assets/
+**/lib/fonts/
