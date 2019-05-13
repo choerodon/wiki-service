@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Spin, Icon, Tooltip } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { DashBoardNavBar, stores, axios } from 'choerodon-front-boot';
+import { DashBoardNavBar, stores, axios } from '@choerodon/boot';
 import EmptyBlockDashboard from '../../components/EmptyBlockDashboard';
 import './index.scss';
 

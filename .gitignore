@@ -34,3 +34,4 @@ Thumbs.db
 
 .vscode
 init-local-database.sh
+node_modules

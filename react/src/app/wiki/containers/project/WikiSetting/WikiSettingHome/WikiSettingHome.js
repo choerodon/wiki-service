@@ -3,7 +3,7 @@ import { observer, inject } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Button, Table, Spin, Form, Popover, Tooltip, Icon, Modal } from 'choerodon-ui';
-import { Permission, Page, Header, Content, stores, axios } from 'choerodon-front-boot';
+import { Permission, Page, Header, Content, stores, axios } from '@choerodon/boot';
 import './WikiSettingHome.scss';
 import CreateSpace from '../OperateWikiSetting/AddSpace';
 import EditSpace from '../OperateWikiSetting/EditSpace';

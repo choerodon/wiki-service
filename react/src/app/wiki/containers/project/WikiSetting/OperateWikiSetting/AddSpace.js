@@ -3,7 +3,7 @@ import { observer, inject } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Button, Form, Select, Input, Tooltip, Modal, Popover, IconSelect } from 'choerodon-ui';
-import { stores, Content, axios } from 'choerodon-front-boot';
+import { stores, Content, axios } from '@choerodon/boot';
 import './OperateSpace.scss';
 
 
