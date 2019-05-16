@@ -1,6 +1,6 @@
 package script.db
 
-databaseChangeLog(logicalFilePath: 'dba/wiki_space.groovy') {
+databaseChangeLog(logicalFilePath: 'wiki_space.groovy') {
     changeSet(author: 'Zenger', id: '2018-07-02-create-table') {
         if(helper.dbType().isSupportSequence()){
             createSequence(sequenceName: 'WIKI_SPACE_S', startValue:"1")
