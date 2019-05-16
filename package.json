@@ -3,13 +3,13 @@
   "routeName": "wiki",
   "version": "0.1.0",
   "description": "",
-  "main": "./lib/src/app/wiki/containers/WIKIIndex.js",
+  "main": "./react/src/app/wiki/containers/WIKIIndex.js",
   "files": [
     "lib"
   ],
   "dependencies": {
     "@choerodon/boot": "0.1.x",
-    "@choerodon/master": "0.1.x"   
+    "@choerodon/master": "0.1.x"
   },
   "devDependencies": {
     "babel-preset-env": "^1.7.0",
@@ -23,7 +23,8 @@
     "compile": "gulp compile",
     "lint-staged": "lint-staged",
     "lint-staged:es": "eslint",
-    "compile": "gulp compile"
+    "prepublish": "choerodon-front-boot prepublish",
+    "postpublish": "choerodon-front-boot postpublish"
   },
   "author": "",
   "license": "ISC",
