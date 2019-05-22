@@ -1,7 +1,6 @@
 package io.choerodon.wiki.app.service.impl;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.wiki.api.dto.WikiGroupDTO;
@@ -74,16 +72,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     @Override
     @Async("org-pro-sync")
     public void scanning() {
-        List<OrganizationE> organizationEList = new ArrayList<>();
-        Page<OrganizationE> pageByOrganization = iamRepository.pageByOrganization(0, 400);
-        int page = pageByOrganization.getTotalPages();
-        organizationEList.addAll(pageByOrganization.getContent());
-        if (page > 1) {
-            for (int i = 1; i < page; i++) {
-                Page<OrganizationE> list = iamRepository.pageByOrganization(i, 400);
-                organizationEList.addAll(list.getContent());
-            }
-        }
+        List<OrganizationE> organizationEList = iamRepository.pageByOrganization(0, 0);
 
         for (OrganizationE organizationE : organizationEList) {
             try {
@@ -193,17 +182,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     @Override
     @Async("org-pro-sync")
     public void syncOrganizationUserGroup() {
-        List<OrganizationE> organizationEList = new ArrayList<>();
-        Page<OrganizationE> pageByOrganization = iamRepository.pageByOrganization(0, 400);
-        int page = pageByOrganization.getTotalPages();
-        organizationEList.addAll(pageByOrganization.getContent());
-        if (page > 1) {
-            for (int i = 1; i < page; i++) {
-                Page<OrganizationE> list = iamRepository.pageByOrganization(i, 400);
-                organizationEList.addAll(list.getContent());
-            }
-        }
-
+        List<OrganizationE> organizationEList = iamRepository.pageByOrganization(0, 0);
         for (OrganizationE organizationE : organizationEList) {
             if (organizationE.getProjectCount() > 0) {
                 getProjectInfo(organizationE);
@@ -214,16 +193,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     @Override
     @Async("org-pro-sync")
     public void syncXWikiAdminGroup() {
-        List<UserWithRoleDO> userWithRoleDOList = new ArrayList<>();
-        Page<UserWithRoleDO> userWithRoleDOPage = iamRepository.pagingQueryUsersWithSiteLevelRoles(0, 400);
-        int page = userWithRoleDOPage.getTotalPages();
-        userWithRoleDOList.addAll(userWithRoleDOPage.getContent());
-        if (page > 1) {
-            for (int i = 1; i < page; i++) {
-                Page<UserWithRoleDO> list = iamRepository.pagingQueryUsersWithSiteLevelRoles(i, 400);
-                userWithRoleDOList.addAll(list.getContent());
-            }
-        }
+        List<UserWithRoleDO> userWithRoleDOList = iamRepository.pagingQueryUsersWithSiteLevelRoles(0, 0);
 
         for (UserWithRoleDO ur : userWithRoleDOList) {
             List<RoleDO> roles = ur.getRoles();
@@ -342,16 +312,7 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
     public void setProject(OrganizationE organizationE) {
         LOGGER.info("start sync project, organizationE: {}", organizationE.toString());
-        List<ProjectE> projectEList = new ArrayList<>();
-        Page<ProjectE> projectEPage = iamRepository.pageByProject(organizationE.getId(), 0, 400);
-        int projectPage = projectEPage.getTotalPages();
-        projectEList.addAll(projectEPage.getContent());
-        if (projectPage > 1) {
-            for (int i = 1; i < projectPage; i++) {
-                Page<ProjectE> list = iamRepository.pageByProject(organizationE.getId(), i, 400);
-                projectEList.addAll(list.getContent());
-            }
-        }
+        List<ProjectE> projectEList = iamRepository.pageByProject(organizationE.getId(), 0, 0);
 
         for (ProjectE projectE : projectEList) {
             try {
@@ -376,21 +337,12 @@ public class WikiScanningServiceImpl implements WikiScanningService {
 
     public void getProjectInfo(OrganizationE organizationE) {
         LOGGER.info("get project information, organizationE: {}", organizationE.toString());
-        List<ProjectE> projectEList = new ArrayList<>();
-        Page<ProjectE> projectEPage = iamRepository.pageByProject(organizationE.getId(), 0, 400);
-        int projectPage = projectEPage.getTotalPages();
-        projectEList.addAll(projectEPage.getContent());
-        if (projectPage > 1) {
-            for (int i = 1; i < projectPage; i++) {
-                Page<ProjectE> list = iamRepository.pageByProject(organizationE.getId(), i, 400);
-                projectEList.addAll(list.getContent());
-            }
-        }
+        List<ProjectE> projectEList = iamRepository.pageByProject(organizationE.getId(), 0, 0);
 
         for (ProjectE projectE : projectEList) {
             try {
-                Page<UserWithRoleDO> userWithRoleDOPage = iamRepository.pagingQueryUsersWithProjectLevelRoles(projectE.getId());
-                userWithRoleDOPage.getContent().stream().forEach(u -> {
+                List<UserWithRoleDO> userWithRoleDOPage = iamRepository.pagingQueryUsersWithProjectLevelRoles(projectE.getId());
+                userWithRoleDOPage.stream().forEach(u -> {
                     u.getRoles().stream().forEach(r -> {
                         RoleE roleE = iamRepository.queryWithPermissionsAndLabels(r.getId());
                         if (roleE.getLabels() != null) {
@@ -451,34 +403,20 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     public void setWikiProjectGroupUser(ProjectE projectE, String groupName, String group) {
-        Page<RoleE> rolePage = null;
+        List<RoleE> rolePage = null;
         if (group.equals(BaseStage.ADMIN_GROUP)) {
             rolePage = iamRepository.roleList(InitRoleCode.PROJECT_OWNER);
         } else if (group.equals(BaseStage.USER_GROUP)) {
             rolePage = iamRepository.roleList(InitRoleCode.PROJECT_MEMBER);
         }
 
-        if (rolePage != null && !rolePage.getContent().isEmpty()) {
-            Page<UserE> userEPage = iamRepository.pagingQueryUsersByRoleIdOnProjectLevel(
+        if (rolePage != null && !rolePage.isEmpty()) {
+            List<UserE> userEList = iamRepository.pagingQueryUsersByRoleIdOnProjectLevel(
                     rolePage.get(0).getId(),
                     projectE.getId(),
                     0,
-                    400);
-            if (userEPage != null && !userEPage.isEmpty()) {
-                List<UserE> userEList = new ArrayList<>();
-                userEList.addAll(userEPage.getContent());
-                int userPage = userEPage.getTotalPages();
-                if (userPage > 1) {
-                    for (int i = 1; i < userPage; i++) {
-                        Page<UserE> list = iamRepository.pagingQueryUsersByRoleIdOnProjectLevel(
-                                rolePage.get(0).getId(),
-                                projectE.getId(),
-                                i,
-                                400);
-                        userEList.addAll(list.getContent());
-                    }
-                }
-
+                    0);
+            if (userEList != null && !userEList.isEmpty()) {
                 for (UserE user : userEList) {
                     wikiGroupService.setUserToGroup(groupName, user.getId(), BaseStage.USERNAME);
                 }
@@ -487,29 +425,15 @@ public class WikiScanningServiceImpl implements WikiScanningService {
     }
 
     public void setWikiOrgGroupUser(OrganizationE organizationE, String groupName) {
-        Page<RoleE> rolePage = iamRepository.roleList(InitRoleCode.ORGANIZATION_ADMINISTRATOR);
+        List<RoleE> rolePage = iamRepository.roleList(InitRoleCode.ORGANIZATION_ADMINISTRATOR);
 
-        if (rolePage != null && !rolePage.getContent().isEmpty()) {
-            Page<UserE> userEPage = iamRepository.pagingQueryUsersByRoleIdOnOrganizationLevel(
+        if (rolePage != null && !rolePage.isEmpty()) {
+            List<UserE> userEList = iamRepository.pagingQueryUsersByRoleIdOnOrganizationLevel(
                     rolePage.get(0).getId(),
                     organizationE.getId(),
                     0,
-                    400);
-            if (userEPage != null && !userEPage.isEmpty()) {
-                List<UserE> userEList = new ArrayList<>();
-                userEList.addAll(userEPage.getContent());
-                int userPage = userEPage.getTotalPages();
-                if (userPage > 1) {
-                    for (int i = 1; i < userPage; i++) {
-                        Page<UserE> list = iamRepository.pagingQueryUsersByRoleIdOnOrganizationLevel(
-                                rolePage.get(0).getId(),
-                                organizationE.getId(),
-                                i,
-                                400);
-                        userEList.addAll(list.getContent());
-                    }
-                }
-
+                    0);
+            if (userEList != null && !userEList.isEmpty()) {
                 for (UserE user : userEList) {
                     wikiGroupService.setUserToGroup(groupName, user.getId(), BaseStage.USERNAME);
                 }

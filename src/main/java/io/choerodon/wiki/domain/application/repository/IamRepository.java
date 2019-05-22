@@ -1,6 +1,7 @@
 package io.choerodon.wiki.domain.application.repository;
 
-import io.choerodon.core.domain.Page;
+import java.util.List;
+
 import io.choerodon.wiki.domain.application.entity.ProjectE;
 import io.choerodon.wiki.domain.application.entity.iam.OrganizationE;
 import io.choerodon.wiki.domain.application.entity.iam.RoleE;
@@ -18,23 +19,23 @@ public interface IamRepository {
 
     ProjectE queryIamProject(Long projectId);
 
-    UserE queryUserByIds(Long[] ids,Boolean flag);
+    UserE queryUserByIds(Long[] ids, Boolean flag);
 
     UserE queryUserById(Long organizationId, Long id);
 
-    Page<OrganizationE> pageByOrganization(int page, int size);
+    List<OrganizationE> pageByOrganization(int page, int size);
 
-    Page<ProjectE> pageByProject(Long organizationId, int page, int size);
+    List<ProjectE> pageByProject(Long organizationId, int page, int size);
 
-    Page<RoleE> roleList(String code);
+    List<RoleE> roleList(String code);
 
-    Page<UserE> pagingQueryUsersByRoleIdOnProjectLevel(Long roleId, Long projectId,int page, int size);
+    List<UserE> pagingQueryUsersByRoleIdOnProjectLevel(Long roleId, Long projectId, int page, int size);
 
-    Page<UserE> pagingQueryUsersByRoleIdOnOrganizationLevel(Long roleId, Long organizationId,int page, int size);
+    List<UserE> pagingQueryUsersByRoleIdOnOrganizationLevel(Long roleId, Long organizationId, int page, int size);
 
-    Page<UserWithRoleDO> pagingQueryUsersWithProjectLevelRoles(Long projectId);
+    List<UserWithRoleDO> pagingQueryUsersWithProjectLevelRoles(Long projectId);
 
-    Page<UserWithRoleDO> pagingQueryUsersWithSiteLevelRoles(int page, int size);
+    List<UserWithRoleDO> pagingQueryUsersWithSiteLevelRoles(int page, int size);
 
     RoleE queryWithPermissionsAndLabels(Long id);
 }
