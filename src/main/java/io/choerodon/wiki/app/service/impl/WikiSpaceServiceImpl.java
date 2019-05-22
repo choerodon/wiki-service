@@ -272,15 +272,7 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
                     deleteOrgUnderPage(w);
                 }
                 //删除项目对应的空间
-                List<ProjectE> projectEList = new ArrayList<>();
-                Page<ProjectE> projectEPage = iamRepository.pageByProject(resourceId, 0, 400);
-                projectEList.addAll(projectEPage);
-                if (projectEPage.getTotalPages() > 1) {
-                    for (int i = 1; i < projectEPage.getTotalPages(); i++) {
-                        Page<ProjectE> page = iamRepository.pageByProject(resourceId, i, 400);
-                        projectEList.addAll(page);
-                    }
-                }
+                List<ProjectE> projectEList = iamRepository.pageByProject(resourceId, 0, 0);
                 for (ProjectE p : projectEList) {
                     deleteProjectPage(p.getId(), wikiSpaceE.getId());
                     //删除项目下对应的空间
