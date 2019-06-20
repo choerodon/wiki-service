@@ -1,6 +1,6 @@
 package io.choerodon.wiki.api.controller
 
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.wiki.IntegrationTestConfiguration
 import io.choerodon.wiki.api.dto.MenuDTO
 import io.choerodon.wiki.api.dto.WikiSpaceDTO

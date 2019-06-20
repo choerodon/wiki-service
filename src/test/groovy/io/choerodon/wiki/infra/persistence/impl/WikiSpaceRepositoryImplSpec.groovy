@@ -1,8 +1,8 @@
 //package io.choerodon.wiki.infra.persistence.impl
 //
-//import io.choerodon.core.domain.Page
+//import com.github.pagehelper.PageInfo
 //import io.choerodon.core.exception.CommonException
-//import io.choerodon.mybatis.pagehelper.domain.PageRequest
+//import io.choerodon.base.domain.PageRequest
 //import io.choerodon.wiki.IntegrationTestConfiguration
 //import io.choerodon.wiki.domain.application.entity.WikiSpaceE
 //import io.choerodon.wiki.infra.dataobject.WikiSpaceDO
@@ -63,7 +63,7 @@
 //        given: '自定义数据'
 //        PageRequest pageRequest = new PageRequest(1, 2);
 //        String searchParam = "{\"searchParam\":{},\"param\":\"\"}"
-//        List<WikiSpaceDO> listWikiSpaceByPage = new Page<>();
+//        List<WikiSpaceDO> listWikiSpaceByPage = new PageInfo<>();
 //        and: 'Mock'
 //        1 * wikiSpaceMapper.listWikiSpaceByPage(_, _, _, _) >> listWikiSpaceByPage
 //        when:
@@ -102,6 +102,6 @@
 //        when:
 //        service.getWikiSpaceByType("testresourceType")
 //        then:
-//        1 * wikiSpaceMapper.select(_) >> new Page<WikiSpaceE>()
+//        1 * wikiSpaceMapper.select(_) >> new PageInfo<WikiSpaceE>()
 //    }
 //}

@@ -2,9 +2,9 @@ package io.choerodon.wiki.infra.dataobject.iam;
 
 import java.util.Date;
 
-import io.choerodon.mybatis.domain.AuditDomain;
+import io.choerodon.mybatis.entity.BaseDTO;
 
-public class UserDO extends AuditDomain {
+public class UserDO extends BaseDTO {
 
     private Long id;
     private String loginName;

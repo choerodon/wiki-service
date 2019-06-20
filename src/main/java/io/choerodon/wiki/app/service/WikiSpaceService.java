@@ -2,8 +2,8 @@ package io.choerodon.wiki.app.service;
 
 import java.util.List;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.wiki.api.dto.MenuDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
@@ -18,7 +18,7 @@ public interface WikiSpaceService {
 
     void create(WikiSpaceDTO wikiSpaceDTO, Long resourceId, String username, String type, Boolean flag);
 
-    Page<WikiSpaceListTreeDTO> listTreeWikiSpaceByPage(Long resourceId, String type,
+    PageInfo<WikiSpaceListTreeDTO> listTreeWikiSpaceByPage(Long resourceId, String type,
                                                        PageRequest pageRequest, String searchParam);
 
     List<WikiSpaceResponseDTO> underOrganization(Long organizationId, String type);

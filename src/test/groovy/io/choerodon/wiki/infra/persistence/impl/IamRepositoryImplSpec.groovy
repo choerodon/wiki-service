@@ -1,6 +1,6 @@
 package io.choerodon.wiki.infra.persistence.impl
 
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.core.exception.CommonException
 import io.choerodon.wiki.IntegrationTestConfiguration
 import io.choerodon.wiki.infra.dataobject.iam.OrganizationDO
@@ -33,12 +33,12 @@ class IamRepositoryImplSpec extends Specification {
 
     def 'pageByOrganization'() {
         given: '自定义数据'
-        Page<OrganizationDO> page = new Page<>()
+        PageInfo<OrganizationDO> page = new PageInfo<>()
         page.setTotalPages(1)
         OrganizationDO organizationDO = new OrganizationDO()
         organizationDO.setId(1)
         page.setContent(Arrays.asList(organizationDO))
-        ResponseEntity<Page<ProjectDO>> pageResponseEntity = new ResponseEntity<>(page, HttpStatus.OK)
+        ResponseEntity<PageInfo<ProjectDO>> pageResponseEntity = new ResponseEntity<>(page, HttpStatus.OK)
 
         when: ''
         service.pageByOrganization(0, 10)
@@ -49,12 +49,12 @@ class IamRepositoryImplSpec extends Specification {
 
     def 'roleList'() {
         given: '自定义数据'
-        Page<RoleDO> page = new Page<>()
+        PageInfo<RoleDO> page = new PageInfo<>()
         page.setTotalPages(1)
         RoleDO roleDO = new RoleDO()
         roleDO.setId(1)
         page.setContent(Arrays.asList(roleDO))
-        ResponseEntity<Page<RoleDO>> responseEntity = new ResponseEntity<>(page, HttpStatus.OK)
+        ResponseEntity<PageInfo<RoleDO>> responseEntity = new ResponseEntity<>(page, HttpStatus.OK)
 
         when: ''
         service.roleList("1")
@@ -65,12 +65,12 @@ class IamRepositoryImplSpec extends Specification {
 
     def 'pagingQueryUsersByRoleIdOnProjectLevel'() {
         given: '自定义数据'
-        Page<UserDO> page = new Page<>()
+        PageInfo<UserDO> page = new PageInfo<>()
         page.setTotalPages(1)
         UserDO userDO = new UserDO()
         userDO.setId(1)
         page.setContent(Arrays.asList(userDO))
-        ResponseEntity<Page<UserDO>> responseEntity = new ResponseEntity<>(page, HttpStatus.OK)
+        ResponseEntity<PageInfo<UserDO>> responseEntity = new ResponseEntity<>(page, HttpStatus.OK)
 
         when: ''
         service.pagingQueryUsersByRoleIdOnProjectLevel(1, 2, 3, 4)
@@ -81,12 +81,12 @@ class IamRepositoryImplSpec extends Specification {
 
     def 'pagingQueryUsersByRoleIdOnOrganizationLevel'() {
         given: '自定义数据'
-        Page<UserDO> page = new Page<>()
+        PageInfo<UserDO> page = new PageInfo<>()
         page.setTotalPages(1)
         UserDO userDO = new UserDO()
         userDO.setId(1)
         page.setContent(Arrays.asList(userDO))
-        ResponseEntity<Page<UserDO>> responseEntity = new ResponseEntity<>(page, HttpStatus.OK)
+        ResponseEntity<PageInfo<UserDO>> responseEntity = new ResponseEntity<>(page, HttpStatus.OK)
 
         when: ''
         service.pagingQueryUsersByRoleIdOnOrganizationLevel(1, 2, 3, 4)
@@ -130,7 +130,7 @@ class IamRepositoryImplSpec extends Specification {
 
     def "pageByOrganizationFailedGet"() {
         given: '自定义数据'
-        ResponseEntity<Page<OrganizationDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
+        ResponseEntity<PageInfo<OrganizationDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
         when:
         service.pageByOrganization(3, 4)
         then:
@@ -141,7 +141,7 @@ class IamRepositoryImplSpec extends Specification {
 
     def "pageByOrganizationFailedQuery"() {
         given: '自定义数据'
-        ResponseEntity<Page<OrganizationDO>> responseEntity = new ResponseEntity<>(HttpStatus.OK)
+        ResponseEntity<PageInfo<OrganizationDO>> responseEntity = new ResponseEntity<>(HttpStatus.OK)
         when:
         service.pageByOrganization(3, 4)
         then:
@@ -152,7 +152,7 @@ class IamRepositoryImplSpec extends Specification {
 
     def "pageByProjectFailedGet1"() {
         given: '自定义数据'
-        ResponseEntity<Page<ProjectDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
+        ResponseEntity<PageInfo<ProjectDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
         when:
         service.pageByProject(1L, 3, 4)
         then:
@@ -163,7 +163,7 @@ class IamRepositoryImplSpec extends Specification {
 
     def "pageByProjectFailedGet2"() {
         given: '自定义数据'
-        ResponseEntity<Page<ProjectDO>> responseEntity = new ResponseEntity<>(HttpStatus.OK)
+        ResponseEntity<PageInfo<ProjectDO>> responseEntity = new ResponseEntity<>(HttpStatus.OK)
         when:
         service.pageByProject(1L, 3, 4)
         then:
@@ -174,7 +174,7 @@ class IamRepositoryImplSpec extends Specification {
 
     def "roleListFailedGet1"() {
         given: '自定义数据'
-        ResponseEntity<Page<RoleDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
+        ResponseEntity<PageInfo<RoleDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
         when:
         service.roleList("testStringCode")
         then:
@@ -185,7 +185,7 @@ class IamRepositoryImplSpec extends Specification {
 
     def "roleListFailedGet2"() {
         given: '自定义数据'
-        ResponseEntity<Page<RoleDO>> responseEntity = new ResponseEntity<>(HttpStatus.OK)
+        ResponseEntity<PageInfo<RoleDO>> responseEntity = new ResponseEntity<>(HttpStatus.OK)
         when:
         service.roleList("testStringCode")
         then:
@@ -196,7 +196,7 @@ class IamRepositoryImplSpec extends Specification {
 
     def "pagingQueryUsersByRoleIdOnProjectLevelFailed"() {
         given: '自定义数据'
-        ResponseEntity<Page<UserDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
+        ResponseEntity<PageInfo<UserDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
         when:
         service.pagingQueryUsersByRoleIdOnProjectLevel(1L, 1L, 1, 2)
         then:
@@ -207,7 +207,7 @@ class IamRepositoryImplSpec extends Specification {
 
     def "pagingQueryUsersByRoleIdOnOrganizationLevelFailed"() {
         given: '自定义数据'
-        ResponseEntity<Page<UserDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
+        ResponseEntity<PageInfo<UserDO>> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED)
         when:
         service.pagingQueryUsersByRoleIdOnOrganizationLevel(1L, 1L, 1, 2)
         then:
