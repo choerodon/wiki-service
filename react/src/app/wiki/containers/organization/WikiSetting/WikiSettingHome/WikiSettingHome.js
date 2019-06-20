@@ -121,7 +121,7 @@ class WikiSettingHome extends Component {
     axios.post(`/wiki/v1/organizations/${AppState.currentMenuType.organizationId}/space/list_by_options?sort=id%2Cdesc`)
       .then((res) => {
         this.setState({
-          components: res.content,
+          components: res.list,
           loading: false,
         });
       })
