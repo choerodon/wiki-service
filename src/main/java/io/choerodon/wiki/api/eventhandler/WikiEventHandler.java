@@ -365,23 +365,23 @@ public class WikiEventHandler {
         return projectEvent;
     }
 
-    /**
-     * 初始化wiki的demo数据
-     */
-    @SagaTask(code = "register-wiki-init-demo-data",
-            description = "初始化wiki的demo数据",
-            sagaCode = "register-org",
-            maxRetryCount = 10,
-            concurrentLimitNum = 2,
-            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 160)
-    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitDemoDataEvent(String data) throws IOException {
-        loggerInfo(data);
-        OrganizationRegisterEventPayloadDTO wikiDemoData = JSONObject.parseObject(data, OrganizationRegisterEventPayloadDTO.class);
-
-        wikiSpaceService.createDemo(wikiDemoData.getOrganization().getId(), BaseStage.USERNAME);
-        return wikiDemoData;
-    }
+//    /**
+//     * 初始化wiki的demo数据
+//     */
+//    @SagaTask(code = "register-wiki-init-demo-data",
+//            description = "初始化wiki的demo数据",
+//            sagaCode = "register-org",
+//            maxRetryCount = 10,
+//            concurrentLimitNum = 2,
+//            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+//            seq = 160)
+//    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitDemoDataEvent(String data) throws IOException {
+//        loggerInfo(data);
+//        OrganizationRegisterEventPayloadDTO wikiDemoData = JSONObject.parseObject(data, OrganizationRegisterEventPayloadDTO.class);
+//
+//        wikiSpaceService.createDemo(wikiDemoData.getOrganization().getId(), BaseStage.USERNAME);
+//        return wikiDemoData;
+//    }
 
     /************************************************************************************
      *end.
