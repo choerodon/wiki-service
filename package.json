@@ -1,17 +1,16 @@
 {
   "name": "@choerodon/wiki",
   "routeName": "wiki",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "",
   "main": "./react/src/app/wiki/containers/WIKIIndex.js",
   "files": [
     "lib"
   ],
-  "dependencies": {
-    "@choerodon/boot": "0.17.x",
-    "@choerodon/master": "0.17.x"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@choerodon/boot": "0.18.x",
+    "@choerodon/master": "0.18.x",
     "babel-preset-env": "^1.7.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.1",
@@ -39,5 +38,8 @@
       "pre-commit": "lint-staged"
     }
   },
-  "peerDependencies": {}
+  "peerDependencies": {
+    "@choerodon/boot": "0.18.x",
+    "@choerodon/master": "0.18.x"
+  }
 }
