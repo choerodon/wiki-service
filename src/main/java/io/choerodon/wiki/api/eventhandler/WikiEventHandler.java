@@ -316,55 +316,53 @@ public class WikiEventHandler {
         return data;
     }
 
-    /************************************************************************************
-     *  2019/2/27 start....
-     *  wiki-service接收创建猪齿鱼demo的saga消息
-     ************************************************************************************/
-    /**
-     * 初始化组织对应的wiki空间
-     */
-    @SagaTask(code = "register-wiki-init-org",
-            description = "初始化组织对应的wiki空间",
-            sagaCode = "register-org",
-            maxRetryCount = 10,
-            concurrentLimitNum = 2,
-            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 70)
-    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitOrganizationEvent(String data) throws IOException {
-        loggerInfo(data);
-        OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = JSONObject.parseObject(data, OrganizationRegisterEventPayloadDTO.class);
-
-        createOrganization(organizationRegisterEventPayloadDTO.getOrganization().getId(),
-                organizationRegisterEventPayloadDTO.getOrganization().getCode(),
-                organizationRegisterEventPayloadDTO.getOrganization().getName(),
-                organizationRegisterEventPayloadDTO.getUser().getId());
-
-        return organizationRegisterEventPayloadDTO;
-    }
-
-    /**
-     * 初始化项目对应的wiki空间
-     */
-    @SagaTask(code = "register-wiki-init-project",
-            description = "初始化项目对应的wiki空间",
-            sagaCode = "register-org",
-            maxRetryCount = 10,
-            concurrentLimitNum = 2,
-            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
-            seq = 120)
-    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitProjectEvent(String data) throws IOException {
-        loggerInfo(data);
-        OrganizationRegisterEventPayloadDTO projectEvent = JSONObject.parseObject(data, OrganizationRegisterEventPayloadDTO.class);
-        createProject(projectEvent.getOrganization().getId(),
-                projectEvent.getOrganization().getCode(),
-                projectEvent.getProject().getCode(),
-                projectEvent.getProject().getName(),
-                projectEvent.getProject().getId(),
-                projectEvent.getUser().getId());
-
-        return projectEvent;
-    }
-
+//    /************************************************************************************
+//     *  2019/2/27 start....
+//     *  wiki-service接收创建猪齿鱼demo的saga消息
+//     ************************************************************************************/
+//    /**
+//     * 初始化组织对应的wiki空间
+//     */
+//    @SagaTask(code = "register-wiki-init-org",
+//            description = "初始化组织对应的wiki空间",
+//            sagaCode = "register-org",
+//            maxRetryCount = 10,
+//            concurrentLimitNum = 2,
+//            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+//            seq = 70)
+//    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitOrganizationEvent(String data) throws IOException {
+//        loggerInfo(data);
+//        OrganizationRegisterEventPayloadDTO organizationRegisterEventPayloadDTO = JSONObject.parseObject(data, OrganizationRegisterEventPayloadDTO.class);
+//
+//        createOrganization(organizationRegisterEventPayloadDTO.getOrganization().getId(),
+//                organizationRegisterEventPayloadDTO.getOrganization().getCode(),
+//                organizationRegisterEventPayloadDTO.getOrganization().getName(),
+//                organizationRegisterEventPayloadDTO.getUser().getId());
+//
+//        return organizationRegisterEventPayloadDTO;
+//    }
+//    /**
+////     * 初始化项目对应的wiki空间
+////     */
+//    @SagaTask(code = "register-wiki-init-project",
+//            description = "初始化项目对应的wiki空间",
+//            sagaCode = "register-org",
+//            maxRetryCount = 10,
+//            concurrentLimitNum = 2,
+//            concurrentLimitPolicy = SagaDefinition.ConcurrentLimitPolicy.NONE,
+//            seq = 120)
+//    public OrganizationRegisterEventPayloadDTO handleWikiRegisterInitProjectEvent(String data) throws IOException {
+//        loggerInfo(data);
+//        OrganizationRegisterEventPayloadDTO projectEvent = JSONObject.parseObject(data, OrganizationRegisterEventPayloadDTO.class);
+//        createProject(projectEvent.getOrganization().getId(),
+//                projectEvent.getOrganization().getCode(),
+//                projectEvent.getProject().getCode(),
+//                projectEvent.getProject().getName(),
+//                projectEvent.getProject().getId(),
+//                projectEvent.getUser().getId());
+//
+//        return projectEvent;
+//    }
 //    /**
 //     * 初始化wiki的demo数据
 //     */
