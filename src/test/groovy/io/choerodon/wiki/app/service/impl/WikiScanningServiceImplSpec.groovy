@@ -1,6 +1,6 @@
 package io.choerodon.wiki.app.service.impl
 
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.wiki.app.service.WikiGroupService
 import io.choerodon.wiki.app.service.WikiSpaceService
 import io.choerodon.wiki.domain.application.entity.ProjectE
@@ -98,11 +98,11 @@ class WikiScanningServiceImplSpec extends Specification {
         organization.setEnabled(true)
         organization.setProjectCount(2)
 
-        Page<OrganizationE> pageByOrganization = new Page<>()
+        PageInfo<OrganizationE> pageByOrganization = new PageInfo<>()
         pageByOrganization.setTotalPages(2)
         pageByOrganization.setContent(Arrays.asList(organization))
 
-        Page<ProjectE> page = new Page<>()
+        PageInfo<ProjectE> page = new PageInfo<>()
         page.setTotalPages(0)
         page.setContent(Arrays.asList(projectE))
 
@@ -120,16 +120,16 @@ class WikiScanningServiceImplSpec extends Specification {
     def 'syncOrgAndProject'() {
         given: '定义请求数据格式'
         def orgId = 1L
-        Page<ProjectE> projectEPage = new Page<>()
+        PageInfo<ProjectE> projectEPage = new PageInfo<>()
         projectEPage.setTotalPages(2)
         projectEPage.setContent(Arrays.asList(projectE))
 
         RoleE roleE = new RoleE()
         roleE.setId(1L)
-        Page<RoleE> rolePage = new Page<>()
+        PageInfo<RoleE> rolePage = new PageInfo<>()
         rolePage.setContent(Arrays.asList(roleE))
 
-        Page<UserE> userEPage = new Page<>()
+        PageInfo<UserE> userEPage = new PageInfo<>()
         userEPage.setTotalPages(2)
         userEPage.setContent(Arrays.asList(userE))
 
@@ -163,16 +163,16 @@ class WikiScanningServiceImplSpec extends Specification {
         given: '定义请求数据格式'
         def orgId = 1L
 
-        Page<ProjectE> projectEPage = new Page<>()
+        PageInfo<ProjectE> projectEPage = new PageInfo<>()
         projectEPage.setTotalPages(2)
         projectEPage.setContent(Arrays.asList(projectE))
 
         RoleE roleE = new RoleE()
         roleE.setId(1L)
-        Page<RoleE> rolePage = new Page<>()
+        PageInfo<RoleE> rolePage = new PageInfo<>()
         rolePage.setContent(Arrays.asList(roleE))
 
-        Page<UserE> userEPage = new Page<>()
+        PageInfo<UserE> userEPage = new PageInfo<>()
         userEPage.setTotalPages(2)
         userEPage.setContent(Arrays.asList(userE))
 
@@ -210,7 +210,7 @@ class WikiScanningServiceImplSpec extends Specification {
         wikiSpaceE.setPath("O-用户测试组织5b3")
         wikiSpaceList.add(wikiSpaceE)
 
-        Page<ProjectE> page = new Page<>()
+        PageInfo<ProjectE> page = new PageInfo<>()
         page.setTotalPages(0)
         page.setContent(Arrays.asList(projectE))
 

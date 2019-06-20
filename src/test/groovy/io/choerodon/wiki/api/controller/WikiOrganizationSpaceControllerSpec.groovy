@@ -1,6 +1,6 @@
 package io.choerodon.wiki.api.controller
 
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.wiki.IntegrationTestConfiguration
 import io.choerodon.wiki.api.dto.WikiSpaceDTO
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO
@@ -389,14 +389,14 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
     def '删除组织下的空间'() {
         given: '定义请求数据格式'
         def id = wikiId
-        Page<ProjectDO> page = new Page<>()
+        PageInfo<ProjectDO> page = new PageInfo<>()
         page.setTotalPages(2)
         ProjectDO projectDO = new ProjectDO()
         projectDO.setId(1)
         projectDO.setOrganizationId(1L)
         page.setContent(Arrays.asList(projectDO))
 
-        ResponseEntity<Page<ProjectDO>> pageResponseEntity = new ResponseEntity<>(page, HttpStatus.OK)
+        ResponseEntity<PageInfo<ProjectDO>> pageResponseEntity = new ResponseEntity<>(page, HttpStatus.OK)
         ResponseEntity<ProjectDO> projectDOResponseEntity = new ResponseEntity<>(projectDO, HttpStatus.OK)
 
         and: 'Mock'

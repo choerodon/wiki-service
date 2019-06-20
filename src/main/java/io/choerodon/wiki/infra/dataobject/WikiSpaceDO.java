@@ -1,23 +1,20 @@
 package io.choerodon.wiki.infra.dataobject;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
+import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
  * Created by Zenger on 2018/7/2.
  */
-@VersionAudit
-@ModifyAudit
 @Table(name = "wiki_space")
-public class WikiSpaceDO extends AuditDomain {
+public class WikiSpaceDO extends BaseDTO {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long resourceId;
     private String resourceType;

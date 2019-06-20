@@ -19,9 +19,9 @@ import org.springframework.stereotype.Service;
 
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
-import io.choerodon.core.domain.Page;
+import com.github.pagehelper.PageInfo;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.wiki.api.dto.MenuDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
@@ -107,18 +107,18 @@ public class WikiSpaceServiceImpl implements WikiSpaceService {
     }
 
     @Override
-    public Page<WikiSpaceListTreeDTO> listTreeWikiSpaceByPage(Long resourceId, String type,
+    public PageInfo<WikiSpaceListTreeDTO> listTreeWikiSpaceByPage(Long resourceId, String type,
                                                               PageRequest pageRequest, String searchParam) {
-        Page<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.listWikiSpaceByPage(resourceId, type,
+        PageInfo<WikiSpaceE> wikiSpaceES = wikiSpaceRepository.listWikiSpaceByPage(resourceId, type,
                 pageRequest, searchParam);
         String urlSlash = wikiUrl.endsWith("/") ? "" : "/";
-        for (WikiSpaceE ws : wikiSpaceES) {
+        for (WikiSpaceE ws : wikiSpaceES.getList()) {
             ws.setPath(wikiUrl + urlSlash + BaseStage.LOCATION + ws.getPath());
         }
-        Page<WikiSpaceListTreeDTO> page = ConvertPageHelper.convertPage(wikiSpaceES, WikiSpaceListTreeDTO.class);
+        PageInfo<WikiSpaceListTreeDTO> page = ConvertPageHelper.convertPageInfo(wikiSpaceES, WikiSpaceListTreeDTO.class);
         String queryType = type.equals(WikiSpaceResourceType.ORGANIZATION.getResourceType()) ?
                 WikiSpaceResourceType.ORGANIZATION_S.getResourceType() : WikiSpaceResourceType.PROJECT_S.getResourceType();
-        page.stream().forEach(p -> {
+        page.getList().stream().forEach(p -> {
             List<WikiSpaceE> wikiSpaceEList = wikiSpaceRepository.getWikiSpaceList(p.getResourceId(), queryType);
             List<WikiSpaceE> list = new ArrayList<>();
             for (WikiSpaceE ws : wikiSpaceEList) {
