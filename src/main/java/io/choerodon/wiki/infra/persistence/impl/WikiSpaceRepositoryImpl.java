@@ -18,6 +18,7 @@ import com.github.pagehelper.PageHelper;
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
 import io.choerodon.wiki.domain.application.repository.WikiSpaceRepository;
+import io.choerodon.wiki.infra.common.PageUtil;
 import io.choerodon.wiki.infra.common.TypeUtil;
 import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
 import io.choerodon.wiki.infra.mapper.WikiSpaceMapper;
@@ -83,14 +84,14 @@ public class WikiSpaceRepositoryImpl implements WikiSpaceRepository {
             if (!StringUtils.isEmpty(searchParam)) {
                 Map<String, Object> searchParamMap = objectMapper.readValue(searchParam, Map.class);
                 wikiSpaceDOPage = PageHelper.startPage(pageRequest.getPage(), pageRequest.getSize(),
-                        pageRequest.getSort().toSql()).doSelectPageInfo(() -> wikiSpaceMapper.listWikiSpaceByPage(
+                        PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> wikiSpaceMapper.listWikiSpaceByPage(
                                 resourceId,
                                 type,
                                 TypeUtil.cast(searchParamMap.get(TypeUtil.SEARCH_PARAM)),
                                 TypeUtil.cast(searchParamMap.get(TypeUtil.PARAM))));
             } else {
                 wikiSpaceDOPage = PageHelper.startPage(pageRequest.getPage(), pageRequest.getSize(),
-                        pageRequest.getSort().toSql()).doSelectPageInfo(() -> wikiSpaceMapper.listWikiSpaceByPage(resourceId,
+                        PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> wikiSpaceMapper.listWikiSpaceByPage(resourceId,
                                 type,
                                 null,
                                 null));
