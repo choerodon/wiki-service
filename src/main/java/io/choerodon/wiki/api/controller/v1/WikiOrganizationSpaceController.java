@@ -2,9 +2,9 @@ package io.choerodon.wiki.api.controller.v1;
 
 import io.choerodon.base.annotation.Permission;
 import io.choerodon.base.enums.ResourceType;
-import io.choerodon.core.domain.Page;
+import com.github.pagehelper.PageInfo;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.swagger.annotation.CustomPageRequest;
 import io.choerodon.wiki.api.dto.WikiSpaceDTO;
 import io.choerodon.wiki.api.dto.WikiSpaceListTreeDTO;
@@ -97,7 +97,7 @@ public class WikiOrganizationSpaceController {
     @ApiOperation(value = "分页查询组织下创建的空间")
     @CustomPageRequest
     @PostMapping(value = "/list_by_options")
-    public ResponseEntity<Page<WikiSpaceListTreeDTO>> pageByOptions(
+    public ResponseEntity<PageInfo<WikiSpaceListTreeDTO>> pageByOptions(
             @ApiParam(value = "组织ID", required = true)
             @PathVariable(value = "organization_id") Long organizationId,
             @ApiParam(value = "分页参数")

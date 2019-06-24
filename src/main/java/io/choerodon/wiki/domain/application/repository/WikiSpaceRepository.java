@@ -2,8 +2,8 @@ package io.choerodon.wiki.domain.application.repository;
 
 import java.util.List;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.wiki.domain.application.entity.WikiSpaceE;
 
 /**
@@ -17,7 +17,7 @@ public interface WikiSpaceRepository {
 
     WikiSpaceE insertIfNotExist(WikiSpaceE wikiSpaceE);
 
-    Page<WikiSpaceE> listWikiSpaceByPage(Long resourceId, String type,
+    PageInfo<WikiSpaceE> listWikiSpaceByPage(Long resourceId, String type,
                                          PageRequest pageRequest, String searchParam);
 
     WikiSpaceE selectById(Long id);

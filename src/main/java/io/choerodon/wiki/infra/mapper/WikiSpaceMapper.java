@@ -5,13 +5,13 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
-import io.choerodon.mybatis.common.BaseMapper;
+import io.choerodon.mybatis.common.Mapper;
 import io.choerodon.wiki.infra.dataobject.WikiSpaceDO;
 
 /**
  * Created by Zenger on 2018/7/2.
  */
-public interface WikiSpaceMapper extends BaseMapper<WikiSpaceDO> {
+public interface WikiSpaceMapper extends Mapper<WikiSpaceDO> {
 
     List<WikiSpaceDO> listWikiSpaceByPage(
             @Param("resourceId") Long resourceId,
