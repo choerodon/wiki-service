@@ -222,8 +222,8 @@ class WikiProjectSpaceControllerSpec extends Specification {
         def searchParam = ""
 
         when: '向接口发请求'
-        def entity = restTemplate.postForEntity(path + '/list_by_options?page=0&size=10', searchParam, Page.class, projectId)
-        List<WikiSpaceListTreeDTO> list = entity.body.content
+        def entity = restTemplate.postForEntity(path + '/list_by_options?page=0&size=10', searchParam, PageInfo.class, projectId)
+        List<WikiSpaceListTreeDTO> list = entity.body.getList()
         wikiId = list.get(0).id
         projectUnderWikiId = list.get(0).children.get(0).id
 
