@@ -197,8 +197,8 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         def searchParam = ""
 
         when: '向接口发请求'
-        def entity = restTemplate.postForEntity(path + '/list_by_options?page=0&size=10', searchParam, Page.class, organizationId)
-        List<WikiSpaceListTreeDTO> list = entity.body.content
+        def entity = restTemplate.postForEntity(path + '/list_by_options?page=0&size=10', searchParam, PageInfo.class, organizationId)
+        List<WikiSpaceListTreeDTO> list = entity.body.getList()
         wikiId = list.get(0).id
         orgUnderWikiId = list.get(0).children.get(0).id
 
@@ -390,11 +390,11 @@ class WikiOrganizationSpaceControllerSpec extends Specification {
         given: '定义请求数据格式'
         def id = wikiId
         PageInfo<ProjectDO> page = new PageInfo<>()
-        page.setTotalPages(2)
+        page.setTotal(2)
         ProjectDO projectDO = new ProjectDO()
         projectDO.setId(1)
         projectDO.setOrganizationId(1L)
-        page.setContent(Arrays.asList(projectDO))
+        page.setList(Arrays.asList(projectDO))
 
         ResponseEntity<PageInfo<ProjectDO>> pageResponseEntity = new ResponseEntity<>(page, HttpStatus.OK)
         ResponseEntity<ProjectDO> projectDOResponseEntity = new ResponseEntity<>(projectDO, HttpStatus.OK)
